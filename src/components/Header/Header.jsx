@@ -1,11 +1,21 @@
 
+// import { useState } from "react";
 import IconButton from "../Buttons/IconButton";
 import LocationInput from "../LocationInput/LocationInput";
 import "./Header.css";
 
-function Header({ isSticky }) {
+function Header({ isSticky, onToggleSearch }) {
+    // const [showSearchPopup, setShowSearchPopup] = useState(false)
+    // const handleSearchPopup = () => {
+    //     setShowSearchPopup(!showSearchPopup)
+    // }
+
+    function showLoginPopup() {
+
+    }
+
     return (
-        <header className="header sticky top-0 z-50 flex items-center justify-between px-4 bg-white shadow">
+        <header className="header sticky top-0 z-50 flex items-center justify-between px bg-white shadow">
             <div className="flex items-center gap-1">
                 <span className="left-section font-bold text-lg">beFood</span>
 
@@ -27,17 +37,17 @@ function Header({ isSticky }) {
                     color="#909AAA"
                     bgColor="#F2F5F7"
                     iconPosition="left"
-                    onClick={() => console.log("Search clicked")}
+                    onClick={onToggleSearch}
                 />
                 <IconButton
-                    icon={<i className="fa fa-user"></i>}
+                    icon={<i className="fa-solid fa-user"></i>}
                     label="Đăng nhập/Đăng ký"
                     variant="secondary"
                     size="md"
                     color={"#081F42"}
                     bgColor="#FFC40C"
                     iconPosition="left"
-                    onClick={() => console.log("Login clicked")}
+                    onClick={showLoginPopup}
                 />
             </div>
         </header>

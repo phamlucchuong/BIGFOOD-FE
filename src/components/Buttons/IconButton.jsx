@@ -20,7 +20,7 @@ export default function IconButton({
       disabled={disabled || loading}
       style={{color: color, backgroundColor: bgColor, margin: '0 10px', borderRadius: '8px'}}
     >
-      {icon && iconPosition === "left" && <span className="btn-icon">{icon}</span>}
+      {icon && iconPosition === "left" && <span className="btn-icon mr-2">{icon}</span>}
       {loading ? <span className="btn-loading">Loading...</span> : <span>{label}</span>}
     </button>
   );

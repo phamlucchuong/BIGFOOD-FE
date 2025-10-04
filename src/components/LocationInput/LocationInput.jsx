@@ -1,18 +1,63 @@
+import { useRef, useState } from "react";
 
 export default function LocationInput({ insideHeader }) {
+  const inputRef = useRef(null)
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handleCloseBtn = () => {
+    const value = inputRef.current.value
+    setIsTyping(value.trim() !== "")
+  }
+
+
   return (
     <div
-      className={`transition-all duration-300 ml-[250px] ${
-        insideHeader
-          ? "w-full"
-          : "mt-10"
-      }`}
+      className={`transition-all duration-300 ${insideHeader
+        ? "w-full ml-6"
+        : "mt-[60px] mb-[200px] ml-[250px]"
+        }`}
     >
-      <input
-        type="text"
-        placeholder="Nhập địa chỉ của bạn"
-        className="border border-gray-700 rounded-lg px-5 py-3 w-[450px] focus:outline outline-blue-500"
-      />
+      {
+        !insideHeader && <p className="text-3xl mb-7 font-medium">Địa chỉ bạn muốn giao món</p>
+      }
+      <div className="px-5 border border-gray-500 rounded-lg focus-within:border-blue-700 w-[450px] flex items-center">
+        {
+          insideHeader && <span className="font-medium mr-1">GIAO TỚI</span>
+        }
+
+        <i className="fa-solid fa-location-dot"></i>
+
+        <input
+          ref={inputRef}
+          onChange={handleCloseBtn}
+          type="text"
+          placeholder="Nhập địa chỉ của bạn"
+          className="px-5 py-3 flex-1"
+          style={{ outline: "none" }}
+        />
+
+        {isTyping && (
+          <i
+            className="fa-solid fa-circle-xmark mr-2 cursor-pointer"
+            onClick={() => {
+              inputRef.current.value = "";
+              setIsTyping(false);
+            }}
+          ></i>
+        )}
+
+        <i className="fa-solid fa-crosshairs cursor-pointer" onClick={() => {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              console.log("Vĩ độ:", position.coords.latitude);
+              console.log("Kinh độ:", position.coords.longitude);
+            },
+            (error) => {
+              console.error("Lỗi khi lấy vị trí:", error);
+            }
+          );
+        }}></i>
+      </div>
     </div>
   );
 }

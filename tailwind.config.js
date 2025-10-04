@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Roboto', 'ui-sans-serif', 'system-ui'], // Roboto mặc định
+        sans: ['Roboto', 'sans-serif'],    // Font mặc định cho toàn app
+        roboto: ['Roboto', 'sans-serif'],  // Hoặc dùng className="font-roboto"
       },
     },
   },
