@@ -3,13 +3,15 @@ import { useState, useEffect } from "react";
 import Header from "../../components/Header/Header";
 import CollectionSection from "../../sections/CollectionSection";
 import category from "../../dataSample/foodCategory";
-import food from "../../dataSample/food";
+import { food } from "../../dataSample/food";
 import Footer from "../../components/Footer/Footer";
 import TextButton from "../../components/Buttons/TextButton";
 import LocationInput from "../../components/LocationInput/LocationInput";
+import SearchPopup from "../../components/Search/SearchPopup";
 
 export default function Home() {
   const [isSticky, setIsSticky] = useState(false);
+  const [showSearchPopup, setShowSearchPopup] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,10 +23,14 @@ export default function Home() {
 
   return (
     <>
-      <Header isSticky={isSticky} />
+      <Header isSticky={isSticky} onToggleSearch={() => setShowSearchPopup(true)}/>
       
       {/* Chỉ render input ở giữa màn hình nếu chưa sticky */}
-      {!isSticky && <LocationInput className="mt-[200px]" />}
+      {!isSticky && <LocationInput/>}
+
+      {showSearchPopup && (
+        <SearchPopup onClose={() => setShowSearchPopup(false)} />
+      )}
       
       <CollectionSection title="Bộ sưu tập món ăn" cards={category} typeCard={true} />
       <CollectionSection title="Quán ngon quanh đây" cards={food} typeCard={false} />
