@@ -1,14 +1,10 @@
-import './App.css'
-import Home from './pages/Home/Home.jsx'
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import './App.css';
+import "react-phone-input-2/lib/style.css";
+import ScreenRouter from './router/ScreenRouter.jsx';
 
 function App() {
-
-    return (
-        <>
-            <Home></Home>
-        </>
-    );
+  
+  return <ScreenRouter />;
 }
 
-export default App
+export default App;
