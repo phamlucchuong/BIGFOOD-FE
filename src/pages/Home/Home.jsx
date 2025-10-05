@@ -9,7 +9,7 @@ import TextButton from "../../components/Buttons/TextButton";
 import LocationInput from "../../components/LocationInput/LocationInput";
 import SearchPopup from "../../components/Search/SearchPopup";
 
-export default function Home() {
+export default function Home({onLoginClick}) {
   const [isSticky, setIsSticky] = useState(false);
   const [showSearchPopup, setShowSearchPopup] = useState(false);
 
@@ -23,7 +23,7 @@ export default function Home() {
 
   return (
     <>
-      <Header isSticky={isSticky} onToggleSearch={() => setShowSearchPopup(true)}/>
+      <Header isSticky={isSticky} onLoginClick={onLoginClick} onToggleSearch={() => setShowSearchPopup(true)}/>
       
       {/* Chỉ render input ở giữa màn hình nếu chưa sticky */}
       {!isSticky && <LocationInput/>}
