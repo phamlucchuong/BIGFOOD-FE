@@ -1,0 +1,72 @@
+
+import { useState, useMemo } from "react";
+import { setToken } from "../../services/localStorageService";
+import { login, register, updateAccount, verifyEmail } from "../../api/auth/authApi";
+
+export default function useRegister({ email, onNext }) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const password = localStorage.getItem("password") || "";
+  const [touched, setTouched] = useState({ name: false, phone: false });
+
+  // ✅ Validation logic gom gọn + memoized
+  const errors = useMemo(() => {
+    const errs = {};
+    if (!/^[a-zA-ZÀ-ỹ\s]{1,40}$/.test(name.trim())) {
+      errs.name = "Tên không hợp lệ (tối đa 40 ký tự, không chứa số/ký tự đặc biệt)";
+    }
+    if (!/^[0-9]{9,10}$/.test(phone.trim())) {
+      errs.phone = "Số điện thoại phải có 9-10 chữ số";
+    }
+    if (password.length !== 6) {
+      errs.password = "Mật khẩu phải có 6 ký tự";
+    }
+    return errs;
+  }, [name, phone, password]);
+
+  const isFormValid = Object.keys(errors).length === 0;
+
+  // ✅ API handlers
+  const handleVerifyLogin = async () => {
+    const response = await login(email, password);
+    // if (response.code !== 1000) throw new Error("Không thể đăng nhập");
+
+    setToken(response.results?.token);
+    onNext();
+  };
+
+  const handleUpdate = async () => {
+    const response = await updateAccount(email, name, phone, password);
+    // if (response.code !== 1000) throw new Error(data.message);
+    await handleVerifyLogin();
+  };
+
+  const handleRegister = async () => {
+    const response = await register(email, name, phone, password);
+    // if (response.code !== 1000) throw new Error(response.message);
+    await handleVerifyLogin();
+  };
+
+  const handleVerify = async () => {
+    try {
+      const response = await verifyEmail(email);
+      if (response.results) {
+        await handleUpdate();
+      } else {
+        await handleRegister();
+      }
+    } catch (error) {
+      console.error("Lỗi khi đăng ký/cập nhật:", error);
+      alert(error.message);
+    }
+  };
+
+  return {
+    name, setName,
+    phone, setPhone,
+    touched, setTouched,
+    isFormValid,
+    errors,
+    handleVerify,
+  };
+}
