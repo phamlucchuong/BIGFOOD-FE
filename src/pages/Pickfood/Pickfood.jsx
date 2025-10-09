@@ -3,7 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import ProductList from '../../components/Pickfood/ProductList';
 
 
-export default function Pickfood({ onLoginClick }) {
+export default function Pickfood() {
 
   const [cart, setCart] = useState([]);
 
