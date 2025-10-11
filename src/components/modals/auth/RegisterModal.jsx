@@ -1,5 +1,4 @@
 
-import "./CompletedRegisterScreen.css";
 import ModalWrapper from "../ModalWrapper";
 import useRegister from "../../../hooks/auth/useRegister";
 
@@ -17,8 +16,7 @@ export default function RegisterModal({ onNext, onClose, email }) {
 
   return (
     <ModalWrapper onClose={onClose} title="Hoàn tất việc đăng ký">
-      
-      {/* Họ và tên */}
+    
       <div className="input-wrapper">
         <input
           type="text"
@@ -33,7 +31,6 @@ export default function RegisterModal({ onNext, onClose, email }) {
         )}
       </div>
 
-      {/* SĐT */}
       <div className="input-wrapper">
         <input
           type="tel"
