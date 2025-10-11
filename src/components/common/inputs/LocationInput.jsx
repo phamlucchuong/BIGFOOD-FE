@@ -32,8 +32,7 @@ export default function LocationInput({ insideHeader }) {
           onChange={handleCloseBtn}
           type="text"
           placeholder="Nhập địa chỉ của bạn"
-          className="px-5 py-3 flex-1"
-          style={{ outline: "none" }}
+          className="px-5 py-3 flex-1 outline-none"
         />
 
         {isTyping && (
