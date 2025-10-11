@@ -29,21 +29,17 @@ export default function useRegister({ email, onNext }) {
   // ✅ API handlers
   const handleVerifyLogin = async () => {
     const response = await login(email, password);
-    // if (response.code !== 1000) throw new Error("Không thể đăng nhập");
-
     setToken(response.results?.token);
     onNext();
   };
 
   const handleUpdate = async () => {
-    const response = await updateAccount(email, name, phone, password);
-    // if (response.code !== 1000) throw new Error(data.message);
+    await updateAccount(email, name, phone, password);
     await handleVerifyLogin();
   };
 
   const handleRegister = async () => {
-    const response = await register(email, name, phone, password);
-    // if (response.code !== 1000) throw new Error(response.message);
+    await register(email, name, phone, password);
     await handleVerifyLogin();
   };
 
