@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import LocationInput from "../common/inputs/LocationInput"
-import SearchModal from "../modals/auth/SearchModal";
+import SearchModal from "../modals/common/SearchModal";
 import AuthModalManager from "../modals/auth/AuthModalManager";
 
 

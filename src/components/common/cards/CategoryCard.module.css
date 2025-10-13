@@ -4,8 +4,8 @@
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.3s ease;
-    width: 330px;
-    height: 180px;
+    width: 260px;
+    height: 150px;
 }
 
 .card:hover {
@@ -30,7 +30,7 @@
 
 .title {
     color: white;
-    font-size: 22px;
+    font-size: 16px;
     font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }

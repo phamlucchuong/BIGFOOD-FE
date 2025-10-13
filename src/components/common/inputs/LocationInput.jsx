@@ -18,9 +18,9 @@ export default function LocationInput({ insideHeader }) {
         }`}
     >
       {
-        !insideHeader && <p className="text-3xl mb-7 font-medium">Địa chỉ bạn muốn giao món</p>
+        !insideHeader && <p className="text-2xl mb-7 font-medium">Địa chỉ bạn muốn giao món</p>
       }
-      <div className="px-5 border border-gray-500 rounded-lg focus-within:border-blue-700 w-[450px] flex items-center">
+      <div className="px-5 border border-gray-300 rounded-lg text-gray-500 focus-within:border-blue-700 w-[390px] flex items-center">
         {
           insideHeader && <span className="font-medium mr-1">GIAO TỚI</span>
         }
@@ -32,12 +32,12 @@ export default function LocationInput({ insideHeader }) {
           onChange={handleCloseBtn}
           type="text"
           placeholder="Nhập địa chỉ của bạn"
-          className="px-5 py-3 flex-1 outline-none"
+          className="px-5 py-2 flex-1 outline-none"
         />
 
         {isTyping && (
           <i
-            className="fa-solid fa-circle-xmark mr-2 cursor-pointer"
+            className="fa-solid fa-circle-xmark text-gray-700 mr-2 cursor-pointer"
             onClick={() => {
               inputRef.current.value = "";
               setIsTyping(false);
