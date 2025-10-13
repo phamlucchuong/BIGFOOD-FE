@@ -10,9 +10,9 @@ export default function ModalWrapper({ title, description, children, onClose }) 
             />
 
             {/* Nội dung popup */}
-            <div className="relative bg-white rounded-lg shadow-lg p-6 w-[700px] z-10">
+            <div className="relative bg-white rounded-lg shadow-lg p-6 w-[600px] z-10">
                 <button
-                    className="absolute top-[-15px] right-[-15px] bg-white w-10 h-10 rounded-[50%] text-black hover:text-gray-500 shadow"
+                    className="absolute top-[-15px] right-[-15px] bg-white w-9 h-9 rounded-[50%] text-black hover:text-gray-500 shadow"
                     onClick={onClose}
                 >
                     <i className="fa-solid fa-xmark text-sm"></i>

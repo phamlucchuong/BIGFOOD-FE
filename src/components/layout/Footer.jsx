@@ -8,9 +8,9 @@ import qr_code from "../../assets/images/qr_code.png"
 export default function Footer() {
     return (
         <div className="mt-[100px] px-[200px] pb-[50px] pt-7" style={{borderTop: '1px solid #d1d5db'}}>
-            <div><span className="text-blue-500 text-6xl">beFood</span></div>
+            <div><span className="text-blue-500 text-5xl">beFood</span></div>
 
-            <div className="flex justify-between font-bold text-xl text-gray-700 leading-[2.5rem] mt-5 pt-7" 
+            <div className="flex justify-between font-bold text-md text-gray-700 leading-[2.5rem] mt-5 pt-7" 
                 style={{borderTop: '1px solid #d1d5db'}}>
                 <ul>
                     <li>Về befood</li>
@@ -26,7 +26,7 @@ export default function Footer() {
                 </ul>
 
                 <ul>
-                    <li className="font-bold text-xl text-gray-800 mb-4">Kết nối với chúng tôi</li>
+                    <li className="text-md text-gray-800">Kết nối với chúng tôi</li>
                     <li>
                         <div className="flex gap-3 items-center">
                             <a
@@ -58,16 +58,16 @@ export default function Footer() {
 
 
                 <ul className="flex items-start gap-6">
-                    <li className="w-[165px] h-[165px]">
+                    <li className="w-[145px] h-[145px]">
                         <img src={qr_code} alt="qr_code" />
                     </li>
                     <li>Quét mã này để tải ứng dụng</li>
                 </ul>
             </div>
 
-            <div className="flex justify-between mt-5 pt-7" style={{borderTop: '1px solid #d1d5db'}}>
-                <div className="text-sm text-gray-500 leading-[1.3rem] mr-[100px]">
-                    <h3 className="text-2xl font-700 text-black mb-5">CÔNG TY CỔ PHẦN BE GROUP</h3>
+            <div className="flex justify-between mt-3 pt-7 border-t border-gray-300">
+                <div className="text-[13px] text-gray-500 leading-[1.2rem] mr-[100px]">
+                    <h3 className="text-xl font-700 text-black mb-3">CÔNG TY CỔ PHẦN BE GROUP</h3>
                     <p>Giấy chứng nhận ĐKDN: 123456789. Cấp lần đầu 21/12/2004. Cơ quan cấp: do Sở Kế hoạch và Đầu tư Thành Phố Hà Nội.</p>
                     <p>Đăng ký thay đổi lần 9: 21/12/2025. Cơ quan cấp: Sở Kế Hoạch và Đầu tư Thành Phố Hồ Chí Minh.</p>
                     <p>Giấy phép kinh doanh vận tải bằng xe ô tô cấp lần đầu: số 1234, ngày 1/1/1111; cấp lần thứ 5: số 5678, ngày 2/2/2222 bởi Sở Giao Thông Vận Tải Thành Phố Hồ Chí Minh.</p>

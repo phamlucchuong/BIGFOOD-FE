@@ -14,7 +14,7 @@ function Header({ isSticky, onToggleSearch, onLoginClick }) {
         const t = getToken();
         setToken(t);
     }, []);
-    
+
     const handleLogout = () => {
         removeToken();
         setToken(null); // Cập nhật lại UI
