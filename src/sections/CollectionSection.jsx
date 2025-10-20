@@ -17,13 +17,13 @@ export default function CollectionSection({ title, cards, typeCard }) {
       <h1 className="text-5xl mb-7">{title}</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {cards.map((item, index) => (
+        {cards.map((item) => (
           typeCard
-            ? <CategoryCard key={index}
+            ? <CategoryCard key={item.id}
               {...item}
-              onclick={() => { console.log("key: " + index) }}
+            onClick={() => console.log("Category ID:", item.id)}
             />
-            : <FoodCard key={index}
+            : <FoodCard key={item.id}
               {...item}
               onClick={handleSubmit}
             />

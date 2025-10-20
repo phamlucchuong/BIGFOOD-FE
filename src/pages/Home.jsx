@@ -1,13 +1,21 @@
-
+import { useState , useEffect } from "react";
 import { food } from "../dataSample/food";
-import category from "../dataSample/foodCategory";
+import handleLoadCategories  from "../hooks/data/useFoodCategory";
 import TextButton from "../components/common/buttons/TextButton";
 import CollectionSection from "../sections/CollectionSection";
 
 export default function Home() {
+    const [categies , setCategories] = useState([]);
+      useEffect( () => {
+        const fetchData = async () => {
+        const data = await handleLoadCategories();
+        setCategories(data);
+         };
+        fetchData();
+    } , []);
   return (
     <>
-      <CollectionSection title="Bộ sưu tập món ăn" cards={category} typeCard={true} />
+      <CollectionSection title="Bộ sưu tập món ăn" cards={categies} typeCard={true} />
       <CollectionSection title="Quán ngon quanh đây" cards={food} typeCard={false} />
 
       <TextButton
