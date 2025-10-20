@@ -1,14 +1,37 @@
 import { useRef, useState } from "react";
+import { getAddressFromCoordinates, getCurrentPosition } from "../../../hooks/data/useGeolocation";
 
 export default function LocationInput({ insideHeader }) {
-  const inputRef = useRef(null)
+  const [address, setAddress] = useState(""); 
   const [isTyping, setIsTyping] = useState(false);
+  const inputRef = useRef(null); 
 
-  const handleCloseBtn = () => {
-    const value = inputRef.current.value
-    setIsTyping(value.trim() !== "")
-  }
+  // Cập nhật hàm xử lý khi nhập liệu
+  const handleInputChange = (event) => {
+    const value = event.target.value;
+    setAddress(value); 
+    setIsTyping(value.trim() !== "");
+  };
 
+  // Cập nhật hàm xử lý nút xóa
+  const handleClearInput = () => {
+    setAddress("");
+    setIsTyping(false);
+    inputRef.current.focus();
+  };
+
+const handleGetLocation = async () => {
+    setAddress("Đang lấy vị trí...");
+    try {
+      const { latitude, longitude } = await getCurrentPosition();
+      const locationName = await getAddressFromCoordinates(latitude, longitude);
+      setAddress(locationName);
+      setIsTyping(locationName.trim() !== "");
+    } catch (error) {
+      setAddress(error);
+      setIsTyping(false);
+    }
+  };
 
   return (
     <div
@@ -29,7 +52,8 @@ export default function LocationInput({ insideHeader }) {
 
         <input
           ref={inputRef}
-          onChange={handleCloseBtn}
+          value={address} 
+          onChange={handleInputChange} 
           type="text"
           placeholder="Nhập địa chỉ của bạn"
           className="px-5 py-2 flex-1 outline-none"
@@ -38,24 +62,14 @@ export default function LocationInput({ insideHeader }) {
         {isTyping && (
           <i
             className="fa-solid fa-circle-xmark text-gray-700 mr-2 cursor-pointer"
-            onClick={() => {
-              inputRef.current.value = "";
-              setIsTyping(false);
-            }}
+            onClick={handleClearInput}
           ></i>
         )}
 
-        <i className="fa-solid fa-crosshairs cursor-pointer" onClick={() => {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              console.log("Vĩ độ:", position.coords.latitude);
-              console.log("Kinh độ:", position.coords.longitude);
-            },
-            (error) => {
-              console.error("Lỗi khi lấy vị trí:", error);
-            }
-          );
-        }}></i>
+        <i 
+            className="fa-solid fa-crosshairs cursor-pointer" 
+            onClick={handleGetLocation} 
+        ></i>
       </div>
     </div>
   );
