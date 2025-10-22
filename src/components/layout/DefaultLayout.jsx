@@ -24,7 +24,7 @@ export default function DefaultLayout({ children }) {
       {/* Header/Navbar */}
       <Header isSticky={isSticky} onLoginClick={() => setShowAuthModal(true)} onToggleSearch={() => setShowSearchModal(true)} />
 
-      {!isSticky && <LocationInput />}
+      {/* {!isSticky && <LocationInput />} */}
 
       {showSearchModal && (
         <SearchModal onClose={() => { setShowSearchModal(false)}} />

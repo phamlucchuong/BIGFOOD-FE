@@ -1,0 +1,55 @@
+
+  const mockRestaurants = [
+    {
+      id: 1,
+      name: "Muanuocep - Nước Ép & Tuyết Yến Healthy",
+      address: "58 Phó Đức Chính, Q.1",
+      rating: 4.8,
+      reviews: 143,
+      promo: true,
+      image: "/public/asia-eu-category.png",
+      category: "juice",
+    },
+    {
+      id: 2,
+      name: "Rau Má Mix - Nước Ép & Trà Trái Cây",
+      address: "54 Hồ Tùng Mậu, Q.1",
+      rating: 5,
+      reviews: 732,
+      promo: true,
+      image: "/public/asia-eu-category.png",
+      category: "juice",
+    },
+    {
+      id: 3,
+      name: "Sinh Tố Tao Đàn - Hoàng Diệu",
+      address: "186B Hoàng Diệu, Q.4",
+      rating: 4.8,
+      reviews: 254,
+      promo: true,
+      image: "/public/asia-eu-category.png",
+      category: "juice",
+    },
+    {
+      id: 4,
+      name: "DannyGreen Nước Ép Organic - Lý Tự Trọng",
+      address: "325 Lý Tự Trọng, Q.1",
+      rating: 5,
+      reviews: 21,
+      promo: true,
+      image: "/public/asia-eu-category.png",
+      category: "juice",
+    },
+    {
+      id: 5,
+      name: "Trà Sữa GongCha - Nguyễn Huệ",
+      address: "45 Nguyễn Huệ, Q.1",
+      rating: 4.7,
+      reviews: 512,
+      promo: false,
+      image: "/public/asia-eu-category.png",
+      category: "milk_tea",
+    },
+  ];
+
+  export default mockRestaurants
