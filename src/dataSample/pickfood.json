@@ -1,6 +1,7 @@
 [
   {
     "category": "YOGURT",
+    "categoryindex" : "yogurt",
     "products": [
       {
         "id": 1,
@@ -34,6 +35,7 @@
   },
   {
     "category": "CÀ PHÊ",
+    "categoryindex" : "caphe",
     "products": [
       {
         "id": 4,
