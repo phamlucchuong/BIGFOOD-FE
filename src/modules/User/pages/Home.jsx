@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { food } from "../dataSample/food";
-import handleLoadCategories from "../hooks/data/useFoodCategory";
-import TextButton from "../components/common/buttons/TextButton";
-import CollectionSection from "../sections/CollectionSection";
+import { food } from "../../../dataSample/food";
+import handleLoadCategories from "../../../hooks/data/useFoodCategory";
+import TextButton from "../../../components/common/buttons/TextButton";
+import CollectionSection from "../../../sections/CollectionSection";
 
 export default function Home() {
   const [categories, setCategories] = useState([]);

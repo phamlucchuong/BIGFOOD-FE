@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {Ban , Check , Download } from "lucide-react"
-import { mockOrders } from "../../dataSample/restaurant/mockOrders";
-import {formatCurrency} from "../../dataSample/restaurant/formatCurrency"
-import { OrderDetailModal } from"./OrderDetailModal"
+import { mockOrders } from "../../../dataSample/restaurant/mockOrders";
+import {formatCurrency} from "../../../dataSample/restaurant/formatCurrency"
+import { OrderDetailModal } from"../components/OrderDetailModal"
 
 export const OrderManagementPage = () => {
   const [orders, setOrders] = useState(mockOrders);

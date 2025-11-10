@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import ProductList from "../../components/Pickfood/ProductList";
-import data from "../../dataSample/pickfood.json";
-import RelatedRestaurants from "../../components/Pickfood/RelatedRestaurants";
-import { ClipboardList } from "lucide-react";
+import data from "../../../dataSample/pickfood.json";
+import RelatedRestaurants from "../../../components/dropdown/RelatedRestaurants";
+import ProductSection from "../../../sections/ProductSection";
+import { ChevronDown, ChevronRight, ClipboardList } from "lucide-react";
 
-export default function Pickfood() {
+export default function RestaurantDetail() {
   const [cart, setCart] = useState([]);
   const [showPopup, setShowPopup] = useState(false); // state cho popup
   const [selectedProduct, setSelectedProduct] = useState(null); // state lưu thông tin sản phẩm khi click
   const [note, setNote] = useState("");
   const [total, setTotal] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
+
+  const [showSlider, setShowSlider] = useState(false);
+
 
   // Hàm xử lý khi click vào sản phẩm để mở popup
   const handleProductClick = (product) => {
@@ -38,10 +41,10 @@ export default function Pickfood() {
         return prev.map((item) =>
           item.id === product.id && item.size === selectedSize
             ? {
-                ...item,
-                quantity: total == 1 ? item.quantity + 1 : total,
-                note,
-              }
+              ...item,
+              quantity: total == 1 ? item.quantity + 1 : total,
+              note,
+            }
             : item
         );
       } else {
@@ -106,7 +109,7 @@ export default function Pickfood() {
       <div>
         <div>
           <img
-            src="/public/asia-eu-category.png"
+            src="src\assets\images\drink-category.png"
             alt="Ảnh demo"
             className="h-[30vh] w-full rounded-none object-cover"
           />
@@ -126,7 +129,29 @@ export default function Pickfood() {
               Thong tin quan
             </a>
           </div>
-          <RelatedRestaurants category="juice" />
+
+          <div className="w-full mt-4">
+            <div className="flex items-center gap-2 mb-3">
+              <button
+                onClick={() => setShowSlider(!showSlider)}
+                className="border rounded-full px-3 py-1 text-sm flex items-center gap-1 text-gray-700"
+              >
+                Nhà hàng tương tự
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform ${showSlider ? "rotate-180" : ""}`}
+                />
+              </button>
+            </div>
+
+            {showSlider && <RelatedRestaurants category="juice" />}
+
+            {/* <button className="flex items-center justify-center min-w-[40px] bg-gray-100 rounded-full size-10 hover:bg-gray-200">
+              <ChevronRight />
+            </button> */}
+          </div>
+
+
           <div>
             <div className="flex flex-row gap-1 items-center border border-gray-300 focus-within:border-blue-500 rounded-lg px-3 py-2 w-full">
               <i className="fa fa-search text-gray-400"></i>
@@ -164,7 +189,7 @@ export default function Pickfood() {
           <div className="flex w-full py-8">
             {/* Khối chiếm 75% */}
             <div className="w-3/4">
-              <ProductList
+              <ProductSection
                 onAddToCart={addToCart}
                 onProductClick={handleProductClick}
               />

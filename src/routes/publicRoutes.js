@@ -1,10 +1,17 @@
 
-import DefaultLayout from "../components/Layout/DefaultLAyout";
-import Home from "../pages/Home";
-import Pickfood from "../pages/Pickfood/Pickfood";
+// import page
+import Home from "../modules/User/pages/Home";
+import RestaurantDetail from "../modules/User/pages/RestaurantDetail";
+import { DashboardPage } from "../modules/Restaurant/pages/DashboardPage";
+
+//  import layout
+import RestaurantLayout from "../modules/Restaurant/layouts/RestaurantLayout";
+import UserDefaultLayout from "../modules/User/layouts/UserDefaultLayout";
+
 
 export const publicRoutes = [
-    {path: "/", component: Home, layout: DefaultLayout},
-    {path: "/restaurant-detail", component: Pickfood, layout: DefaultLayout},
+    {path: "/", component: Home, layout: UserDefaultLayout},
+    {path: "/restaurant-detail", component: RestaurantDetail, layout: UserDefaultLayout},
+    {path: "/restaurant-dashboard", component: DashboardPage, layout: RestaurantLayout},
     // {path: "/", component: Home},
 ];

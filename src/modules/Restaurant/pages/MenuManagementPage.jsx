@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {Plus ,Edit2 , Trash2 ,Filter , Star ,Eye , EyeOff} from "lucide-react";
-import {mockCategories } from'../../dataSample/restaurant/mockCategories';
-import { mockFoods } from '../../dataSample/restaurant/mockFoods'; 
-import {formatCurrency} from "../../dataSample/restaurant/formatCurrency"
-import { CategoryModal } from './CategoryModal';
-import { FoodModal } from './FoodModal';
+import {mockCategories } from'../../../dataSample/restaurant/mockCategories';
+import { mockFoods } from '../../../dataSample/restaurant/mockFoods'; 
+import {formatCurrency} from "../../../dataSample/restaurant/formatCurrency"
+import { CategoryModal } from '../components/CategoryModal';
+import { FoodModal } from '../components/FoodModal';
 
 export const MenuManagementPage = () => {
   const [categories, setCategories] = useState(mockCategories);

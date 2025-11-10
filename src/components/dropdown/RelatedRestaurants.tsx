@@ -1,36 +1,17 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronRight, Users } from "lucide-react";
+import { ChevronRight, Users } from "lucide-react";
 import mockRestaurants from "../../dataSample/mockRestaurants";
 
 const RelatedRestaurants = ({ category }) => {
-  const [showSlider, setShowSlider] = useState(false);
 
   const restaurants = mockRestaurants.filter(
     (item) => item.category === category
   );
 
   return (
-    <div className="w-full mt-4">
-      {/* Thanh nút điều khiển */}
-      <div className="flex items-center gap-2 mb-3">
-        <button
-          onClick={() => setShowSlider(!showSlider)}
-          className="border rounded-full px-3 py-1 text-sm flex items-center gap-1 text-gray-700"
-        >
-          Nhà hàng tương tự
-          <ChevronDown
-            size={16}
-            className={`transition-transform ${showSlider ? "rotate-180" : ""}`}
-          />
-        </button>
-
-        <button className="border rounded-full px-3 py-1 text-sm flex items-center gap-1 text-gray-700">
-          <Users size={16} /> Đặt theo nhóm
-        </button>
-      </div>
+    <div>
 
       {/* Slider hiển thị danh sách quán */}
-      {showSlider && (
         <div className="flex items-center gap-4 overflow-x-auto pb-3 animate-fadeIn">
           {restaurants.map((item) => (
             <div
@@ -61,11 +42,7 @@ const RelatedRestaurants = ({ category }) => {
             </div>
           ))}
 
-          <button className="flex items-center justify-center min-w-[40px] bg-gray-100 rounded-full size-10 hover:bg-gray-200">
-            <ChevronRight />
-          </button>
         </div>
-      )}
     </div>
   );
 };

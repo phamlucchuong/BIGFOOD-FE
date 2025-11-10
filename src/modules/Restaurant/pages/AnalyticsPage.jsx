@@ -1,7 +1,7 @@
  import React, { useState, useEffect } from 'react';
  import {Download , DollarSign , ShoppingBag ,Star } from "lucide-react"
- import { mockFoods } from "../../dataSample/restaurant/mockFoods";
- import {formatCurrency} from "../../dataSample/restaurant/formatCurrency"
+ import { mockFoods } from "../../../dataSample/restaurant/mockFoods";
+ import {formatCurrency} from "../../../dataSample/restaurant/formatCurrency"
 
  export const AnalyticsPage = () => {
   const [timeRange, setTimeRange] = useState('day');

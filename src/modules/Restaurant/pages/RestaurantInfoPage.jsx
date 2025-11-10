@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Save , Edit2 , Camera , Upload , MapPin , Phone , Mail ,CreditCard , AlertCircle} from "lucide-react"
-import { mockRestaurantData } from '../../dataSample/restaurant/mockRestaurantData';
+import { mockRestaurantData } from '../../../dataSample/restaurant/mockRestaurantData';
 
 export  function RestaurantInfoPage ()  {
   const [restaurant, setRestaurant] = useState(mockRestaurantData);

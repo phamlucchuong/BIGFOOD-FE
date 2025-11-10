@@ -1,8 +1,8 @@
-import footer_img from "../../assets/images/footer-img.png"
-import facebook from "../../assets/images/facebook.png"
-import instagram from "../../assets/images/instagram.png"
-import youtube from "../../assets/images/youtube.png"
-import qr_code from "../../assets/images/qr_code.png"
+import footer_img from "../../../assets/images/footer-img.png"
+import facebook from "../../../assets/images/facebook.png"
+import instagram from "../../../assets/images/instagram.png"
+import youtube from "../../../assets/images/youtube.png"
+import qr_code from "../../../assets/images/qr_code.png"
 
 
 export default function Footer() {
