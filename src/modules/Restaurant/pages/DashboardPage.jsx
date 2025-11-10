@@ -2,9 +2,9 @@ import {
   ShoppingBag, Star, DollarSign, TrendingUp,
 } from 'lucide-react';
 
-import {mockOrders  } from  "../../dataSample/restaurant/mockOrders"
-import {formatCurrency} from "../../dataSample/restaurant/formatCurrency"
-import {mockFoods} from "../../dataSample/restaurant/mockFoods"
+import {mockOrders  } from  "../../../dataSample/restaurant/mockOrders"
+import {formatCurrency} from "../../../dataSample/restaurant/formatCurrency"
+import {mockFoods} from "../../../dataSample/restaurant/mockFoods"
 
 export const DashboardPage = () => {
   const stats = [

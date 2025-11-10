@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import LocationInput from "../common/inputs/LocationInput"
-import SearchModal from "../modals/common/SearchModal";
-import AuthModalManager from "../modals/auth/AuthModalManager";
+import LocationInput from "../../../components/common/inputs/LocationInput"
+import SearchModal from "../../../components/modals/common/SearchModal";
+import AuthModalManager from "../../../components/modals/auth/AuthModalManager";
 
 
-export default function DefaultLayout({ children }) {
+export default function UserDefaultLayout({ children }) {
   const [isSticky, setIsSticky] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);

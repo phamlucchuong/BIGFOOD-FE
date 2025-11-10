@@ -1,9 +1,9 @@
 
 import { useEffect, useState } from "react";
-import IconButton from "../common/buttons/IconButton";
-import LocationInput from "../common/inputs/LocationInput";
-import user_icon from "../../assets/images/user_icon.png"
-import { getToken, removeToken } from "../../services/localStorageService";
+import IconButton from "../../../components/common/buttons/IconButton";
+import LocationInput from "../../../components/common/inputs/LocationInput";
+import user_icon from "../../../assets/images/user_icon.png"
+import { getToken, removeToken } from "../../../services/localStorageService";
 
 
 

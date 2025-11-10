@@ -1,4 +1,4 @@
-export default function FoodCard({ image, name, address, rating, onClick }) {
+export default function RestaurantCard({ image, name, address, rating, onClick }) {
     return (
         <div 
             onClick={onClick} 

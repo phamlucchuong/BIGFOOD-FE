@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import CategoryCard from "../components/common/cards/CategoryCard";
-import FoodCard from "../components/common/cards/FoodCard";
+import RestaurantCard from "../components/common/cards/RestaurantCard";
 
 export default function CollectionSection({ title, cards, typeCard }) {
 
@@ -23,7 +23,7 @@ export default function CollectionSection({ title, cards, typeCard }) {
               {...item}
             onClick={() => console.log("Category ID:", item.id)}
             />
-            : <FoodCard key={item.id}
+            : <RestaurantCard key={item.id}
               {...item}
               onClick={handleSubmit}
             />

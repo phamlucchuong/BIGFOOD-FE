@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import { DashboardPage } from '../../../pages/restaurant/DashboardPage';
-import { RestaurantInfoPage } from "../../../pages/restaurant/RestaurantInfoPage"
-import { MenuManagementPage } from '../../../pages/restaurant/MenuManagementPage';
-import { AnalyticsPage } from "../../../pages/restaurant/AnalyticsPage"
-import { OrderManagementPage } from "../../../pages/restaurant/OrderManagementPage"
-import {ReviewsManagementPage} from "../../../pages/restaurant/ReviewsManagementPage"
+import { DashboardPage } from '../pages/DashboardPage';
+import { RestaurantInfoPage } from "../pages/RestaurantInfoPage"
+import { MenuManagementPage } from '../pages/MenuManagementPage';
+import { AnalyticsPage } from "../pages/AnalyticsPage"
+import { OrderManagementPage } from "../pages/OrderManagementPage"
+import {ReviewsManagementPage} from "../pages/ReviewsManagementPage"
 
- export default function RestaurantHomePage(){
+ export default function RestaurantLayout(){
    const[activePage , setActivePage] = useState('dashboard')
    const[sidebarOpen , setSidebarOpen] = useState(false)
 

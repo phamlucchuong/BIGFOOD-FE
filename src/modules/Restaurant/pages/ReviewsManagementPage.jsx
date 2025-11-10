@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {MessageSquare , Star } from "lucide-react"
-import {mockReviews} from "../../dataSample/restaurant/mockReview"
+import {mockReviews} from "../../../dataSample/restaurant/mockReview"
 
 export const ReviewsManagementPage = () => {
   const [reviews, setReviews] = useState(mockReviews);

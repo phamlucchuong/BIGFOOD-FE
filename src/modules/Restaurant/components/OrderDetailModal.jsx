@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Ban , Check , Package, Clock ,CreditCard , DollarSign , UtensilsCrossed , MapPin , Phone , Users , X} from "lucide-react"
-import { formatCurrency } from '../../dataSample/restaurant/formatCurrency';
+import { formatCurrency } from '../../../dataSample/restaurant/formatCurrency';
 
 export const OrderDetailModal = ({ show, onClose, order, onUpdateStatus, onReject, onRefund }) => {
   const [showRejectForm, setShowRejectForm] = useState(false);
