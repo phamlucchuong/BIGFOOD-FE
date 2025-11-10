@@ -10,7 +10,7 @@ const handleLoadCategories = async () => {
   const categoryList = [];
 
   data.forEach((category) => {
-    let name, image;
+    let image;
 
     switch (category.name) {
       case "Đồ Uống":
