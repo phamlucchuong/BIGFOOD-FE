@@ -7,8 +7,6 @@ export default function CollectionSection({ title, cards, typeCard }) {
   const navigate = useNavigate();
 
   function handleSubmit() {
-    // e.preventDefault();
-    // Giả sử login thành công
     navigate("/restaurant-detail");
   }
 

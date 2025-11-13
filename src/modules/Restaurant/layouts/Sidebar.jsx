@@ -3,16 +3,33 @@ import {
   Star, X, LogOut
 } from 'lucide-react';
 
+// 💡 BƯỚC 1: IMPORT LINK TỪ REACT-ROUTER-DOM
+import { Link } from 'react-router-dom';
 
-export default function Sidebar  ({ activePage, setActivePage, sidebarOpen, setSidebarOpen })  {
+
+export default function Sidebar ({ activePage, sidebarOpen, setSidebarOpen }) {
+// ❌ Loại bỏ setActivePage khỏi props vì Layout sẽ tự động tính toán activePage
+// dựa trên URL (sau khi đã sửa RestaurantLayout).
+ 
+  // 💡 LƯU Ý: Đổi 'restaurant' thành 'info' trong id để khớp với route path
   const menuItems = [
-    { id: 'dashboard', icon: Home, label: 'Tổng Quan' },
-    { id: 'restaurant', icon: Store, label: 'Thông Tin NH' },
-    { id: 'menu', icon: UtensilsCrossed, label: 'Thực Đơn' },
-    { id: 'orders', icon: ShoppingBag, label: 'Đơn Hàng' },
-    { id: 'analytics', icon: BarChart3, label: 'Thống Kê' },
-    { id: 'reviews', icon: Star, label: 'Đánh Giá' },
+    { id: 'dashboard', icon: Home, label: 'Tổng Quan', path: '' }, // path rỗng cho index route
+    { id: 'info', icon: Store, label: 'Thông Tin NH', path: 'info' },
+    { id: 'menu', icon: UtensilsCrossed, label: 'Thực Đơn', path: 'menu' },
+    { id: 'orders', icon: ShoppingBag, label: 'Đơn Hàng', path: 'orders' },
+    { id: 'analytics', icon: BarChart3, label: 'Thống Kê', path: 'analytics' },
+    { id: 'reviews', icon: Star, label: 'Đánh Giá', path: 'reviews' },
   ];
+
+  // 💡 Logic để xác định trang đang hoạt động (ví dụ: 'restaurant/info' -> 'info')
+  const isActive = (itemPath) => {
+    // Nếu activePage là 'restaurant' (từ /restaurant/), chúng ta muốn highlight Dashboard
+    if (itemPath === '' && activePage === 'restaurant') {
+        return true;
+    }
+    // So sánh các trang còn lại
+    return activePage === itemPath;
+  };
 
   return (
     <>
@@ -26,14 +43,19 @@ export default function Sidebar  ({ activePage, setActivePage, sidebarOpen, setS
         </div>
         <nav className="p-4 space-y-2">
           {menuItems.map(item => (
-            <button
+            // 💡 BƯỚC 2: THAY THẾ <button> BẰNG <Link>
+            // to={item.path} là relative path, sẽ hoạt động tốt trong route /restaurant/
+            <Link
               key={item.id}
-              onClick={() => { setActivePage(item.id); setSidebarOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === item.id ? 'bg-orange-50 text-orange-600' : 'hover:bg-gray-50'}`}
+              to={item.path} 
+              onClick={() => { setSidebarOpen(false); }} // ❌ Bỏ setActivePage, chỉ đóng sidebar
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors 
+                ${isActive(item.path) ? 'bg-orange-50 text-orange-600' : 'hover:bg-gray-50'}`
+              }
             >
               <item.icon size={20} />
               <span className="font-medium">{item.label}</span>
-            </button>
+            </Link>
           ))}
         </nav>
         <div className="absolute bottom-4 left-4 right-4">

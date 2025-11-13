@@ -1,34 +1,65 @@
+// AppRoutes.jsx
+import { Routes, Route } from "react-router-dom";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { publicRoutes } from "./publicRoutes";
+// import layouts
+import AdminLayout from "../modules/Admin/layouts/AdminLayout";
+import UserDefaultLayout from "../modules/User/layouts/UserDefaultLayout";
+import RestaurantLayout from "../modules/Restaurant/layouts/RestaurantLayout";
+
+
+// import pages
+import Home from "../modules/User/pages/Home";
+import RestaurantDetail from "../modules/User/pages/RestaurantDetail";
+
+import AdminDashboard from "../modules/Admin/pages/AdminDashboard";
+import UserManagerment from "../modules/Admin/pages/UserManagerment";
+import RestaurantRequest from "../modules/Admin/pages/restaurant/RestaurantRequest";
+import CategoryManagerment from "../modules/Admin/pages/restaurant/CategoryManagerment";
+import ReportingManagerment from "../modules/Admin/pages/restaurant/ReportingManagerment";
+import OrderManagerment from "../modules/Admin/pages/OrderManagerment";
+import FinanceReporting from "../modules/Admin/pages/FinanceReporting";
+
+import RestaurantDashboard from "../modules/Restaurant/pages/RestaurantDashboard";
+import { RestaurantInfoPage } from "../modules/Restaurant/pages/RestaurantInfoPage"
+import { MenuManagementPage } from '../modules/Restaurant/pages/MenuManagementPage';
+import { AnalyticsPage } from "../modules/Restaurant/pages/AnalyticsPage"
+import { OrderManagementPage } from "../modules/Restaurant/pages/OrderManagementPage"
+import {ReviewsManagementPage} from "../modules/Restaurant/pages/ReviewsManagementPage"
 
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {
-        publicRoutes.map((route, index) => {
-          const Page = route.component;
-          const Layout = route.layout;
+      {/* user routes */}
+      <Route path="/" element={<UserDefaultLayout />}>
+        <Route index element={<Home />} />
+        <Route path="/restaurant-detail" element={<RestaurantDetail />} />
+      </Route>
 
-          if (Layout) {
-            return (
-              <Route
-                key={index}
-                path={route.path}
-                element={
-                  <Layout>
-                    <Page />
-                  </Layout>
-                }
-              />
-            );
-          }
 
-          // Không có layout thì render trực tiếp
-          return <Route key={index} path={route.path} element={<Page />} />;
-        })
-      }
+
+      {/* admin routes */}
+      <Route path="/admin/" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="user-managerment" element={<UserManagerment />} />
+        <Route path="restaurant-request" element={<RestaurantRequest />} />
+        <Route path="restaurant-managerment" element={<CategoryManagerment />} />
+        <Route path="reporting-managerment" element={<ReportingManagerment />} />
+        <Route path="order-managerment" element={<OrderManagerment />} />
+        <Route path="finance-reporting" element={<FinanceReporting />} />
+      </Route>
+      
+      
+      {/* restaurant routes */}
+      <Route path="/restaurant/" element={<RestaurantLayout />}>
+        <Route index element={<RestaurantDashboard />} />
+        <Route path="info" element={<RestaurantInfoPage />} />
+        <Route path="orders" element={<OrderManagementPage />} />
+        <Route path="menu" element={<MenuManagementPage />} />
+        <Route path="analytics" element={<AnalyticsPage />} />
+        <Route path="reviews" element={<ReviewsManagementPage />} />
+
+      </Route>
     </Routes>
   );
 }

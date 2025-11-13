@@ -4,9 +4,9 @@ import Footer from "./Footer";
 import LocationInput from "../../../components/common/inputs/LocationInput"
 import SearchModal from "../../../components/modals/common/SearchModal";
 import AuthModalManager from "../../../components/modals/auth/AuthModalManager";
+import { Outlet } from "react-router-dom";
 
-
-export default function UserDefaultLayout({ children }) {
+export default function UserDefaultLayout() {
   const [isSticky, setIsSticky] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -34,7 +34,7 @@ export default function UserDefaultLayout({ children }) {
 
       {/* Main Content */}
       <div className="main-content">
-        {children}
+        <Outlet />
       </div>
 
       {/* Footer */}
