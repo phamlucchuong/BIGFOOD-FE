@@ -6,7 +6,7 @@ import {mockOrders  } from  "../../../dataSample/restaurant/mockOrders"
 import {formatCurrency} from "../../../dataSample/restaurant/formatCurrency"
 import {mockFoods} from "../../../dataSample/restaurant/mockFoods"
 
-export const DashboardPage = () => {
+const RestaurantDashboard = () => {
   const stats = [
     { label: 'Doanh Thu Hôm Nay', value: '12.5M', change: '+12%', icon: DollarSign, color: 'bg-green-500' },
     { label: 'Đơn Hàng Mới', value: '28', change: '+5%', icon: ShoppingBag, color: 'bg-blue-500' },
@@ -79,3 +79,5 @@ export const DashboardPage = () => {
     </div>
   );
 };
+
+export default RestaurantDashboard;
