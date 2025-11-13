@@ -1,69 +1,22 @@
 import React from 'react';
-import { Edit2, Lock, Trash2, UserCog, Check, X, ArrowUp } from 'lucide-react';
 import Badge from '../ui/Badge';
 
-// --- Custom UI Components (Giữ nguyên) ---
+
+
 const Table = ({ children }) => <table className="w-full">{children}</table>;
 const TableBody = ({ children, className }) => <tbody className={className}>{children}</tbody>;
 const TableCell = ({ children, isHeader, className }) => isHeader ? <th className={className}>{children}</th> : <td className={className}>{children}</td>;
 const TableHeader = ({ children, className }) => <thead className={className}>{children}</thead>;
 const TableRow = ({ children, ...props }) => <tr {...props}>{children}</tr>;
 
-// --- Dữ liệu Mẫu ---
 
-// Dữ liệu cho Quản lý User (Chỉ role 'User')
-const userData = [
-    {
-        id: 1,
-        user: { image: "/src/assets/images/user_default.png", name: "Lindsey Curtis", email: "lindsey@example.com" },
-        role: "User",
-        dateJoined: "12/03/2024",
-        totalOrders: 45,
-        accountStatus: "Active",
-    },
-    {
-        id: 2,
-        user: { image: "/src/assets/images/user_default.png", name: "Lindsey Curtis", email: "lindsey@example.com" },
-        role: "Admin",
-        dateJoined: "12/03/2024",
-        totalOrders: 45,
-        accountStatus: "Active",
-    },
-    {
-        id: 3,
-        user: { image: "/src/assets/images/user_default.png", name: "Zain Geidt", email: "zain.g@example.com" },
-        role: "User",
-        dateJoined: "05/01/2024",
-        totalOrders: 5,
-        accountStatus: "Locked",
-    },
-];
 
-// Dữ liệu cho Xét duyệt Nhà hàng (Yêu cầu đăng ký)
-const restaurantApprovalData = [
-    {
-        id: 101,
-        user: { image: "/src/assets/images/user-18.png", name: "Kaiya George", email: "kaiya.g@biz.com" },
-        restaurantName: "Kaiya's Kitchen",
-        location: "Quận 1, TP HCM",
-        dateRequested: "01/11/2025",
-        status: "Pending", // Trạng thái xét duyệt
-    },
-    {
-        id: 102,
-        user: { image: "/src/assets/images/user-20.png", name: "Abram Schleifer", email: "abram@digital.co" },
-        restaurantName: "Digital Delights",
-        location: "Quận 3, TP HCM",
-        dateRequested: "05/11/2025",
-        status: "Pending",
-    },
-];
-
-// ---------------------------------------------
-
-export default function AdminCustomTable({ mode = 'users' }) { // Thêm prop mode
-    
-    const data = mode === 'users' ? userData : restaurantApprovalData;
+export default function AdminCustomTable({
+    data,
+    headers,
+    actions,
+    mode = 'users'
+}) { // Thêm prop mode
 
     const handleAction = (action, item) => {
         if (mode === 'users') {
@@ -89,65 +42,103 @@ export default function AdminCustomTable({ mode = 'users' }) { // Thêm prop mod
     };
 
     // --- RENDER HÀNH ĐỘNG DỰA TRÊN MODE ---
-    const renderActionCell = (item) => {
+    const renderActionCell = (user) => {
         if (mode === 'users') {
             return (
                 <div className="flex items-center gap-3">
-                    {/* Nâng cấp Role */}
-                    <button
-                        onClick={() => handleAction('Nâng cấp Role', item)}
-                        className="text-gray-500 hover:text-brand-500 transition-colors"
-                        title="Nâng cấp thành Admin"
-                    >
-                        <ArrowUp size={18} />
-                    </button>
-                    {/* Khóa/Mở khóa */}
-                    {item.accountStatus === 'Active' ? (
+                    {/* Button 1 */}
+                    {
+                        (user.role !== 'Admin') &&
                         <button
-                            onClick={() => handleAction('Khóa', item)}
-                            className="text-gray-500 hover:text-error-500 transition-colors"
-                            title="Khóa tài khoản"
+                            onClick={() => handleAction('Nâng cấp Role', user)}
+                            className="text-gray-500 hover:text-brand-500 transition-colors"
+                            title={actions[0].name}
                         >
-                            <Lock size={18} />
+                            {actions[0].icon}
+                        </button>
+                    }
+
+                    {/* Button 2 */}
+                    {user.accountStatus === 'Active' ? (
+                        <button
+                            onClick={() => handleAction('Khóa', user)}
+                            className="text-gray-500 hover:text-error-500 transition-colors"
+                            title={actions[1].name}
+                        >
+                            {actions[1].icon}
                         </button>
                     ) : (
                         <button
-                            onClick={() => handleAction('Mở khóa', item)}
+                            onClick={() => handleAction('Mở khóa', user)}
                             className="text-gray-500 hover:text-success-500 transition-colors"
-                            title="Mở khóa tài khoản"
+                            title={actions[2].name}
                         >
-                            <UserCog size={18} />
+                            {actions[2].icon}
                         </button>
                     )}
                 </div>
             );
         }
 
-        if (mode === 'approvals') {
+        if (mode === 'request') {
             return (
                 <div className="flex items-center gap-3">
-                    {/* Xét duyệt */}
+                    {/* Button 1 */}
+                    {
+                        (user.role !== 'Admin') &&
+                        <button
+                            onClick={() => handleAction('Nâng cấp Role', user)}
+                            className="text-gray-500 hover:text-brand-500 transition-colors"
+                            title={actions[0].name}
+                        >
+                            {actions[0].icon}
+                        </button>
+                    }
+
+                    {/* Button 2 */}
                     <button
-                        onClick={() => handleAction('Xét duyệt', item)}
-                        className="text-gray-500 hover:text-success-500 transition-colors"
-                        title="Xét duyệt yêu cầu"
-                    >
-                        <Check size={18} />
-                    </button>
-                    {/* Từ chối */}
-                    <button
-                        onClick={() => handleAction('Từ chối', item)}
+                        onClick={() => handleAction('Khóa', user)}
                         className="text-gray-500 hover:text-error-500 transition-colors"
-                        title="Từ chối yêu cầu"
+                        title={actions[1].name}
                     >
-                        <X size={18} />
+                        {actions[1].icon}
                     </button>
+
                 </div>
             );
         }
+
+        if (mode === 'restaurants') {
+            return (
+                <div className="flex items-center gap-3">
+                    {/* Button 1 */}
+                    {
+                        (user.role !== 'Admin') &&
+                        <button
+                            onClick={() => handleAction('Nâng cấp Role', user)}
+                            className="text-gray-500 hover:text-brand-500 transition-colors"
+                            title={actions[0].name}
+                        >
+                            {actions[0].icon}
+                        </button>
+                    }
+
+                    {/* Button 2 */}
+                    <button
+                        onClick={() => handleAction('Khóa', user)}
+                        className="text-gray-500 hover:text-error-500 transition-colors"
+                        title={actions[1].name}
+                    >
+                        {actions[1].icon}
+                    </button>
+
+                </div>
+            );
+        }
+
         return null;
     };
-    
+
     // --- RENDER NỘI DUNG TỪNG DÒNG DỰA TRÊN MODE ---
     const renderTableRows = () => {
         if (mode === 'users') {
@@ -183,25 +174,46 @@ export default function AdminCustomTable({ mode = 'users' }) { // Thêm prop mod
             ));
         }
 
-        if (mode === 'approvals') {
-            return data.map((approval) => (
-                <TableRow key={approval.id}>
+        if (mode === 'request') {
+            return data.map((request) => (
+                <TableRow key={request.id}>
                     {/* Tên Nhà hàng */}
                     <TableCell className="px-5 py-4 sm:px-6 text-start">
-                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">{approval.restaurantName}</span>
-                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{approval.location}</span>
+                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">{request.restaurantName}</span>
+                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{request.location}</span>
                     </TableCell>
                     {/* Người gửi yêu cầu */}
-                    <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">{approval.user.name}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">{request.user.name}</TableCell>
                     {/* Ngày yêu cầu */}
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">{approval.dateRequested}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">{request.dateRequested}</TableCell>
                     {/* Trạng thái (Pending) */}
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        <Badge size="sm" color={getStatusColor(approval.status)}>{approval.status}</Badge>
-                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">{request.email}</TableCell>
                     {/* Thao tác */}
                     <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                        {renderActionCell(approval)}
+                        {renderActionCell(request)}
+                    </TableCell>
+                </TableRow>
+            ));
+        }
+
+        if (mode === 'restaurants') {
+            return data.map((restaurant) => (
+                <TableRow key={restaurant.id}>
+                    {/* Tên Nhà hàng */}
+                    <TableCell className="px-5 py-4 sm:px-6 text-start">
+                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">{restaurant.restaurantName}</span>
+                        <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{restaurant.location}</span>
+                    </TableCell>
+                    {/* Người gửi yêu cầu */}
+                    <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">{restaurant.startedDate}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">{restaurant.category}</TableCell>
+                    {/* Ngày yêu cầu */}
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">{restaurant.totalOrders}</TableCell>
+                    {/* Trạng thái (Pending) */}
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">{restaurant.ratings}</TableCell>
+                    {/* Thao tác */}
+                    <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                        {renderActionCell(restaurant)}
                     </TableCell>
                 </TableRow>
             ));
@@ -210,17 +222,7 @@ export default function AdminCustomTable({ mode = 'users' }) { // Thêm prop mod
     };
 
 
-    // --- RENDER HEADER DỰA TRÊN MODE ---
     const renderTableHeader = () => {
-        let headers;
-        if (mode === 'users') {
-            headers = ['Người dùng', 'Vai trò', 'Ngày tham gia', 'Tổng đơn hàng', 'Trạng thái', 'Thao tác'];
-        } else if (mode === 'approvals') {
-            headers = ['Tên Nhà hàng', 'Người yêu cầu', 'Ngày gửi', 'Trạng thái', 'Thao tác'];
-        } else {
-            return null;
-        }
-
         return (
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                 <TableRow>

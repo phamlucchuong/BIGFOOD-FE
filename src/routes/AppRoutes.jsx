@@ -14,7 +14,7 @@ import RestaurantDetail from "../modules/User/pages/RestaurantDetail";
 import AdminDashboard from "../modules/Admin/pages/AdminDashboard";
 import UserManagerment from "../modules/Admin/pages/UserManagerment";
 import RestaurantRequest from "../modules/Admin/pages/restaurant/RestaurantRequest";
-import CategoryManagerment from "../modules/Admin/pages/restaurant/CategoryManagerment";
+import RestaurantManagerment from "../modules/Admin/pages/restaurant/RestaurantManagerment";
 import ReportingManagerment from "../modules/Admin/pages/restaurant/ReportingManagerment";
 import OrderManagerment from "../modules/Admin/pages/OrderManagerment";
 import FinanceReporting from "../modules/Admin/pages/FinanceReporting";
@@ -43,7 +43,7 @@ export default function AppRoutes() {
         <Route index element={<AdminDashboard />} />
         <Route path="user-managerment" element={<UserManagerment />} />
         <Route path="restaurant-request" element={<RestaurantRequest />} />
-        <Route path="restaurant-managerment" element={<CategoryManagerment />} />
+        <Route path="restaurant-managerment" element={<RestaurantManagerment />} />
         <Route path="reporting-managerment" element={<ReportingManagerment />} />
         <Route path="order-managerment" element={<OrderManagerment />} />
         <Route path="finance-reporting" element={<FinanceReporting />} />

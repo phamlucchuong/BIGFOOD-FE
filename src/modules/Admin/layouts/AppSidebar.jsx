@@ -1,6 +1,17 @@
+import {
+  Building2,
+  ChevronDown,
+  CircleUserRound,
+  Ellipsis,
+  Flag,
+  GitPullRequest,
+  HandCoins,
+  LayoutDashboard,
+  ScrollText,
+  ShoppingCart
+} from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
-import { LayoutDashboard, Building2, CircleUserRound, BookA, ChevronDown, HandCoins, Ellipsis } from "lucide-react";
 import { useSidebar } from "../context/SidebarContext";
 
 
@@ -19,14 +30,14 @@ const navItems = [
     icon: <Building2 />,
     name: "Quản lý nhà hàng",
     subItems: [
-      { name: "Yêu cầu xét duyệt", path: "restaurant-request", pro: false },
-      { name: "Danh sách nhà hàng", path: "restaurant-managerment", pro: false },
-      { name: "Báo cáo vi phạm", path: "reporting-managerment", pro: false },
+      { icon: <GitPullRequest />, name: "Yêu cầu xét duyệt", path: "restaurant-request", pro: false },
+      { icon: <ScrollText />, name: "Danh sách nhà hàng", path: "restaurant-managerment", pro: false },
+      { icon: <Flag />, name: "Báo cáo vi phạm", path: "reporting-managerment", pro: false },
     ],
   },
   {
     name: "Quản lý đơn hàng",
-    icon: <BookA />,
+    icon: <ShoppingCart />,
     path: "order-managerment",
   },
   {
@@ -35,37 +46,6 @@ const navItems = [
     subItems: [
       { name: "Báo cáo tài chính", path: "finance-reporting", pro: false },
       { name: "404 Error", path: "error-404", pro: false },
-    ],
-  },
-];
-
-const othersItems = [
-  {
-    icon: <BookA />,
-    name: "Charts",
-    subItems: [
-      { name: "Line Chart", path: "line-chart", pro: false },
-      { name: "Bar Chart", path: "bar-chart", pro: false },
-    ],
-  },
-  {
-    icon: <BookA />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "alerts", pro: false },
-      { name: "Avatar", path: "avatars", pro: false },
-      { name: "Badge", path: "badge", pro: false },
-      { name: "Buttons", path: "buttons", pro: false },
-      { name: "Images", path: "images", pro: false },
-      { name: "Videos", path: "videos", pro: false },
-    ],
-  },
-  {
-    icon: <BookA />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "signin", pro: false },
-      { name: "Sign Up", path: "signup", pro: false },
     ],
   },
 ];
@@ -80,23 +60,21 @@ const AppSidebar = () => {
   const subMenuRefs = useRef({});
 
   const isActive = useCallback(
-    (path) => location.pathname === path,
+    (path) => location.pathname.endsWith(path),
     [location.pathname]
   );
 
   useEffect(() => {
     let submenuMatched = false;
     ["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? navItems : othersItems;
-      items.forEach((nav, index) => {
+      // const items =  navItems;
+      navItems.forEach((nav, index) => { // Lỗi: Chỉ lặp qua navItems
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
             if (isActive(subItem.path)) {
               // Xóa khai báo kiểu cho type
-              setOpenSubmenu({
-                type: menuType,
-                index,
-              });
+              // Lỗi: isActive không hoạt động với path tương đối
+              setOpenSubmenu(index);
               submenuMatched = true;
             }
           });
@@ -111,12 +89,12 @@ const AppSidebar = () => {
 
   useEffect(() => {
     if (openSubmenu !== null) {
-      const key = `${openSubmenu.type}-${openSubmenu.index}`;
+      const key = openSubmenu;
       if (subMenuRefs.current[key]) {
         setSubMenuHeight((prevHeights) => ({
           ...prevHeights,
           // Sử dụng Optional Chaining (?) để tránh lỗi nếu không tìm thấy ref
-          [key]: subMenuRefs.current[key]?.scrollHeight || 0, 
+          [key]: subMenuRefs.current[key]?.scrollHeight || 0,
         }));
       }
     }
@@ -124,28 +102,23 @@ const AppSidebar = () => {
 
   // Xóa khai báo kiểu cho tham số
   const handleSubmenuToggle = (index, menuType) => {
-    setOpenSubmenu((prevOpenSubmenu) => {
-      if (
-        prevOpenSubmenu &&
-        prevOpenSubmenu.type === menuType &&
-        prevOpenSubmenu.index === index
-      ) {
-        return null;
-      }
-      return { type: menuType, index };
+    setOpenSubmenu((prevOpenIndex) => {
+      // Nếu index đã được mở, đóng nó lại (bằng cách trả về null)
+      // Nếu không, mở index mới
+      return prevOpenIndex === index ? null : index;
     });
   };
 
   // Xóa khai báo kiểu cho tham số
-  const renderMenuItems = (items, menuType) => (
+  const renderMenuItems = (items) => (
     <ul className="flex flex-col gap-4">
       {items.map((nav, index) => (
         <li key={nav.name}>
           {nav.subItems ? (
             <button
-              onClick={() => handleSubmenuToggle(index, menuType)}
+              onClick={() => handleSubmenuToggle(index, "main")}
               className={`menu-item group ${
-                openSubmenu?.type === menuType && openSubmenu?.index === index
+                openSubmenu === index
                   ? "menu-item-active"
                   : "menu-item-inactive"
               } cursor-pointer ${
@@ -156,7 +129,7 @@ const AppSidebar = () => {
             >
               <span
                 className={`menu-item-icon-size ${
-                  openSubmenu?.type === menuType && openSubmenu?.index === index
+                  openSubmenu === index
                     ? "menu-item-icon-active"
                     : "menu-item-icon-inactive"
                 }`}
@@ -169,8 +142,7 @@ const AppSidebar = () => {
               {(isExpanded || isHovered || isMobileOpen) && (
                 <ChevronDown
                   className={`ml-auto w-5 h-5 transition-transform duration-200 ${
-                    openSubmenu?.type === menuType &&
-                    openSubmenu?.index === index
+                    openSubmenu === index
                       ? "rotate-180 text-brand-500"
                       : ""
                   }`}
@@ -204,13 +176,13 @@ const AppSidebar = () => {
             <div
               ref={(el) => {
                 // Giữ lại logic sử dụng ref
-                subMenuRefs.current[`${menuType}-${index}`] = el;
+                subMenuRefs.current[index] = el;
               }}
               className="overflow-hidden transition-all duration-300"
               style={{
                 height:
-                  openSubmenu?.type === menuType && openSubmenu?.index === index
-                    ? `${subMenuHeight[`${menuType}-${index}`]}px`
+                  openSubmenu === index
+                    ? `${subMenuHeight[index] || 0}px`
                     : "0px",
               }}
             >
@@ -309,6 +281,7 @@ const AppSidebar = () => {
           )}
         </Link>
       </div>
+
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
@@ -327,29 +300,11 @@ const AppSidebar = () => {
                 )}
               </h2>
               {renderMenuItems(navItems, "main")}
-            </div>
-
-            {/* <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <Ellipsis />
-                )}
-              </h2>
-              {renderMenuItems(othersItems, "others")}
-            </div> */}
-            
+            </div>            
           </div>
         </nav>
-        {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
       </div>
+      
     </aside>
   );
 };

@@ -19,7 +19,7 @@ export default function CollectionSection({ title, cards, typeCard }) {
           typeCard
             ? <CategoryCard key={item.id}
               {...item}
-            onClick={() => console.log("Category ID:", item.id)}
+              onClick={() => console.log("Category ID:", item.id)}
             />
             : <RestaurantCard key={item.id}
               {...item}
