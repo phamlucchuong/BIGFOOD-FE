@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { sendOtp, verifyEmail } from "../../api/auth/authApi";
 

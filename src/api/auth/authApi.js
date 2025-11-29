@@ -1,5 +1,3 @@
-
-
 async function verifyEmail(email) {
     try {
         const response = await fetch(
@@ -54,12 +52,9 @@ async function login(email, password) {
   try {
     data = await response.json();
   } catch (e) {
-    // backend có thể không trả JSON khi lỗi
     console.log(e)
-    data = null;
   }
-
-  return { ok: response.ok, status: response.status, data };
+  return { data };
 }
 
 
