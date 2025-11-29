@@ -6,6 +6,8 @@ import AdminLayout from "../modules/Admin/layouts/AdminLayout";
 import UserDefaultLayout from "../modules/User/layouts/UserDefaultLayout";
 import RestaurantLayout from "../modules/Restaurant/layouts/RestaurantLayout";
 
+import ResgisterRestaurant from "../modules/Restaurant/pages/RegisterAndLogin/RegisterPage";
+
 
 // import pages
 import Home from "../modules/User/pages/Home";
@@ -51,7 +53,7 @@ export default function AppRoutes() {
       
       
       {/* restaurant routes */}
-      <Route path="/restaurant/" element={<RestaurantLayout />}>
+      <Route path="/restaurant/" element={<ResgisterRestaurant />}>
         <Route index element={<RestaurantDashboard />} />
         <Route path="info" element={<RestaurantInfoPage />} />
         <Route path="orders" element={<OrderManagementPage />} />
