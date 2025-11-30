@@ -25,6 +25,8 @@ import { MenuManagementPage } from '../modules/Restaurant/pages/MenuManagementPa
 import { AnalyticsPage } from "../modules/Restaurant/pages/AnalyticsPage"
 import { OrderManagementPage } from "../modules/Restaurant/pages/OrderManagementPage"
 import {ReviewsManagementPage} from "../modules/Restaurant/pages/ReviewsManagementPage"
+import Order from "../modules/User/pages/Order";
+import Checkout from "../modules/User/pages/Checkout";
 
 
 export default function AppRoutes() {
@@ -34,6 +36,8 @@ export default function AppRoutes() {
       <Route path="/" element={<UserDefaultLayout />}>
         <Route index element={<Home />} />
         <Route path="/restaurant-detail" element={<RestaurantDetail />} />
+        <Route path="/orders" element={<Order />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Route>
 
 
