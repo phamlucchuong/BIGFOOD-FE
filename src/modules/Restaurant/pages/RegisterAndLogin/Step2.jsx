@@ -8,7 +8,7 @@ const Step2 = ({ formData, setFormData, setCurrentStep, otpTimer }) => {
           onClick={() => setCurrentStep(1)}
           className="mb-4 text-gray-600 hover:text-gray-800"
         >
-          ← Quay lại
+          Quay lại
         </button>
 
         <h1 className="text-3xl font-bold text-center mb-8">
