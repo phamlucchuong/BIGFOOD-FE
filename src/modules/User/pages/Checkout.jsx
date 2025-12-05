@@ -1,5 +1,6 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     Bike,
     ClipboardList,
@@ -19,20 +20,27 @@ const address = {
     shippingMessage: "Giao hàng tận cửa chỉ với 5.000đ",
 };
 
-const orderItems = [
-    {
-        id: 1,
-        name: "Bánh bao sữa tươi chiên",
-        quantity: 1,
-        price: 25000,
-        image: phoImage,
-    },
-];
+// const orderItems = [
+//     {
+//         id: 1,
+//         name: "Bánh bao sữa tươi chiên",
+//         quantity: 1,
+//         price: 25000,
+//         image: phoImage,
+//     },
+//     {
+//         id: 2,
+//         name: "Bánh bao sữa",
+//         quantity: 1,
+//         price: 4000,
+//         image: phoImage,
+//     },
+// ];
 
 const payment = {
     method: "Tiền mặt",
     promo: "Be khuyến mại",
-    subtotal: 25000,
+    subtotal: 0,
     fee: 21000,
     insurance: "Đơn hàng có Bảo hiểm Food Care",
 };
@@ -50,6 +58,42 @@ const formatCurrency = (amount) =>
 
 export default function Checkout() {
     const [selectedMethod, setSelectedMethod] = useState(payment.method);
+    const [showPopup, setShowPopup] = useState(false); // state cho popup
+    const [selectedProduct, setSelectedProduct] = useState(null); // state lưu thông tin sản phẩm khi click
+    const [orderItems, setCart] = useState([]);
+    const [total, setTotal] = useState(0);
+    const navigate = useNavigate();
+
+    function Themmon() {
+      navigate("/restaurant-detail");
+    }
+
+     const handleDelete = (id) => {
+        const updatedCart = orderItems.filter(item => item.id !== id);
+        setCart(updatedCart);
+        sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+      };
+
+      const calculateTotal = (cart) => {
+        return cart.reduce((sum, item) => {
+          const qty = item.quantity ?? item.sold ?? 1;
+          return sum + item.price * qty;
+        }, 0);
+      };
+
+
+    // load từ sessionStorage khi mở trang
+    useEffect(() => {
+      const saved = JSON.parse(sessionStorage.getItem("cart"));
+      if (saved) setCart(saved); 
+        setTotal(calculateTotal(saved));
+    }, []);
+
+    useEffect(() => {
+        setTotal(calculateTotal(orderItems));
+
+      }, [orderItems]);
+    
 
     return (
         <div className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
@@ -109,7 +153,9 @@ export default function Checkout() {
                                         </p>
                                     </div>
                                 </div>
-                                <button className="text-sm font-medium text-gray-500 hover:text-gray-800">
+                                <button className="text-sm font-medium text-gray-500 hover:text-gray-800" 
+                                onClick={Themmon}
+                                >
                                     Thêm món
                                 </button>
                             </div>
@@ -117,6 +163,7 @@ export default function Checkout() {
                             <div className="space-y-4">
                                 {orderItems.map((item) => (
                                     <div
+                                    
                                         key={item.id}
                                         className="flex items-center gap-4 rounded-2xl border border-gray-100 p-4"
                                     >
@@ -134,9 +181,13 @@ export default function Checkout() {
                                                     <p className="text-base font-semibold text-gray-900">
                                                         {item.name}
                                                     </p>
+                                                    <p className="text-sm italic text-gray-500">
+                                                        {item.note}
+                                                    </p>
                                                 </div>
                                                 <div className="flex flex-col items-end gap-2">
                                                     <button
+                                                    onClick={() => handleDelete(item.id)}
                                                         type="button"
                                                         aria-label="Xoá món"
                                                         className="text-gray-400 transition hover:text-red-500"
@@ -144,13 +195,17 @@ export default function Checkout() {
                                                         <Trash2 className="size-4" />
                                                     </button>
                                                     <p className="text-base font-semibold text-gray-900">
-                                                        {formatCurrency(item.price)}
+                                                        {formatCurrency(item.price * item.quantity)}
                                                     </p>
                                                 </div>
                                             </div>
-                                            <button className="mt-3 text-sm font-medium text-gray-500 hover:text-gray-800">
+                                            {/* <button 
+                                                onClick={() => {
+                                                handleProductClick(item);
+                                                }}
+                                             className="mt-3 text-sm font-medium text-gray-500 hover:text-gray-800">
                                                 Chỉnh sửa món
-                                            </button>
+                                            </button> */}
                                         </div>
                                     </div>
                                 ))}
@@ -218,9 +273,9 @@ export default function Checkout() {
 
                             <div className="mt-5 space-y-3 text-sm text-gray-600">
                                 <div className="flex items-center justify-between">
-                                    <span>Tạm tính (1 phần)</span>
+                                    <span>Tạm tính</span>
                                     <span className="font-medium text-gray-900">
-                                        {formatCurrency(payment.subtotal)}
+                                        {formatCurrency(total)}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
@@ -232,7 +287,7 @@ export default function Checkout() {
                                 <div className="flex items-center justify-between border-t border-dashed border-gray-200 pt-4 text-base font-semibold text-gray-900">
                                     <span>Tổng số tiền</span>
                                     <span>
-                                        {formatCurrency(payment.subtotal + payment.fee)}
+                                        {formatCurrency(total + payment.fee)}
                                     </span>
                                 </div>
                             </div>
