@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import {Save , Edit2 , Camera , Upload , MapPin , Phone , Mail ,CreditCard , AlertCircle} from "lucide-react"
-import { mockRestaurantData } from '../../../dataSample/restaurant/mockRestaurantData';
+import  {useRestaurant}  from "../../../hooks/auth/restaurant/useRestaurant"
 
 export  function RestaurantInfoPage ()  {
-  const [restaurant, setRestaurant] = useState(mockRestaurantData);
+  const [restaurant, setRestaurant] = useState("");
   const [editing, setEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { fetchRestaurantDetails } = useRestaurant();
+    useEffect(() => {
+      const loadData = async () => {
+        try {
+          const data = await fetchRestaurantDetails();
+          console.log("Restaurant:", data);
+          setRestaurant(data.results);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      loadData();
+    }, []); 
 
   return (
     <div className="space-y-6">
@@ -19,7 +33,7 @@ export  function RestaurantInfoPage ()  {
 
       <div className="bg-white rounded-xl border overflow-hidden">
         <div className="relative h-48 bg-gradient-to-r from-orange-500 to-red-500">
-          <img src={restaurant.coverImage} alt="Cover" className="w-full h-full object-cover" />
+          <img src={restaurant.bannerId} alt="Cover" className="w-full h-full object-cover" />
           {editing && (
             <button className="absolute bottom-4 right-4 bg-white p-2 rounded-lg shadow-lg hover:bg-gray-50">
               <Camera size={20} />
@@ -29,7 +43,7 @@ export  function RestaurantInfoPage ()  {
         <div className="p-6">
           <div className="flex items-start gap-6">
             <div className="relative -mt-16">
-              <img src={restaurant.logo} alt="Logo" className="w-24 h-24 rounded-xl border-4 border-white shadow-lg" />
+              <img src={restaurant.avatar} alt="Logo" className="w-24 h-24 rounded-xl border-4 border-white shadow-lg" />
               {editing && (
                 <button className="absolute bottom-0 right-0 bg-orange-600 p-2 rounded-lg text-white shadow-lg hover:bg-orange-700">
                   
@@ -45,7 +59,6 @@ export  function RestaurantInfoPage ()  {
               )}
               <div className="flex flex-wrap gap-2">
                 <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">Đang hoạt động</span>
-                <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Xác thực email</span>
               </div>
             </div>
           </div>
@@ -101,25 +114,25 @@ export  function RestaurantInfoPage ()  {
             <div>
               <label className="text-sm text-gray-600 block mb-1">Ngân hàng</label>
               {editing ? (
-                <input type="text" value={restaurant.bankAccount.bankName} className="w-full px-3 py-2 border rounded-lg" />
+                <input type="text" value={restaurant.nameBank} className="w-full px-3 py-2 border rounded-lg" />
               ) : (
-                <p className="font-medium">{restaurant.bankAccount.bankName}</p>
+                <p className="font-medium">{restaurant.nameBank}</p>
               )}
             </div>
             <div>
               <label className="text-sm text-gray-600 block mb-1">Số tài khoản</label>
               {editing ? (
-                <input type="text" value={restaurant.bankAccount.accountNumber} className="w-full px-3 py-2 border rounded-lg" />
+                <input type="text" value={restaurant.bankNumber} className="w-full px-3 py-2 border rounded-lg" />
               ) : (
-                <p className="font-medium">{restaurant.bankAccount.accountNumber}</p>
+                <p className="font-medium">{restaurant.bankNumber}</p>
               )}
             </div>
             <div>
               <label className="text-sm text-gray-600 block mb-1">Chủ tài khoản</label>
               {editing ? (
-                <input type="text" value={restaurant.bankAccount.accountName} className="w-full px-3 py-2 border rounded-lg" />
+                <input type="text" value={restaurant.bankAccountName} className="w-full px-3 py-2 border rounded-lg" />
               ) : (
-                <p className="font-medium">{restaurant.bankAccount.accountName}</p>
+                <p className="font-medium">{restaurant.bankAccountName}</p>
               )}
             </div>
           </div>

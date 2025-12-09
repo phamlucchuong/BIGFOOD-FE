@@ -5,8 +5,8 @@ import { Routes, Route } from "react-router-dom";
 import AdminLayout from "../modules/Admin/layouts/AdminLayout";
 import UserDefaultLayout from "../modules/User/layouts/UserDefaultLayout";
 import RestaurantLayout from "../modules/Restaurant/layouts/RestaurantLayout";
-
-import ResgisterRestaurant from "../modules/Restaurant/pages/RegisterAndLogin/RegisterPage";
+import RegisterPage from "../modules/Restaurant/pages/RegisterAndLogin/RegisterPage";
+import LoginPage from "../modules/Restaurant/pages/RegisterAndLogin/LoginPage";
 
 
 // import pages
@@ -52,15 +52,17 @@ export default function AppRoutes() {
       </Route>
       
       
-      {/* restaurant routes */}
-      <Route path="/restaurant/" element={<ResgisterRestaurant />}>
+      <Route path="/restaurant/register" element={<RegisterPage />} />
+      <Route path="/restaurant/login" element={<LoginPage />} />
+
+      {/* Restaurant Main */}
+      <Route path="/restaurant/" element={<RestaurantLayout />}>
         <Route index element={<RestaurantDashboard />} />
         <Route path="info" element={<RestaurantInfoPage />} />
         <Route path="orders" element={<OrderManagementPage />} />
         <Route path="menu" element={<MenuManagementPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="reviews" element={<ReviewsManagementPage />} />
-
       </Route>
     </Routes>
   );

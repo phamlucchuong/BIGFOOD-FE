@@ -1,10 +1,81 @@
-import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import React, { useState , useEffect} from "react";
+import { useNavigate } from "react-router-dom";
+import { ChevronDown, Upload, X } from "lucide-react";
+import handleLoadCategories from "../../../../hooks/data/useFoodCategory";
+import useInfoRestaurant from "../../../../hooks/auth/restaurant/useInfoRestaurant";
 
-const Step4 = ({ formData, setFormData, setCurrentStep }) => {
+const Step4 = ({ formData, setFormData }) => {
+   const navigate = useNavigate();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showBusinessFields, setShowBusinessFields] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const { loading, error, handleSubmitRestaurant } = useInfoRestaurant();
+ const goToLogin = () => navigate("/restaurant/login"); 
+    useEffect(() => {
+    const fetchData = async () => {
+      const data = await handleLoadCategories();
+      setCategories(data);
+    };
+    fetchData();
+  }, [])
 
-  const SuccessModal = () => (
+const toggleBusinessField = (category) => {
+    const currentFields = formData.businessField || [];
+    const isSelected = currentFields.some(field => field.id === category.id);
+
+    if (isSelected) {
+      setFormData({
+        ...formData,
+        businessField: currentFields.filter(f => f.id !== category.id)
+      });
+    } else {
+      setFormData({
+        ...formData,
+        businessField: [...currentFields, { id: category.id, title: category.title }]
+      });
+    }
+  };
+  const removeBusinessField = (field) => {
+    const currentFields = formData.businessField || [];
+    setFormData({
+      ...formData,
+      businessField: currentFields.filter(f => f !== field)
+    });
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploadedFile(file);
+      setFormData({
+        ...formData,
+        businessLicenseFile: file
+      });
+    }
+  };
+
+  const removeFile = () => {
+    setUploadedFile(null);
+    setFormData({
+      ...formData,
+      businessLicenseFile: null
+    });
+  };
+
+    const handleSubmit = async () => {
+      setErrorMessage("");
+
+      const result = await handleSubmitRestaurant(formData);
+
+      if (result.success) {
+        setShowSuccess(true);
+      } else {
+        setErrorMessage(result.message || "Có lỗi xảy ra");
+      }
+    };
+const SuccessModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full text-center animate-fade-in">
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -28,7 +99,7 @@ const Step4 = ({ formData, setFormData, setCurrentStep }) => {
           Chúng tôi sẽ xem xét và phản hồi trong vòng 24–48 giờ.
         </p>
         <button
-          onClick={() => setShowSuccess(false)}
+          onClick={goToLogin}
           className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded transition"
         >
           Về trang chủ
@@ -47,134 +118,101 @@ const Step4 = ({ formData, setFormData, setCurrentStep }) => {
 
           <h2 className="text-xl font-bold mb-6">Thông tin cửa hàng</h2>
 
+        
+          {(errorMessage || error) && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{errorMessage || error}</p>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Business Type */}
-            <div>
-              <label className="block text-gray-700 mb-2">Loại hình kinh doanh</label>
+           
+            <div className="md:col-span-2">
+              <label className="block text-gray-700 mb-2">
+                Lĩnh vực kinh doanh (Có thể chọn nhiều)
+              </label>
               <div className="relative">
-                <select
-                  value={formData.businessType}
-                  onChange={(e) =>
-                    setFormData({ ...formData, businessType: e.target.value })
-                  }
-                  className="w-full border border-gray-300 rounded px-4 py-3 appearance-none"
+                <div
+                  onClick={() => setShowBusinessFields(!showBusinessFields)}
+                  className="w-full border border-gray-300 rounded px-4 py-3 cursor-pointer flex items-center justify-between min-h-[48px]"
                 >
-                  <option>Doanh nghiệp</option>
-                  <option>Hộ kinh doanh</option>
-                  <option>Cá nhân</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <div className="flex flex-wrap gap-2">
+                    {formData.businessField && formData.businessField.length > 0 ? (
+                      formData.businessField.map((field) => (
+                        <span
+                          key={field.id}
+                          className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm flex items-center gap-1"
+                        >
+                          {field.title}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeBusinessField(field.id);
+                            }}
+                            className="hover:bg-blue-200 rounded-full p-0.5"
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-400">Chọn lĩnh vực kinh doanh</span>
+                    )}
+                  </div>
+                  <ChevronDown
+                    className={`text-gray-500 transition-transform ${
+                      showBusinessFields ? "rotate-180" : ""
+                    }`}
+                    size={20}
+                  />
+                </div>
+
+                {showBusinessFields && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto">
+                    {categories.map((category) => (
+                      console.log("Category: ", category),
+                      <div
+                        key={category.id}
+                        onClick={() => toggleBusinessField(category)}
+                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer flex items-center justify-between"
+                      >
+                        <span>{category.title}</span>
+                       
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Business Field */}
-            <div>
-              <label className="block text-gray-700 mb-2">Lĩnh vực kinh doanh</label>
-              <div className="relative">
-                <select
-                  value={formData.businessField}
-                  onChange={(e) =>
-                    setFormData({ ...formData, businessField: e.target.value })
-                  }
-                  className="w-full border border-gray-300 rounded px-4 py-3 appearance-none"
-                >
-                  <option value="">Chọn lĩnh vực kinh doanh</option>
-                  <option>Ẩm thực</option>
-                  <option>Đồ uống</option>
-                  <option>Tráng miệng</option>
-                  <option>Fast Food</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
-              </div>
-            </div>
-
-            {/* Store name */}
+          
             <div className="md:col-span-2">
               <label className="block text-gray-700 mb-2">Tên cửa hàng</label>
               <input
                 type="text"
-                value={formData.storeName}
+                value={formData.storeName || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, storeName: e.target.value })
                 }
                 placeholder="B Foods - Trẻ Trôn & Chả Cá"
-                className="w-full border border-blue-500 rounded px-4 py-3"
+                className="w-full border border-gray-300 rounded px-4 py-3"
               />
             </div>
 
-            {/* Store address */}
+         
             <div className="md:col-span-2">
               <label className="block text-gray-700 mb-2">Địa chỉ cửa hàng</label>
               <input
                 type="text"
-                value={formData.storeAddress}
+                value={formData.storeAddress || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, storeAddress: e.target.value })
                 }
                 placeholder="85 Bùi Minh Trực"
-                className="w-full border border-blue-500 rounded px-4 py-3"
+                className="w-full border border-gray-300 rounded px-4 py-3"
               />
             </div>
 
-            {/* City */}
-            <div>
-              <label className="block text-gray-700 mb-2">Tỉnh/Thành phố</label>
-              <div className="relative">
-                <select
-                  value={formData.city}
-                  onChange={(e) =>
-                    setFormData({ ...formData, city: e.target.value })
-                  }
-                  className="w-full border border-blue-500 rounded px-4 py-3 appearance-none"
-                >
-                  <option>Thành phố Hồ Chí Minh</option>
-                  <option>Hà Nội</option>
-                  <option>Đà Nẵng</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
-              </div>
-            </div>
-
-            {/* District */}
-            <div>
-              <label className="block text-gray-700 mb-2">Quận/Huyện</label>
-              <div className="relative">
-                <select
-                  value={formData.district}
-                  onChange={(e) =>
-                    setFormData({ ...formData, district: e.target.value })
-                  }
-                  className="w-full border border-blue-500 rounded px-4 py-3 appearance-none"
-                >
-                  <option>Quận 6</option>
-                  <option>Quận 1</option>
-                  <option>Quận 2</option>
-                  <option>Quận 3</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
-              </div>
-            </div>
-
-            {/* Ward */}
-            <div>
-              <label className="block text-gray-700 mb-2">Xã/Phường</label>
-              <div className="relative">
-                <select
-                  value={formData.ward}
-                  onChange={(e) =>
-                    setFormData({ ...formData, ward: e.target.value })
-                  }
-                  className="w-full border border-blue-500 rounded px-4 py-3 appearance-none"
-                >
-                  <option>Phường 05</option>
-                  <option>Phường 01</option>
-                  <option>Phường 02</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
-              </div>
-            </div>
-
-            {/* Store phone */}
             <div>
               <label className="block text-gray-700 mb-2">Số điện thoại liên hệ</label>
               <div className="flex gap-2">
@@ -183,50 +221,42 @@ const Step4 = ({ formData, setFormData, setCurrentStep }) => {
                 </div>
                 <input
                   type="tel"
-                  value={formData.storePhone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, storePhone: e.target.value })
-                  }
-                  placeholder="987654321"
-                  className="flex-1 border border-gray-300 rounded px-4 py-3"
+                  value={formData.phone}
+                  disabled
+                  className="flex-1 border border-gray-300 rounded px-4 py-3 bg-gray-100 cursor-not-allowed"
                 />
               </div>
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-gray-700 mb-2">Email của quản lý</label>
               <input
-                type="email"
-                value={formData.storeEmail}
-                onChange={(e) =>
-                  setFormData({ ...formData, storeEmail: e.target.value })
-                }
-                placeholder="abc123@gmail.com"
-                className="w-full border border-gray-300 rounded px-4 py-3"
+                type="tel"
+                value={formData.email}
+                disabled
+                className="w-full border border-gray-300 rounded px-4 py-3 bg-gray-100 cursor-not-allowed"
               />
             </div>
 
-            {/* Bank name */}
+          
             <div>
               <label className="block text-gray-700 mb-2">Tên ngân hàng</label>
               <input
                 type="text"
-                value={formData.bankName}
+                value={formData.bankName || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, bankName: e.target.value })
                 }
-                placeholder="(VPBank)"
+                placeholder="VPBank"
                 className="w-full border border-gray-300 rounded px-4 py-3"
               />
             </div>
 
-            {/* Account number */}
             <div>
               <label className="block text-gray-700 mb-2">Số tài khoản</label>
               <input
                 type="text"
-                value={formData.accountNumber}
+                value={formData.accountNumber || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, accountNumber: e.target.value })
                 }
@@ -235,12 +265,11 @@ const Step4 = ({ formData, setFormData, setCurrentStep }) => {
               />
             </div>
 
-            {/* Account owner */}
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-gray-700 mb-2">Tên chủ tài khoản</label>
               <input
                 type="text"
-                value={formData.accountName}
+                value={formData.accountName || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, accountName: e.target.value })
                 }
@@ -248,26 +277,90 @@ const Step4 = ({ formData, setFormData, setCurrentStep }) => {
                 className="w-full border border-gray-300 rounded px-4 py-3"
               />
             </div>
+
+            
+            <div className="md:col-span-2">
+              <label className="block text-gray-700 font-semibold mb-3">
+                Giấy phép kinh doanh
+              </label>
+              
+              {!uploadedFile ? (
+                <label className="border-2 border-dashed border-gray-300 rounded-lg p-10 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all">
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    className="hidden"
+                  />
+                  <Upload className="text-gray-400 mb-3" size={40} />
+                  <p className="text-sm font-medium text-gray-700 mb-1">
+                    Nhấn để tải lên hoặc kéo thả file
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PDF, JPG, PNG (Max 5MB)
+                  </p>
+                </label>
+              ) : (
+                <div className="border-2 border-green-300 bg-green-50 rounded-lg p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-green-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {uploadedFile.name}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {(uploadedFile.size / 1024).toFixed(2)} KB
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={removeFile}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2 rounded-full transition"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Buttons */}
-          <div className="flex gap-4 mt-6">
+          {/* Submit button */}
+          <div className="flex gap-4 mt-8">
             <button
-              onClick={() => setCurrentStep(3)}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-black font-semibold py-3 rounded"
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`flex-1 font-semibold py-3 rounded transition ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-yellow-400 hover:bg-yellow-500 text-black"
+              }`}
             >
-              Quay lại
-            </button>
-
-            <button
-              onClick={() => setShowSuccess(true)}
-              className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded"
-            >
-              Hoàn tất
+              {loading ? "Đang xử lý..." : "Hoàn tất"}
             </button>
           </div>
         </div>
       </div>
+
+      {showBusinessFields && (
+        <div
+          className="fixed inset-0 z-0"
+          onClick={() => setShowBusinessFields(false)}
+        />
+      )}
 
       {showSuccess && <SuccessModal />}
     </>
