@@ -31,7 +31,6 @@ export const MenuManagementPage = () => {
 
  const loadFoods = async () => {
         try {
-            // setLoading(true);
             const data = await listFood();
             setFoods(data.results);
         } catch (error) {
@@ -60,18 +59,9 @@ export const MenuManagementPage = () => {
     try {
       if (editingCategory) {
         console.log(category)
-        const updatedCategory = await editCategory(category);
-        // setCategories(prevCategories => 
-        //         prevCategories.map(c => 
-        //             c.id === category.id 
-        //                 ? (updatedCategory.data || updatedCategory || category) 
-        //                 : c
-        //         )
-        //     );
+        await editCategory(category);
       } else {
-        const newCategory = await createCategory(category.name, category.iconIndex);
-        //  const categoryData = newCategory.data || newCategory;
-        //   setCategories(prevCategories => [...prevCategories, categoryData]);
+        await createCategory(category.name, category.iconIndex);
       }
         loadCategories();
       setEditingCategory(null);
@@ -97,17 +87,12 @@ export const MenuManagementPage = () => {
 
   const handleSaveFood = async (foodData) => {
     try {
-      setLoading(true);
       if (editingFood) {
         await updateFoodItem(foodData);
       } else {
         await addFood(foodData);
       }
-      setFoods(prevFoods =>
-          prevFoods.map(f =>
-            f.id === foodId ? { ...f, available: !f.available } : f
-          )
-        );
+      loadFoods();
       setEditingFood(null);
       setShowFoodModal(false);
     } catch (error) {
@@ -124,7 +109,6 @@ export const MenuManagementPage = () => {
             return;
         }
         try {
-            setLoading(true);
             await removeFood(foodId);
             loadFoods();
         } catch (error) {
@@ -303,7 +287,7 @@ export const MenuManagementPage = () => {
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <img 
-                          src={food.imageId} 
+                          src={food.image} 
                           alt={food.name} 
                           className="w-12 h-12 rounded-lg object-cover" 
                         />

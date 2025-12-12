@@ -1,4 +1,4 @@
-import {getListOrder , getOrderDetail , updateStatusOrder} from "../../../api/restaurant/orderAPI"
+import {getListOrder , getOrderDetail , updateStatusOrder , getOrderRestaurantByStatus} from "../../../api/restaurant/orderAPI"
 
 export function useOrder(){
    const listOrderMyRestaurant = async () =>{
@@ -22,9 +22,15 @@ export function useOrder(){
     }
     return response;
   }
-
+   const listOrderByStatus = async(status) =>{
+      const response = await getOrderRestaurantByStatus(status);
+    if(!response.ok){
+        throw new Error(`Failed to fetch update status order : ${response.status}`);
+    }
+    return response;
+   }
 
    return {
-    listOrderMyRestaurant ,orderDetail , updateStatus
+    listOrderMyRestaurant ,orderDetail , updateStatus , listOrderByStatus
    }
 }
