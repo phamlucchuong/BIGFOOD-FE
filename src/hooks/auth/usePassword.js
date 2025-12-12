@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { setToken } from "../../services/localStorageService";
 import { login, sendOtp } from "../../api/auth/authApi";
@@ -29,23 +28,26 @@ export default function usePassword({ email, onNext, setPasswordGlobal }) {
   const handleVerifyPassword = async () => {
     const passwordString = password.join("");
     try {
-      if (localStorage.getItem("email-verified") === true) {
+      if (localStorage.getItem("email-verified") === "true") {
         const response = await login(email, passwordString);
-        // login thành công
-        setToken(response?.results?.token);
-        setSnackBarOpen(false);
-        console.log("Login success");
-        onNext("home");
+        if(response.data.code == 1001){
+          setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");  
+          setSnackBarOpen(true);
+          setPassword(["", "", "", "", "", ""]);
+          setTimeout(() => inputRefs.current[0]?.focus(), 100);
+        }else{
+          setToken(response.results?.token);
+          setSnackBarOpen(false);
+          console.log("Login success");
+          onNext("home");
+        }
+        
       } else {
         setPasswordGlobal(passwordString);
         onNext("register");
       }
     } catch (error) {
       console.error("Unexpected error:", error);
-      setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
-      setSnackBarOpen(true);
-      setPassword(["", "", "", "", "", ""]);
-      setTimeout(() => inputRefs.current[0]?.focus(), 100);
     }
   };
 

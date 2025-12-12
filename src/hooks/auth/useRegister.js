@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { setToken } from "../../services/localStorageService";
 import { login, register, updateAccount, verifyEmail } from "../../api/auth/authApi";
@@ -18,11 +17,8 @@ export default function useRegister({ email, onNext }) {
     if (!/^[0-9]{9,10}$/.test(phone.trim())) {
       errs.phone = "Số điện thoại phải có 9-10 chữ số";
     }
-    if (password.length !== 6) {
-      errs.password = "Mật khẩu phải có 6 ký tự";
-    }
     return errs;
-  }, [name, phone, password]);
+  }, [name, phone]);
 
   const isFormValid = Object.keys(errors).length === 0;
 
@@ -30,7 +26,7 @@ export default function useRegister({ email, onNext }) {
   const handleVerifyLogin = async () => {
     const response = await login(email, password);
     setToken(response.results?.token);
-    onNext();
+    onNext('/');
   };
 
   const handleUpdate = async () => {

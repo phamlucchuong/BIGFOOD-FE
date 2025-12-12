@@ -9,7 +9,9 @@ export default function CollectionSection({ title, cards, typeCard }) {
   function handleSubmit() {
     navigate("/restaurant-detail");
   }
-
+  function handleClickCollection(){
+    navigate("/collection");
+  }
   return (
     <div className="mb-8 mx-[200px] mt-12">
       <h1 className="text-5xl mb-7">{title}</h1>
@@ -19,7 +21,7 @@ export default function CollectionSection({ title, cards, typeCard }) {
           typeCard
             ? <CategoryCard key={item.id}
               {...item}
-              onClick={() => console.log("Category ID:", item.id)}
+              onClick={handleClickCollection}
             />
             : <RestaurantCard key={item.id}
               {...item}
