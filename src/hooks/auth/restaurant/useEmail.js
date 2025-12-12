@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { sendOtp, verifyEmail } from "../../api/auth/authApi";
+import { sendOtp, verifyEmail } from "../../../api/auth/authApi";
 
-export default function useEmail({ onNext, setEmail }) {
+export default function useEmail() {
   const [localEmail, setLocalEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(localEmail);
@@ -23,16 +23,23 @@ export default function useEmail({ onNext, setEmail }) {
       setLoading(true);
       const response = await verifyEmail(localEmail);
       localStorage.setItem("email-verified", response.results);
-      console.log("email-verified: ", response.results);
-
-      if (response.results === true) {
-        onNext("password");
-      } else {
-        await handleSendOtp();
-        onNext("otp");
+      console.log("Email verification response:", response.results);
+      if (!response.results) {
+        return {
+          success: false,
+          message: "Email đẫ tồn tại"
+        };
+      } 
+      await handleSendOtp();
+      return {
+        success : true
       }
     } catch (err) {
       console.error("Error verifying email:", err);
+      return {
+        success: false,
+        message: "Lỗi hệ thống"
+      };
     } finally {
       setLoading(false);
     }

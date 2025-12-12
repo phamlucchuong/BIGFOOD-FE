@@ -4,9 +4,7 @@ import EmailModal from "./EmailModal";
 import OtpModal from "./OtpModal";
 import PasswordModal from "./PasswordModal";
 import RegisterModal from "./RegisterModal";
-import Home from "../../../modules/User/pages/Home"
-
-function setModal(screen, setScreen, authData, setAuthData, onClose ) {
+function setModal(screen, setScreen, authData, setAuthData, onClose) {
     switch (screen) {
         case "email":
             return (
