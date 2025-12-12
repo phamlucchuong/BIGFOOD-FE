@@ -12,7 +12,7 @@ export const OrderManagementPage = () => {
   const [rejectReason, setRejectReason] = useState('');
   const [statusFilter, setStatusFilter] = useState("");
 
-  const { listOrderMyRestaurant, updateStatus } = useOrder();
+  const { listOrderMyRestaurant, updateStatus , listOrderByStatus} = useOrder();
 
   const handleLoadListOrder = async () => {
     try {
@@ -55,8 +55,9 @@ export const OrderManagementPage = () => {
     }
   };
 
-  const handleLoadStatusFilter = async() =>{
-    
+  const handleLoadStatusFilter = async(status) =>{
+     const data = await listOrderByStatus(status);
+     setOrders(data.results);
   }
 
   const handleReject = async () => {
@@ -106,18 +107,21 @@ export const OrderManagementPage = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Quản Lý Đơn Hàng</h2>
         <div className="flex gap-3">
-          <select className="px-4 py-2 border rounded-lg"
+          <select 
+          className="px-4 py-2 border rounded-lg appearance-none bg-white"
           value={statusFilter}
           onChange={(e)=>{
+            console.log("select :" ,e.target.value),
               setStatusFilter(e.target.value),
-              ha
+              handleLoadStatusFilter(e.target.value);
           }}
           > 
-            <option>Tất cả trạng thái</option>
-            <option>Chờ xác nhận</option>
-            <option>Đang xử lý</option>
-            <option>Hoàn thành</option>
-            <option>Đã hủy</option>
+            <option value="">Tất cả trạng thái</option>
+            <option value="PENDING">Chờ xác nhận</option>
+            <option value="PREPARING">Đang chuẩn bị</option>
+            <option value="CONFIRMED">Đang xử lý</option>
+            <option value="COMPLETED">Hoàn thành</option>
+            <option value="REJECTED">Đã hủy</option>
           </select>
         </div>
       </div>
