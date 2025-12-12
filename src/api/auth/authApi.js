@@ -84,22 +84,9 @@ async function createRestaurant(formData) {
     return response;
 }
 
-async function restaurantDetail() {
-    const token = getToken();
-    const response = await fetch(`http://localhost:8080/bigfood/api/restaurants/detail`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-       
-    });
-    return response;
-}
 
 
 
 
 
-
-export { verifyEmail, sendOtp, verifyOtp, login, restaurantDetail , updateAccount ,createRestaurant }
+export { verifyEmail, sendOtp, verifyOtp, login , updateAccount ,createRestaurant }

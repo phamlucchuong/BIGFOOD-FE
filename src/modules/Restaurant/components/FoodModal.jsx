@@ -3,12 +3,13 @@ import { Image, Upload } from 'lucide-react';
 
 export const FoodModal = ({ show , onClose, onSave, food = null, categories }) => {
   const [formData, setFormData] = useState({
+    idFood: food?.id || '',
     name: food?.name || '',
-    category: food?.category || categories[0]?.id || 1,
+    categoryId: food?.categoryId || categories[0]?.id,
     price: food?.price || '',
     image: food?.image || '',
     description: food?.description || '',
-    soldOut: food?.soldOut || false
+    available: food?.available || false
   });
   const [imagePreview, setImagePreview] = useState(food?.image || '');
 
@@ -28,12 +29,8 @@ export const FoodModal = ({ show , onClose, onSave, food = null, categories }) =
     e.preventDefault();
     onSave({ 
       ...formData, 
-      id: food?.id || Date.now(), 
-      sold: food?.sold || 0,
-      rating: food?.rating || 5.0,
       price: Number(formData.price)
     });
-    onClose();
   };
 
   if (!show) return null;
@@ -69,17 +66,6 @@ export const FoodModal = ({ show , onClose, onSave, food = null, categories }) =
                     <Upload size={20} />
                     <span>Tải ảnh lên</span>
                   </label>
-                  <p className="text-sm text-gray-500 mt-2">Hoặc nhập URL ảnh bên dưới</p>
-                  <input
-                    type="url"
-                    value={formData.image}
-                    onChange={(e) => {
-                      setFormData({...formData, image: e.target.value});
-                      setImagePreview(e.target.value);
-                    }}
-                    className="w-full px-3 py-2 border rounded-lg mt-2 text-sm"
-                    placeholder="https://example.com/image.jpg"
-                  />
                 </div>
               </div>
             </div>
@@ -99,8 +85,8 @@ export const FoodModal = ({ show , onClose, onSave, food = null, categories }) =
             <div>
               <label className="block text-sm font-medium mb-2">Danh mục *</label>
               <select
-                value={formData.category}
-                onChange={(e) => setFormData({...formData, category: Number(e.target.value)})}
+                value={formData.categoryId}
+                onChange={(e) => setFormData({...formData, categoryId: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg  focus:ring-orange-500 focus:border-transparent"
                 required
               >
@@ -120,26 +106,8 @@ export const FoodModal = ({ show , onClose, onSave, food = null, categories }) =
                 placeholder="50000"
                 required
                 min="0"
-                step="1000"
               />
             </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Trạng thái</label>
-              <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                <input
-                  type="checkbox"
-                  checked={formData.soldOut}
-                  onChange={(e) => setFormData({...formData, soldOut: e.target.checked})}
-                  className="w-5 h-5 text-orange-600 rounded  focus:ring-orange-500"
-                />
-                <div>
-                  <span className="font-medium">Đánh dấu hết hàng</span>
-                  <p className="text-xs text-gray-500">Khách hàng sẽ không thể đặt món này</p>
-                </div>
-              </label>
-            </div>
-
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-2">Mô tả món ăn</label>
               <textarea
