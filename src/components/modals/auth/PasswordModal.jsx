@@ -14,7 +14,7 @@ export default function PasswordModal({
     inputRefs,
     snackBarOpen,
     snackBarMessage,
-  } = usePassword({ email, onNext, setPasswordGlobal });
+  } = usePassword({ email, onNext, setPasswordGlobal, onClose });
 
   return (
     <ModalWrapper

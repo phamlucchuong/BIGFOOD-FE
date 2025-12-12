@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { setToken } from "../../services/localStorageService";
 import { login, sendOtp } from "../../api/auth/authApi";
 
-export default function usePassword({ email, onNext, setPasswordGlobal }) {
+export default function usePassword({ email, onNext, setPasswordGlobal, onClose }) {
   const [password, setPassword] = useState(["", "", "", "", "", ""]);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
@@ -29,15 +29,18 @@ export default function usePassword({ email, onNext, setPasswordGlobal }) {
   const handleVerifyPassword = async () => {
     const passwordString = password.join("");
     try {
-      if (localStorage.getItem("email-verified") === true) {
-        const response = await login(email, passwordString);
-        // login thành công
-        setToken(response?.results?.token);
-        setSnackBarOpen(false);
-        console.log("Login success");
-        onNext("home");
+      if (localStorage.getItem("email-verified") !== "true") {
+        const response = await login({ email, password: passwordString });
+        if (response.ok) {
+          setToken(response?.results?.token);
+          setSnackBarOpen(false);
+          console.log("Login success");
+          onClose();
+        }
+
       } else {
         setPasswordGlobal(passwordString);
+        localStorage.setItem("password", passwordString);
         onNext("register");
       }
     } catch (error) {

@@ -9,7 +9,6 @@ export default function useRegister({ email, onNext }) {
   const password = localStorage.getItem("password") || "";
   const [touched, setTouched] = useState({ name: false, phone: false });
 
-  // ✅ Validation logic gom gọn + memoized
   const errors = useMemo(() => {
     const errs = {};
     if (!/^[a-zA-ZÀ-ỹ\s]{1,40}$/.test(name.trim())) {
@@ -18,17 +17,13 @@ export default function useRegister({ email, onNext }) {
     if (!/^[0-9]{9,10}$/.test(phone.trim())) {
       errs.phone = "Số điện thoại phải có 9-10 chữ số";
     }
-    if (password.length !== 6) {
-      errs.password = "Mật khẩu phải có 6 ký tự";
-    }
     return errs;
-  }, [name, phone, password]);
+  }, [name, phone]);
 
   const isFormValid = Object.keys(errors).length === 0;
 
-  // ✅ API handlers
   const handleVerifyLogin = async () => {
-    const response = await login(email, password);
+    const response = await login({email, password});
     setToken(response.results?.token);
     onNext();
   };
@@ -46,7 +41,7 @@ export default function useRegister({ email, onNext }) {
   const handleVerify = async () => {
     try {
       const response = await verifyEmail(email);
-      if (response.results) {
+      if (!response.results) {
         await handleUpdate();
       } else {
         await handleRegister();

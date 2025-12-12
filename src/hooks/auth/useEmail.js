@@ -20,12 +20,11 @@ export default function useEmail({ onNext, setEmail }) {
 
   const handleVerifyEmail = async () => {
     try {
-      setLoading(true);
       const response = await verifyEmail(localEmail);
       localStorage.setItem("email-verified", response.results);
       console.log("email-verified: ", response.results);
-
-      if (response.results === true) {
+      setEmail(localEmail);
+      if (!response.results) {
         onNext("password");
       } else {
         await handleSendOtp();
