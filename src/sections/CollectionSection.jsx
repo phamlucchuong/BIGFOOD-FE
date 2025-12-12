@@ -7,7 +7,7 @@ export default function CollectionSection({ title, cards, typeCard }) {
   const navigate = useNavigate();
 
   function handleSubmit(restaurantId, restaurantName) {
-    navigate("/restaurant-detail?name=" + restaurantName);
+    navigate(`/restaurant-detail?id=${restaurantId}&name=${restaurantName}`);
   }
   function handleClickCollection(){
     navigate("/collection");

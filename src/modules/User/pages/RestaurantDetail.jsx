@@ -1,12 +1,17 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import data from "../../../dataSample/pickfood.json";
 import RelatedRestaurants from "../../../components/dropdown/RelatedRestaurants";
 import ProductSection from "../../../sections/ProductSection";
 import { ChevronDown, ChevronRight, ClipboardList } from "lucide-react";
+import useRestaurant from "../../../hooks/data/useRestaurant";
 
 export default function RestaurantDetail() {
+  const [searchParams] = useSearchParams();
+  const restaurantId = searchParams.get('id');
+  const restaurantName = searchParams.get('name');
+  
   const [cart, setCart] = useState([]);
   const [showPopup, setShowPopup] = useState(false); // state cho popup
   const [selectedProduct, setSelectedProduct] = useState(null); // state lưu thông tin sản phẩm khi click
@@ -24,6 +29,14 @@ export default function RestaurantDetail() {
   }, []);
 
 
+  const { restaurantDetail, fetchRestaurantDetail } = useRestaurant();
+  useEffect(() => {
+    console.log('Restaurant ID from URL:', restaurantId);
+    if (restaurantId) {
+      console.log('Fetching restaurant detail for ID:', restaurantId);
+      fetchRestaurantDetail(restaurantId);
+    }
+  }, []);
 
   // Hàm xử lý khi click vào sản phẩm để mở popup
   const handleProductClick = (product) => {
@@ -34,7 +47,6 @@ export default function RestaurantDetail() {
   const handleNoteChange = (e) => {
     setNote(e.target.value);
   };
-
 
   const addToCart = (product) => {
     const extraPrice = selectedSize === "L" ? 10000 : 0;
@@ -50,10 +62,10 @@ export default function RestaurantDetail() {
         return prev.map((item) =>
           item.id === product.id && item.size === selectedSize
             ? {
-              ...item,
-              quantity: total == 1 ? item.quantity + 1 : total,
-              note,
-            }
+                ...item,
+                quantity: total == 1 ? item.quantity + 1 : total,
+                note,
+              }
             : item
         );
       } else {
@@ -109,38 +121,68 @@ export default function RestaurantDetail() {
 
   const onFinish = async (e) => {
     e.preventDefault();
-    console.log("Đơn hàng đã đặt:", cart);
-    sessionStorage.setItem("cart", JSON.stringify(cart));
+    if(localStorage.getItem("token") == null) {
+      alert("Vui lòng đăng nhập để đặt hàng!");
+      navigate("/");
+      return;
+    }
+    
+    // Lưu thông tin đơn hàng vào sessionStorage
+    const orderData = {
+      restaurant: {
+        id: restaurantId,
+        name: restaurantName,
+        address: restaurantDetail?.address
+      },
+      cart: cart,
+    };
+    
+    sessionStorage.setItem("orderData", JSON.stringify(orderData));
+    console.log("Đơn hàng đã đặt:", orderData);
+    
+    // Navigate sang trang checkout
     navigate("/checkout");
-    alert("đạt hàng thành công");
   };
+
+  const handleCategoryClick = (e, categoryName) => {
+    e.preventDefault();
+    const element = document.getElementById(categoryName);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  if (!restaurantDetail) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Đang tải thông tin nhà hàng...</p>
+      </div>
+    );
+  }
 
   return (
     <>
       <div>
         <div>
           <img
-            src="src\assets\images\drink-category.png"
-            alt="Ảnh demo"
+            src={restaurantDetail?.banner}
+            alt={`Banner nhà hàng ${restaurantDetail?.restaurantName}`}
             className="h-[30vh] w-full rounded-none object-cover"
           />
         </div>
         <div className="mx-auto px-60">
           <div className="flex flex-col gap-3 py-4">
             <div className="flex flex-row items-center justify-between">
-              <h1 className="font-bold text-2xl">
-                Cua Bac - Juice & Fruit - Lê Thánh Tông
-              </h1>
+              <h1 className="font-bold text-2xl">{restaurantDetail?.restaurantName}</h1>
               <div className="rounded-xl border border-gray-300 px-2 py-1">
                 <button>Yêu thích</button>
               </div>
             </div>
-            <p>164 Le Thanh Tong, Phuong Ben Thanh, Quan 1, Tphcm</p>
+            <p>{restaurantDetail?.address}</p>
             <a className="underline" href="">
               Thong tin quan
             </a>
           </div>
-
           <div className="w-full mt-4">
             <div className="flex items-center gap-2 mb-3">
               <button
@@ -150,18 +192,15 @@ export default function RestaurantDetail() {
                 Nhà hàng tương tự
                 <ChevronDown
                   size={16}
-                  className={`transition-transform ${showSlider ? "rotate-180" : ""}`}
+                  className={`transition-transform ${
+                    showSlider ? "rotate-180" : ""
+                  }`}
                 />
               </button>
             </div>
 
             {showSlider && <RelatedRestaurants category="juice" />}
-
-            {/* <button className="flex items-center justify-center min-w-[40px] bg-gray-100 rounded-full size-10 hover:bg-gray-200">
-              <ChevronRight />
-            </button> */}
           </div>
-
 
           <div>
             <div className="flex flex-row gap-1 items-center border border-gray-300 focus-within:border-blue-500 rounded-lg px-3 py-2 w-full">
@@ -173,23 +212,18 @@ export default function RestaurantDetail() {
               />
             </div>
             <div className="flex flex-row gap-2 py-4">
-              {data.map((categoryData, index) => {
-                // Tính tổng số sản phẩm đã bán trong mỗi category
-                const totalSold = categoryData.products.reduce(
-                  (sum, product) => sum + product.sold,
-                  0
-                );
-                const totalProducts = categoryData.products.length;
-
+              {restaurantDetail?.foodCategories?.map((category, index) => {
+                const totalProducts = category.foods.length;
                 return (
                   <div
                     key={index}
-                    className="rounded-2xl border border-gray-300 py-1 uppercase flex gap-1 px-4"
+                    className="rounded-2xl border border-gray-300 py-1 uppercase flex gap-1 px-4 cursor-pointer"
+                      onClick={(e) => handleCategoryClick(e, category.name)}
                   >
-                    <a href={"#" + categoryData.categoryindex}>
-                      {categoryData.category}
-                    </a>
-                    <span className="text-blue-700">{totalProducts}</span>
+                    <span className="hover:text-blue-600">
+                      {category.name}
+                      <strong className="text-blue-500 bg-gray-200 rounded-full px-2 ml-1">{totalProducts}</strong>
+                    </span>
                   </div>
                 );
               })}
@@ -201,15 +235,15 @@ export default function RestaurantDetail() {
             {/* Khối chiếm 75% */}
             <div className="w-3/4">
               <ProductSection
+                data={restaurantDetail.foodCategories}
                 onAddToCart={addToCart}
                 onProductClick={handleProductClick}
               />
             </div>
 
             {/* Khối chiếm 25% */}
-
             <div className="flex-1 w-1/4 ml-4">
-              <div className="sticky top-20 z-20">
+              <div className="">
                 <h2 className="text-2xl font-bold mb-4 text-center">
                   Giỏ hàng của tôi
                 </h2>
@@ -281,9 +315,9 @@ export default function RestaurantDetail() {
                         <div className="mt-4 text-right font-bold text-lg">
                           Tổng: {totalPrice.toLocaleString()}đ
                         </div>
-                        <div className="flex justify-center bg-orange-400 rounded-lg m-4">
+                        <div className="flex justify-center bg-orange-400 rounded-lg m-4 cursor-pointer hover:scale-105 transition-transform">
                           <button className="p-2" type="submit">
-                            Đặt đơn
+                            Xem đơn hàng
                           </button>
                         </div>
                       </form>
@@ -297,9 +331,6 @@ export default function RestaurantDetail() {
 
         {/* Popup hiển thị thông tin chi tiết sản phẩm */}
         {showPopup && selectedProduct && (
-          //           const basePrice = selectedProduct.price;
-          // const extraPrice = selectedSize === 'L' ? 10000 : 0;
-          // const finalPrice = (basePrice + extraPrice) * total;
 
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white rounded-lg max-w-md w-full shadow-lg relative">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getRestaurant } from "../../api/common/restaurantApi";
+import { getRestaurant, getRestaurantDetail } from "../../api/common/restaurantApi";
 
 
 
@@ -29,5 +29,20 @@ export default function useHome() {
     }
   };
 
-  return { restaurants, fetchRestaurants, totalPages, isLoading };
+
+
+  const [ restaurantDetail, setRestaurantDetail ] = useState(null);
+  const fetchRestaurantDetail = async (restaurantId) => {
+    setIsLoading(true);
+    try {
+      const response = await getRestaurantDetail(restaurantId);
+      setRestaurantDetail(response.results);
+    } catch (error) {
+      console.error("Lỗi fetch chi tiết nhà hàng:", error);
+    } finally {
+      setIsLoading(false);
+    } 
+  };
+
+  return { restaurants, fetchRestaurants, totalPages, isLoading, restaurantDetail, fetchRestaurantDetail };
 }
