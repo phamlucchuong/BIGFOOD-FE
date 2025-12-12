@@ -6,8 +6,8 @@ export default function CollectionSection({ title, cards, typeCard }) {
 
   const navigate = useNavigate();
 
-  function handleSubmit() {
-    navigate("/restaurant-detail");
+  function handleSubmit(restaurantId, restaurantName) {
+    navigate("/restaurant-detail?name=" + restaurantName);
   }
 
   return (
@@ -21,9 +21,9 @@ export default function CollectionSection({ title, cards, typeCard }) {
               {...item}
               onClick={() => console.log("Category ID:", item.id)}
             />
-            : <RestaurantCard key={item.id}
-              {...item}
-              onClick={handleSubmit}
+            : <RestaurantCard key={item.restaurantId}
+              item={item}
+              onClick={() => handleSubmit(item.restaurantId, item.restaurantName)}
             />
         ))}
       </div>

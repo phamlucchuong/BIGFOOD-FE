@@ -3,7 +3,6 @@ export default function CategoryCard({ name, image, title, size = 'md', onclick 
     const sizeClasses = {
         sm: 'w-[210px] h-[130px]',
         md: 'w-[260px] h-[150px]',
-        // lg: 'w-[320px] h-[200px]',
     };
     
     return (
