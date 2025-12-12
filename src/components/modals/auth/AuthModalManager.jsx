@@ -5,7 +5,6 @@ import OtpModal from "./OtpModal";
 import PasswordModal from "./PasswordModal";
 import RegisterModal from "./RegisterModal";
 
-
 function setModal(screen, setScreen, authData, setAuthData, onClose) {
     switch (screen) {
         case "email":
