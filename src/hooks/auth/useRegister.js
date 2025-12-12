@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { setToken } from "../../services/localStorageService";
 import { login, register, updateAccount, verifyEmail } from "../../api/auth/authApi";
@@ -25,7 +24,7 @@ export default function useRegister({ email, onNext }) {
   const handleVerifyLogin = async () => {
     const response = await login({email, password});
     setToken(response.results?.token);
-    onNext();
+    onNext('/');
   };
 
   const handleUpdate = async () => {

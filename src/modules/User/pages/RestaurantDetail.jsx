@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import data from "../../../dataSample/pickfood.json";
 import RelatedRestaurants from "../../../components/dropdown/RelatedRestaurants";
@@ -14,6 +15,14 @@ export default function RestaurantDetail() {
   const [selectedSize, setSelectedSize] = useState("M");
 
   const [showSlider, setShowSlider] = useState(false);
+  const navigate = useNavigate();
+
+  // load từ sessionStorage khi mở trang
+  useEffect(() => {
+    const saved = sessionStorage.getItem("cart");
+    if (saved) setCart(JSON.parse(saved));
+  }, []);
+
 
 
   // Hàm xử lý khi click vào sản phẩm để mở popup
@@ -100,7 +109,9 @@ export default function RestaurantDetail() {
 
   const onFinish = async (e) => {
     e.preventDefault();
-
+    console.log("Đơn hàng đã đặt:", cart);
+    sessionStorage.setItem("cart", JSON.stringify(cart));
+    navigate("/checkout");
     alert("đạt hàng thành công");
   };
 

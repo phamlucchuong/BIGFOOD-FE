@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { setToken } from "../../services/localStorageService";
 import { login, sendOtp } from "../../api/auth/authApi";
@@ -37,38 +36,47 @@ export default function usePassword({ email, onNext, setPasswordGlobal, onClose 
           console.log("Login success");
           onClose();
         }
-
-      } else {
-        setPasswordGlobal(passwordString);
-        localStorage.setItem("password", passwordString);
-        onNext("register");
+        if (localStorage.getItem("email-verified") === "true") {
+          const response = await login(email, passwordString);
+          if (response.data.code == 1001) {
+            setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
+            setSnackBarOpen(true);
+            setPassword(["", "", "", "", "", ""]);
+            setTimeout(() => inputRefs.current[0]?.focus(), 100);
+          } else {
+            setToken(response.results?.token);
+            setSnackBarOpen(false);
+            console.log("Login success");
+            onNext("home");
+          }
+        } else {
+          setPasswordGlobal(passwordString);
+          localStorage.setItem("password", passwordString);
+          onNext("register");
+        }
       }
     } catch (error) {
       console.error("Unexpected error:", error);
-      setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
-      setSnackBarOpen(true);
-      setPassword(["", "", "", "", "", ""]);
-      setTimeout(() => inputRefs.current[0]?.focus(), 100);
     }
-  };
 
 
-  const handleSendOtp = async () => {
-    try {
-      await sendOtp(email);
-      console.log("Otp sent for reset password");
-      onNext("otp");
-    } catch (err) {
-      console.error("Error sending otp:", err);
-    }
-  };
+    const handleSendOtp = async () => {
+      try {
+        await sendOtp(email);
+        console.log("Otp sent for reset password");
+        onNext("otp");
+      } catch (err) {
+        console.error("Error sending otp:", err);
+      }
+    };
 
-  return {
-    password,
-    handleChange,
-    handleSendOtp,
-    inputRefs,
-    snackBarOpen,
-    snackBarMessage,
-  };
+    return {
+      password,
+      handleChange,
+      handleSendOtp,
+      inputRefs,
+      snackBarOpen,
+      snackBarMessage,
+    };
+  }
 }
