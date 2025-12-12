@@ -21,6 +21,16 @@ async function getOrderDetail(orderId) {
     });
     return response.json();
 }
+async function getOrderRestaurantByStatus(status) {
+    const token = getToken();
+    const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant?status=${status}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        }
+    });
+    return response.json();
+}
 
 async function updateStatusOrder({orderId , status , reason}) {
     reason = reason ?? "";
@@ -36,4 +46,4 @@ async function updateStatusOrder({orderId , status , reason}) {
     return response.json();
 }
 
-export {getListOrder , getOrderDetail , updateStatusOrder}
+export {getListOrder , getOrderDetail , updateStatusOrder , getOrderRestaurantByStatus}

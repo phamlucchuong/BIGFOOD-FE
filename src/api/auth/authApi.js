@@ -43,7 +43,7 @@ async function verifyOtp(email, otp) {
     return response.json();
 }
 
-async function login(email, password) {
+async function login({email, password}) {
     const response = await fetch("http://localhost:8080/bigfood/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
