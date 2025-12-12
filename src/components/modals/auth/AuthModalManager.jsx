@@ -4,7 +4,6 @@ import EmailModal from "./EmailModal";
 import OtpModal from "./OtpModal";
 import PasswordModal from "./PasswordModal";
 import RegisterModal from "./RegisterModal";
-
 function setModal(screen, setScreen, authData, setAuthData, onClose) {
     switch (screen) {
         case "email":
@@ -31,25 +30,25 @@ function setModal(screen, setScreen, authData, setAuthData, onClose) {
                         setAuthData((prev) => ({ ...prev, password }))
                     }
                     onClose={onClose}
-                    onNext={(next) => setScreen(next)}
+                   onNext={(next) => { setScreen(next) }}
                 />
             );
         case "register":
             return (
-                <RegisterModal
+                <RegisterModal  
                     email={authData.email}
                     password={authData.password}
                     onClose={onClose}
-                    onNext={onClose}
+                    onNext={()=>setScreen('home')}
                 />
             );
     }
 }
 
 
-export default function AuthModalManager({ onClose }) {
+export default function AuthModalManager({ onClose   }) {
     const [screen, setScreen] = useState("email");
     const [authData, setAuthData] = useState({ email: "", password: "" });
 
-    return setModal(screen, setScreen, authData, setAuthData, onClose);
+    return setModal(screen, setScreen, authData, setAuthData, onClose );
 }
