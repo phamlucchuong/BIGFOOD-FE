@@ -1,15 +1,15 @@
-export default function CategoryCard({ name, image, title, size = 'md', onclick }) {
-    
+export default function CategoryCard({ name, image, title, size = 'md', onClick }) {
+
     const sizeClasses = {
         sm: 'w-[210px] h-[130px]',
         md: 'w-[260px] h-[150px]',
     };
-    
+
     return (
-        <div 
+        <div
             className={`relative rounded-xl overflow-hidden cursor-pointer transition-transform 
                 duration-300 ease-in-out hover:scale-[1.02] ${sizeClasses[size]}`}
-            onClick={onclick} 
+            onClick={onClick}
         >
             <img
                 src={image}
