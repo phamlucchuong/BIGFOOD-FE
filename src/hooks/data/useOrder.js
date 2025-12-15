@@ -9,6 +9,7 @@ export default function useOrder() {
   const [orders, setOrders] = useState([]);
   const [orderHistory, setOrderHistory] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [total, setTotal] = useState(0);
 
   const createOrder = async (formData) => {
     return await createNewOrder(formData);
@@ -23,11 +24,15 @@ export default function useOrder() {
     }
   };
 
-  const getAllOrder = async (page = 0, reset = false) => {
+  const getAllOrder = async (status = false, page = 0, reset = false) => {
     try {
-      const response = await getOrderByUserId();
-      const newData = response.results || [];
-      
+      const response = await getOrderByUserId(status, page);
+      const newData = response.results.orders || [];
+      const total = response?.results?.total ?? 0;
+      setTotal(total);
+      const totalPages = response?.results?.totalPages ?? response?.results?.total ?? 1;
+      setTotalPages(totalPages);
+
       if (reset || page === 0) {
         // Nếu là trang đầu hoặc reset -> Ghi đè mới hoàn toàn
         setOrderHistory(newData);
@@ -35,8 +40,6 @@ export default function useOrder() {
         // Nếu là "Xem thêm" -> Nối mảng cũ với mảy mới
         setOrderHistory((prev) => [...prev, ...newData]);
       }
-      
-      setTotalPages(response.totalPages || 1);
     } catch (error) {
       console.error("Error fetching order history:", error);
     }
@@ -48,6 +51,7 @@ export default function useOrder() {
     getOrder, 
     orderHistory, 
     getAllOrder, 
+    total,
     totalPages 
   };
 }

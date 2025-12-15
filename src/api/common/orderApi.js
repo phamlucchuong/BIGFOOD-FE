@@ -62,10 +62,10 @@ export async function getOrderById(orderId) {
 }
 
 
-export async function getOrderByUserId() {
+export async function getOrderByUserId(status, page) {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/orders/user/all`,
+            `http://localhost:8080/bigfood/api/orders/user/all?status=${status}&page=${page}`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json",

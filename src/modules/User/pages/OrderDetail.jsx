@@ -10,17 +10,21 @@ import {
 import { formatUuidWithPrefix } from "../../../utils/uuidFormatUtils";
 import { formatISOToReadable } from "../../../utils/dateTimeFormatUtils";
 import { useSearchParams } from "react-router-dom";
-
+import TextButton from "../../../components/common/buttons/TextButton";
 
 export default function OrderDetail() {
   const { orders, getOrder } = useOrder();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("id");
 
-
   useEffect(() => {
     getOrder(orderId);
   }, []);
+
+  const buttonColor = {
+    PENDING: "red",
+    COMPLETED: "blue",
+  }[orders?.status];
 
   const calTime = (distance) => {
     const minSpeed = 15; // km/h (Kẹt xe)
@@ -79,8 +83,12 @@ export default function OrderDetail() {
               <p className="text-sm font-medium text-gray-600">
                 {formatISOToReadable(orders.createdAt)}
               </p>
-              <p className="text-xs text-gray-400">Mã đơn hàng: {formatUuidWithPrefix(orders?.id, "ĐH-")}</p>
-              <h1 className="mt-2 text-lg font-semibold text-gray-900">
+              <p className="text-xs text-gray-400">
+                Mã đơn hàng: {formatUuidWithPrefix(orders?.id, "ĐH-")}
+              </p>
+            </div>
+            <div className="ml-6 mt-[-20px]">
+              <h1 className="mt-2 text-lg text-gray-900">
                 {orders?.restaurantName}
               </h1>
               <p className="text-sm text-gray-500">
@@ -89,9 +97,13 @@ export default function OrderDetail() {
               </p>
             </div>
           </div>
-          <button className="rounded-full border border-slate-200 bg-slate-50 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">
+          <TextButton
+            name={orders?.status == "PENDING" ? "Hủy đơn hàng" : ""}
+            className={`border border-${buttonColor}-700 px-4 py-2 rounded-lg font-medium text-sm transition`}
+          />
+          <div className="rounded-full border border-slate-200 bg-slate-50 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">
             {orderStatusMap[orders?.status]}
-          </button>
+          </div>
         </div>
 
         <div className="mt-6 bg-[#dce9ff] px-6 py-3 text-sm font-semibold text-slate-700">
@@ -199,39 +211,41 @@ export default function OrderDetail() {
               </div>
 
               <div className="mt-6 space-y-5">
-                <div className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600">
-                      <MapPin className="h-4 w-4" />
+                <>
+                  <div className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                        <MapPin className="h-4 w-4" />
+                      </div>
+                      <div className="h-full w-px bg-slate-200" />
                     </div>
-                    <div className="h-full w-px bg-slate-200" />
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-slate-800">
+                        Điểm giao hàng
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {orders?.restaurantName}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">
-                      Điểm giao hàng
-                    </p>
-                    <p className="text-sm text-slate-500">
-                      {orders?.restaurantName}
-                    </p>
-                  </div>
-                </div>
 
-                <div className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="h-full w-px bg-slate-200" />
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600">
-                      <MapPin className="h-4 w-4" />
+                  <div className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="h-full w-px bg-slate-200" />
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                        <MapPin className="h-4 w-4" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-slate-800">
+                        Điểm nhận hàng
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {orders?.deliveryAddress}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">
-                      Điểm nhận hàng
-                    </p>
-                    <p className="text-sm text-slate-500">
-                      {orders?.deliveryAddress}
-                    </p>
-                  </div>
-                </div>
+                </>
               </div>
             </div>
           </section>
