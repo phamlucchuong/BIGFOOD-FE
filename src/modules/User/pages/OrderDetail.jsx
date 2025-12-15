@@ -20,6 +20,7 @@ export default function OrderDetail() {
   const orderId = searchParams.get("id");
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [reason, setReason] = useState("");
 
   const handleRatingModalOpen = () => {
     setIsRatingModalOpen(true);
@@ -37,8 +38,8 @@ export default function OrderDetail() {
     setIsCancelModalOpen(false);
   };
 
-  const handleCancelOrder = (reason) => {
-    console.log("Cancellation reason:", reason);
+  const handleCancelOrder = (reasonText) => {
+    setReason(reasonText);
   };
 
   useEffect(() => {
@@ -171,6 +172,11 @@ export default function OrderDetail() {
                 <p className="mt-2 text-slate-500">
                   Đơn hàng đang chờ nhà hàng xác nhận và chuẩn bị.
                 </p>
+                {reason && (
+                  <div className="mt-2 text-red-500">
+                    Lý do hủy: {reason}
+                  </div>
+                )}
               </div>
             </div>
           </section>
