@@ -113,7 +113,7 @@
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600 w-20">Trung lập</span>
               <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-yellow-500" style={{ width:  `${100 - (order.percentagePositive +order.percentNegative) }%` }}></div>
+                <div className="h-full bg-yellow-500" style={{ width:  `${100 - (order.percentagePositive + order.percentNegative) }%` }}></div>
               </div>
               <span className="text-sm font-medium">{100 - (order.percentagePositive +order.percentNegative)}%</span>
             </div>
