@@ -55,11 +55,11 @@ export function RestaurantInfoPage() {
 
       const response = await updateRestaurant(payload);
       console.log("update : " ,response);
-
       alert("Cập nhật thành công");
       setEditing(false);
       setAvatarFile(null);
       setBannerFile(null);
+      loadData();
     } catch (error) {
       console.error(error);
       alert("Lỗi khi cập nhật nhà hàng");
@@ -84,7 +84,7 @@ export function RestaurantInfoPage() {
       <div className="bg-white rounded-xl border overflow-hidden">
         <div className="relative h-48 bg-gradient-to-r from-orange-500 to-red-500">
           <img
-            src={restaurant.bannerId}
+            src={restaurant.banner}
             alt="Cover"
             className="w-full h-full object-cover"
           />

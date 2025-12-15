@@ -5,8 +5,25 @@ import {
 import {mockOrders  } from  "../../../dataSample/restaurant/mockOrders"
 import {formatCurrency} from "../../../dataSample/restaurant/formatCurrency"
 import {mockFoods} from "../../../dataSample/restaurant/mockFoods"
+import { useRestaurant } from '../../../hooks/auth/restaurant/useRestaurant';
+import { useEffect, useState } from 'react';
 
 const RestaurantDashboard = () => {
+  const [food , setFood] = useState();
+  const [order, setOrder] = useState();
+  const {listFoodBestSell , listOrderNew} =useRestaurant();
+
+  const handleLoadFood = async () => {
+    const data = await listFoodBestSell();
+    const listOrder = await listOrderNew();
+    setFood(data.results);
+    setOrder(listOrder.results);
+  }
+
+  useEffect(() => {
+   handleLoadFood();
+  },[])
+
   const stats = [
     { label: 'Doanh Thu Hôm Nay', value: '12.5M', change: '+12%', icon: DollarSign, color: 'bg-green-500' },
     { label: 'Đơn Hàng Mới', value: '28', change: '+5%', icon: ShoppingBag, color: 'bg-blue-500' },
@@ -36,16 +53,16 @@ const RestaurantDashboard = () => {
         <div className="bg-white p-6 rounded-xl border">
           <h3 className="text-lg font-bold mb-4">Đơn Hàng Gần Đây</h3>
           <div className="space-y-3">
-            {mockOrders.slice(0, 4).map(order => (
+            {order&&order.map(order => (
               <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="font-medium">{order.customer}</p>
-                  <p className="text-sm text-gray-600">{order.items.length} món • {order.time}</p>
+                  <p className="font-medium">{order.user.name}</p>
+                  <p className="text-sm text-gray-600">{order.numberDishes} món • {order.createdAt}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-orange-600">{formatCurrency(order.total)}</p>
-                  <span className={`text-xs px-2 py-1 rounded ${order.status === 'completed' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
-                    {order.status === 'completed' ? 'Hoàn thành' : 'Đang xử lý'}
+                  <p className="font-bold text-orange-600">{formatCurrency(order.totalAmount)}</p>
+                  <span className={`text-xs px-2 py-1 rounded ${order.status === 'COMPLETED' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
+                    {order.status === 'COMPLETED' ? 'Hoàn thành' : 'Đang xử lý'}
                   </span>
                 </div>
               </div>
@@ -56,7 +73,7 @@ const RestaurantDashboard = () => {
         <div className="bg-white p-6 rounded-xl border">
           <h3 className="text-lg font-bold mb-4">Top Món Bán Chạy</h3>
           <div className="space-y-3">
-            {mockFoods.sort((a, b) => b.sold - a.sold).slice(0, 4).map((food, idx) => (
+            {food && food.map((food, idx) => (
               <div key={food.id} className="flex items-center gap-3">
                 <span className="text-lg font-bold text-gray-300">#{idx + 1}</span>
                 <img src={food.image} alt={food.name} className="w-12 h-12 rounded-lg object-cover" />
@@ -68,7 +85,7 @@ const RestaurantDashboard = () => {
                   <p className="font-bold">{formatCurrency(food.price)}</p>
                   <div className="flex items-center gap-1">
                     <Star size={14} className="fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm">{food.rating}</span>
+                    <span className="text-sm">{4.7}</span>
                   </div>
                 </div>
               </div>

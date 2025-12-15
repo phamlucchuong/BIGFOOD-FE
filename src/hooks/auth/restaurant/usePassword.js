@@ -41,12 +41,10 @@ export default function usePassword(name, email, phone, password, onNext) {
   const handleVerifyLogin = async () => {
     try {
       setApiError(""); 
-      const response = await login(email, password);
+      const response = await login({email, password});
       if (response.results?.token) {
         setToken(response.results.token);
-        if (onNext) {
-          onNext();
-        }
+        onNext();
         return true;
       } else {
         setApiError(response.message || "Đăng nhập thất bại");

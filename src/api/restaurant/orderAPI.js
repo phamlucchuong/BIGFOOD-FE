@@ -46,4 +46,16 @@ async function updateStatusOrder({orderId , status , reason}) {
     return response.json();
 }
 
-export {getListOrder , getOrderDetail , updateStatusOrder , getOrderRestaurantByStatus}
+
+async function getRestaurantStatistical() {
+    const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/statistital`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+        }
+    });
+    return response.json();
+}
+
+
+export {getListOrder , getOrderDetail , updateStatusOrder , getOrderRestaurantByStatus , getRestaurantStatistical}

@@ -1,17 +1,15 @@
+import { useState, useEffect } from 'react';
 import { 
   Home, Store, UtensilsCrossed, ShoppingBag, BarChart3, 
   Star, X, LogOut
 } from 'lucide-react';
-
-// 💡 BƯỚC 1: IMPORT LINK TỪ REACT-ROUTER-DOM
+import { useNavigate } from "react-router-dom"; 
 import { Link } from 'react-router-dom';
-
+import { getToken , removeToken } from '../../../services/localStorageService';
 
 export default function Sidebar ({ activePage, sidebarOpen, setSidebarOpen }) {
-// ❌ Loại bỏ setActivePage khỏi props vì Layout sẽ tự động tính toán activePage
-// dựa trên URL (sau khi đã sửa RestaurantLayout).
- 
-  // 💡 LƯU Ý: Đổi 'restaurant' thành 'info' trong id để khớp với route path
+  const [token, setToken] = useState(null);
+  const navigate = useNavigate(); 
   const menuItems = [
     { id: 'dashboard', icon: Home, label: 'Tổng Quan', path: '' }, // path rỗng cho index route
     { id: 'info', icon: Store, label: 'Thông Tin NH', path: 'info' },
@@ -30,6 +28,16 @@ export default function Sidebar ({ activePage, sidebarOpen, setSidebarOpen }) {
     // So sánh các trang còn lại
     return activePage === itemPath;
   };
+    useEffect(() => {
+      const t = getToken();
+      setToken(t);
+    }, []);
+
+    const handleLogout = () => {
+      removeToken();
+      setToken(null);
+      navigate("/restaurant/login");
+    };
 
   return (
     <>
@@ -48,7 +56,7 @@ export default function Sidebar ({ activePage, sidebarOpen, setSidebarOpen }) {
             <Link
               key={item.id}
               to={item.path} 
-              onClick={() => { setSidebarOpen(false); }} // ❌ Bỏ setActivePage, chỉ đóng sidebar
+              onClick={() => { setSidebarOpen(false); }} 
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors 
                 ${isActive(item.path) ? 'bg-orange-50 text-orange-600' : 'hover:bg-gray-50'}`
               }
@@ -59,7 +67,8 @@ export default function Sidebar ({ activePage, sidebarOpen, setSidebarOpen }) {
           ))}
         </nav>
         <div className="absolute bottom-4 left-4 right-4">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 text-red-600 transition-colors">
+          <button onClick={ handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 text-red-600 transition-colors">
             <LogOut size={20} />
             <span className="font-medium">Đăng Xuất</span>
           </button>
