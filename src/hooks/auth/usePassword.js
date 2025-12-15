@@ -41,12 +41,21 @@ export default function usePassword({ email, onNext, setPasswordGlobal, onClose 
           navigate("/");
         }
 
-      } else {
-        setPasswordGlobal(passwordString);
-        localStorage.setItem("password", passwordString);
-        onNext("register");
-      }
-    } catch (error) {
+    //   } else {
+    //     setPasswordGlobal(passwordString);
+    //     localStorage.setItem("password", passwordString);
+    //     onNext("register");
+    //   }
+    // } catch (error) {
+          setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
+          setSnackBarOpen(true);
+          setPassword(["", "", "", "", "", ""]);
+        } else {
+          setPasswordGlobal(passwordString);
+          localStorage.setItem("password", passwordString);
+          onNext("register");
+        }
+      } catch (error) {
       console.error("Unexpected error:", error);
       setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
       setSnackBarOpen(true);

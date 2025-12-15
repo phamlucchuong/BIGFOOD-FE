@@ -1,5 +1,6 @@
 import { restaurantDetail, fetchCategoriesFoods, addCategory, updateCategory, deleteCategory ,
-     createFood , getListFood , updateFood , deleteFood , updateFoodIsAvailable , getListFoodByCategoryId , updateRes
+     createFood , getListFood , updateFood , deleteFood , updateFoodIsAvailable , getListFoodByCategoryId , updateRes ,
+     getListFoodBestSell , getListFoodLeast , getListOrderNew
     } from "../../../api/restaurant/restaurantAPI";
 
 export function useRestaurant() {
@@ -127,6 +128,29 @@ export function useRestaurant() {
         }
     };
 
+    const listFoodBestSell = async() =>{
+        const response = await getListFoodBestSell();
+        if(!response.ok){
+            throw new Error(`Failed to fetch get top 5 food best seller: ${response.status}`);
+        }
+        return response;
+    }
+    const listFoodLeast= async() =>{
+        const response = await getListFoodLeast();
+        if(!response.ok){
+            throw new Error(`Failed to fetch get top 5 food least: ${response.status}`);
+        }
+        return response;
+    }
+     const listOrderNew = async() =>{
+        const response = await getListOrderNew();
+        if(!response.ok){
+            throw new Error(`Failed to fetch get top 5 order new : ${response.status}`);
+        }
+        return response;
+    }
+
+
 
     return { 
         fetchRestaurantDetails, 
@@ -140,6 +164,9 @@ export function useRestaurant() {
         updateFoodItem,
         updateFoodItemIsAvailable,
         listFoodByCatogoryId,
-        updateRestaurant
+        updateRestaurant ,
+        listFoodBestSell,
+        listFoodLeast ,
+        listOrderNew
     };
 }

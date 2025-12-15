@@ -161,6 +161,36 @@ async function updateFoodIsAvailable(foodData) {
     }
     return response.json();
 }
+
+async function  getListFoodBestSell(){
+     const response = await fetch(`http://localhost:8080/bigfood/api/foods/list/best-sell`, {
+        method: "GET",
+        headers: { 
+             "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`}
+    });
+    return response.json();
+}
+async function  getListFoodLeast(){
+     const response = await fetch(`http://localhost:8080/bigfood/api/foods/list/least-sell`, {
+        method: "GET",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`}
+    });
+    return response.json();
+}
+
+async function  getListOrderNew(){
+     const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/list-order-new`, {
+        method: "GET",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`}
+    });
+    return response.json();
+}
+
 export { restaurantDetail ,fetchCategoriesFoods , addCategory , updateCategory , deleteCategory ,
          createFood , getListFood, updateFood , deleteFood , updateFoodIsAvailable ,getListFoodByCategoryId ,
-        updateRes };
+        updateRes , getListFoodBestSell , getListFoodLeast , getListOrderNew };
