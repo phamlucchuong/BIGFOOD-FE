@@ -85,8 +85,17 @@ async function createRestaurant(formData) {
 }
 
 
+async function logoutUser() {
+    const token = getToken();
+    const response = await fetch(`http://localhost:8080/bigfood/api/auth/logout`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+    });
+    return response;
+}
 
 
 
-
-export { verifyEmail, sendOtp, verifyOtp, login , updateAccount ,createRestaurant }
+export { verifyEmail, sendOtp, verifyOtp, login , updateAccount ,createRestaurant, logoutUser }

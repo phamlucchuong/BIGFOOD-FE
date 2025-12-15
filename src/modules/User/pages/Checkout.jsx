@@ -11,7 +11,6 @@ import {
   Tag,
   Trash2,
 } from "lucide-react";
-import phoImage from "../../../assets/images/pho.png";
 
 const payment = {
   method: "Tiền mặt",
@@ -20,6 +19,7 @@ const payment = {
   fee: 21000,
   insurance: "Đơn hàng có Bảo hiểm Food Care",
 };
+import { getToken } from "../../../services/localStorageService";
 
 const paymentMethods = [
   "Tiền mặt",
@@ -104,28 +104,125 @@ export default function Checkout() {
 
   const { createOrder } = useOrder();
   const handleOrderSubmit = async () => {
+    if(getToken() == null) {
+      alert("Vui lòng đăng nhập để đặt hàng!");
+      navigate("/");
+      return;
+    }
+    // Validation
+    if (!orderData || !orderData.restaurant || !orderData.restaurant.id) {
+      alert("Thiếu thông tin nhà hàng!");
+      console.error("OrderData:", orderData);
+      return;
+    }
+    
+    if (!orderItems || orderItems.length === 0) {
+      alert("Giỏ hàng trống!");
+      return;
+    }
+    
+    // Kiểm tra địa chỉ hợp lệ (không phải giá trị mặc định)
+    if (!user_location.address || user_location.address === "Chưa có địa chỉ" || user_location.address.trim() === "") {
+      alert("Vui lòng nhập địa chỉ giao hàng hợp lệ!");
+      return;
+    }
+
+    // Validate từng item trong orderItems
+    const invalidItems = orderItems.filter(item => {
+      return !item || !item.id || item.id === null || item.id === undefined || 
+             !item.quantity || item.quantity === null || item.quantity === undefined || 
+             Number(item.quantity) <= 0 || isNaN(Number(item.quantity));
+    });
+
+    if (invalidItems.length > 0) {
+      alert("Giỏ hàng có sản phẩm không hợp lệ! Vui lòng kiểm tra lại.");
+      console.error("Invalid items:", invalidItems);
+      return;
+    }
+
+    // Map payment method sang giá trị backend expect (có thể là enum)
+    const paymentMethodMap = {
+        "Tiền mặt": "CASH",
+        "Thẻ ngân hàng": "BANK_CARD",
+        "Ví Momo": "MOMO",
+        "ZaloPay": "ZALO_PAY",
+        "VNPay": "VNPAY"
+    };
+    
+    // Cấu trúc formData theo đúng backend DTO
+    const restaurantId = String(orderData.restaurant.id).trim();
+    if (!restaurantId || restaurantId === "null" || restaurantId === "undefined") {
+      alert("ID nhà hàng không hợp lệ!");
+      console.error("Restaurant ID:", restaurantId);
+      return;
+    }
+
+    const orderDetails = orderItems
+      .filter(item => item && item.id && item.quantity) // Lọc lại một lần nữa
+      .map(item => {
+        const foodId = String(item.id).trim();
+        const quantity = Number(item.quantity);
+        const notes = "";
+        
+        // Validate foodId
+        if (!foodId || foodId === "null" || foodId === "undefined" || foodId === "") {
+          console.error("Invalid foodId:", item);
+          return null;
+        }
+        
+        // Validate quantity
+        if (isNaN(quantity) || quantity <= 0) {
+          console.error("Invalid quantity:", item);
+          return null;
+        }
+
+        const detail = {
+          foodId: foodId,
+          quantity: quantity,
+          notes: notes
+        };
+        
+        // Chỉ thêm notes nếu có giá trị (tránh @NotBlank validation)
+        if (item.note && item.note.trim() && item.note.trim() !== "") {
+          detail.notes = item.note.trim();
+        }
+        
+        return detail;
+      })
+      .filter(detail => detail !== null); // Loại bỏ các detail không hợp lệ
+
+    if (orderDetails.length === 0) {
+      alert("Không có sản phẩm hợp lệ trong giỏ hàng!");
+      return;
+    }
 
     const formData = {
-        restaurantId: orderData.restaurant.id,
-        deliveryAddress: user_location.address,
-        deliveryLongitude: user_location.longitude,
-        deliveryLatitude: user_location.latitude,
-        paymentMethod: selectedMethod,
-        notes: "",
-        orderDetails: orderItems.map(item => ({
-            foodId: item.id,
-            quantity: item.quantity,
-            notes: item.note || ""
-        })),
+      restaurantId: restaurantId,
+      deliveryAddress: user_location.address.trim(),
+      paymentMethod: paymentMethodMap[selectedMethod] || "CASH",
+      notes: "",
+      orderDetails: orderDetails
+    };
+    
+    
+    try {
+      const response = await createOrder(formData);
+      console.log("Order Results:", response);
+      
+      if (response && response.ok) {
+        alert("Đơn hàng của bạn đã được đặt thành công!");
+        sessionStorage.removeItem("orderData");
+        // sessionStorage.setItem("orderResponse", response.results);
+        localStorage.setItem("last_order_id", response.results.id);
+        console.log("Saved last_order_id:", response.results.id);
+        navigate("/order/detail");
+      } else {
+        alert(`Đặt hàng thất bại: ${response.message || "Lỗi không xác định"}`);
+      }
+    } catch (error) {
+      console.error("Lỗi khi đặt hàng:", error);
+      alert("Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại!");
     }
-    const results = await createOrder(formData);
-    console.log("Order Results:", results);
-    // Xử lý logic đặt hàng ở đây
-    alert("Đơn hàng của bạn đã được đặt thành công!");
-    // Xoá dữ liệu order khỏi sessionStorage
-    sessionStorage.removeItem("orderData");
-    // Chuyển hướng về trang chủ hoặc trang khác nếu cần
-    // navigate("/");
   };
 
   return (
@@ -133,7 +230,7 @@ export default function Checkout() {
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
         <div>
           <h1 className="mt-1 text-2xl font-semibold text-gray-800">
-            Thanh toán - {orderData?.restaurantName || "Đang tải..."}
+            Thanh toán - {orderData?.restaurant.name || "Đang tải..."}
           </h1>
           {orderData?.restaurantDetail?.address && (
             <p className="text-sm text-gray-500 mt-1">

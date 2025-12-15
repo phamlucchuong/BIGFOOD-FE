@@ -1,6 +1,5 @@
 
 
-
 export async function reverseGeocode(latitude, longitude) {
     try {
         const response = await fetch(

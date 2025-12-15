@@ -12,11 +12,6 @@ export default function RestaurantCard({ item, onClick }) {
           className="w-full h-40 object-cover"
         />
 
-        {/* Label promo */}
-        {/* <span className="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-                    PROMO
-                </span> */}
-
         {/* Nút tim */}
         <button
           onClick={(e) => {
@@ -56,14 +51,14 @@ export default function RestaurantCard({ item, onClick }) {
         </p>
 
         <div className="flex items-center">
-          {item.distanceM == 0.0 && (
+          {item.distanceM != 0 && (
             <div className="text-xs text-gray-500 mt-1 mr-2">
               <i className="fa-solid fa-location-dot mr-1"></i>
               <span>{(item.distanceM / 1000).toFixed(1)} km</span>
             </div>
           )}
 
-          {item.rating == 0 && (
+          {item.reviewCount != 0 && (
             <div className="flex items-center text-xs text-gray-500 mt-1">
               <i className="fa-solid fa-star text-yellow-500 mr-1"></i>
               <span className="mr-1">{item.rating}</span>

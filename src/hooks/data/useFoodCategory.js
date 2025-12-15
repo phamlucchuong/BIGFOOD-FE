@@ -6,43 +6,43 @@ import rice from "../../assets/images/rice-category.png";
 
 const handleLoadCategories = async () => {
   const response = await getCategories();
-  const data =  response.results;
-  const categoryList = [];
+  return response.results;
+  // const categoryList = [];
 
-  data.forEach((category) => {
-    let image;
+  // data.forEach((category) => {
+  //   let image;
 
-    switch (category.name) {
-      case "Đồ Uống":
-        name = "drink";
-        image = drink;
-        break;
-      case "Thức Ăn Nhanh":
-        name = "fastFood";
-        image = fastFood;
-        break;
-      case "Món Á-Âu":
-        name = "euFood";
-        image = asia_eu;
-        break;
-      case "Cơm":
-        name = "rice";
-        image = rice;
-        break;
-      default:
-        name = "other";
-        image = null;
-        break;
-    }
+  //   switch (category.name) {
+  //     case "Đồ Uống":
+  //       name = "drink";
+  //       image = drink;
+  //       break;
+  //     case "Thức Ăn Nhanh":
+  //       name = "fastFood";
+  //       image = fastFood;
+  //       break;
+  //     case "Món Á-Âu":
+  //       name = "euFood";
+  //       image = asia_eu;
+  //       break;
+  //     case "Cơm":
+  //       name = "rice";
+  //       image = rice;
+  //       break;
+  //     default:
+  //       name = "other";
+  //       image = null;
+  //       break;
+  //   }
 
-    categoryList.push({
-      id: category.id,
-      title: category.name,
-      image,
-    });
-  });
+  //   categoryList.push({
+  //     id: category.id,
+  //     title: category.name,
+  //     image,
+  //   });
+  // });
 
-  return categoryList;
+  // return categoryList;
 };
 
 export default handleLoadCategories;

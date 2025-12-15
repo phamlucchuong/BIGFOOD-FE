@@ -2,11 +2,14 @@ import { useState, useRef } from "react";
 import TextLabel from "../../common/labels/TextLabel";
 import ModalWrapper from "../ModalWrapper";
 import useSearch from "../../../hooks/data/useSearch";
+import { useNavigate } from "react-router-dom";
 
 export default function SearchModal({ onClose }) {
+  const [page, setPage] = useState(0);
   const inputRef = useRef(null);
   const [query, setQuery] = useState("");
   const { historySearch, hotSearch, addSearch, clearHistorySearch } = useSearch(5);
+  const navigate = useNavigate();
 
   const isTyping = query.trim() !== "";
 
@@ -17,11 +20,18 @@ export default function SearchModal({ onClose }) {
 
   const handleSearch = (value = query) => {
     if (!value.trim()) return;
-    addSearch(value);
+    if (page == 0) {
+      addSearch(value, page, true);
+    } else {
+      addSearch(value, page, false);
+    }
+    const nextPage = page + 1;
+    setPage(nextPage);
     console.log("Tìm kiếm:", value);
     setQuery("");
     inputRef.current?.focus();
     onClose();
+    navigate(`/search?query=${value}`);
   };
 
   return (
@@ -65,7 +75,10 @@ export default function SearchModal({ onClose }) {
               <TextLabel
                 key={index}
                 name={item}
-                onclick={() => setQuery(item)}
+                onclick={() => {
+                  setQuery(item);
+                  handleSearch(item);
+                }}
               />
             ))}
           </div>
@@ -80,12 +93,10 @@ export default function SearchModal({ onClose }) {
             <TextLabel
               key={index}
               name={item.content}
-              onclick={
-                () => {
-                  setQuery(item.content); 
-                  handleSearch(item.content);
-                }
-              }
+              onclick={() => {
+                setQuery(item.content);
+                handleSearch(item.content);
+              }}
             />
           ))}
         </div>

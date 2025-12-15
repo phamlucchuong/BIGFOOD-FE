@@ -54,10 +54,11 @@ export default function RestaurantManagerment() {
 
                 <div className='flex justify-between mx-10 mb-6'>
                     <CategoryCard 
-                        name="Tất cả"
-                        image={"/src/assets/images/all-category.png"}
+                        // item={}
+                        // name="Tất cả"
+                        // image={"/src/assets/images/all-category.png"}
                         title={"Tất cả"}
-                        onclick={() => console.log("Category ID: All")}
+                        onClick={() => console.log("Category ID: All")}
                         size='sm'
                     ></CategoryCard>
 

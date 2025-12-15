@@ -7,7 +7,7 @@ import qr_code from "../../../assets/images/qr_code.png"
 
 export default function Footer() {
     return (
-        <div className="mt-[100px] px-[200px] pb-[50px] pt-7" style={{borderTop: '1px solid #d1d5db'}}>
+        <div className="px-[200px] pb-[50px] pt-7" style={{borderTop: '1px solid #d1d5db'}}>
             <div><span className="text-blue-500 text-5xl">beFood</span></div>
 
             <div className="flex justify-between font-bold text-md text-gray-700 leading-[2.5rem] mt-5 pt-7" 

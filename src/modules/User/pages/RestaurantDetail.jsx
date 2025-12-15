@@ -121,21 +121,56 @@ export default function RestaurantDetail() {
 
   const onFinish = async (e) => {
     e.preventDefault();
-    if(localStorage.getItem("token") == null) {
-      alert("Vui lòng đăng nhập để đặt hàng!");
-      navigate("/");
+    
+    // Validation: Kiểm tra restaurantId và cart
+    // Ưu tiên dùng userId từ restaurantDetail nếu có, nếu không thì dùng từ URL params
+    const finalRestaurantId = restaurantDetail?.userId || restaurantId;
+    
+    if (!finalRestaurantId || finalRestaurantId.trim() === "") {
+      alert("Thiếu thông tin nhà hàng!");
+      console.error("Restaurant ID:", { 
+        fromUrl: restaurantId, 
+        fromDetail: restaurantDetail?.userId,
+        restaurantDetail 
+      });
+      return;
+    }
+
+    if (!cart || cart.length === 0) {
+      alert("Giỏ hàng trống!");
+      return;
+    }
+
+    // Validate từng item trong cart
+    const invalidCartItems = cart.filter(item => {
+      return !item || !item.id || item.id === null || item.id === undefined || 
+             !item.quantity || item.quantity === null || item.quantity === undefined || 
+             Number(item.quantity) <= 0 || isNaN(Number(item.quantity));
+    });
+
+    if (invalidCartItems.length > 0) {
+      alert("Giỏ hàng có sản phẩm không hợp lệ! Vui lòng kiểm tra lại.");
+      console.error("Invalid cart items:", invalidCartItems);
       return;
     }
     
     // Lưu thông tin đơn hàng vào sessionStorage
     const orderData = {
       restaurant: {
-        id: restaurantId,
-        name: restaurantName,
-        address: restaurantDetail?.address
+        id: finalRestaurantId.trim(),
+        name: restaurantName || restaurantDetail?.restaurantName || "",
+        address: restaurantDetail?.address || ""
       },
-      cart: cart,
+      cart: cart.map(item => ({
+        ...item,
+        id: String(item.id).trim(),
+        quantity: Number(item.quantity),
+        price: Number(item.price) || 0,
+        note: item.note ? String(item.note).trim() : ""
+      }))
     };
+    
+    console.log("OrderData được lưu:", orderData);
     
     sessionStorage.setItem("orderData", JSON.stringify(orderData));
     console.log("Đơn hàng đã đặt:", orderData);
