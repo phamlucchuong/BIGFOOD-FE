@@ -1,7 +1,7 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Bike, ClipboardList, Clock, CreditCard, MapPin } from "lucide-react";
 import useOrder from "../../../hooks/data/useOrder";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { formatCurrency } from "../../../utils/moneyFormatUtils";
 import {
   orderStatusMap,
@@ -11,11 +11,36 @@ import { formatUuidWithPrefix } from "../../../utils/uuidFormatUtils";
 import { formatISOToReadable } from "../../../utils/dateTimeFormatUtils";
 import { useSearchParams } from "react-router-dom";
 import TextButton from "../../../components/common/buttons/TextButton";
+import RatingModal from "../../../components/modals/common/RatingModal";
+import CancelOrderModal from "../../../components/modals/common/CancelOrderModal";
 
 export default function OrderDetail() {
   const { orders, getOrder } = useOrder();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("id");
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [reason, setReason] = useState("");
+
+  const handleRatingModalOpen = () => {
+    setIsRatingModalOpen(true);
+  };
+
+  const handleRatingModalClose = () => {
+    setIsRatingModalOpen(false);
+  };
+
+  const handleCancelModalOpen = () => {
+    setIsCancelModalOpen(true);
+  };
+
+  const handleCancelModalClose = () => {
+    setIsCancelModalOpen(false);
+  };
+
+  const handleCancelOrder = (reasonText) => {
+    setReason(reasonText);
+  };
 
   useEffect(() => {
     getOrder(orderId);
@@ -98,8 +123,9 @@ export default function OrderDetail() {
             </div>
           </div>
           <TextButton
-            name={orders?.status == "PENDING" ? "Hủy đơn hàng" : ""}
+            name={orders?.status === "PENDING" ? "Hủy đơn hàng" : ""}
             className={`border border-${buttonColor}-700 px-4 py-2 rounded-lg font-medium text-sm transition`}
+            onClick={()=>handleCancelModalOpen()}
           />
           <div className="rounded-full border border-slate-200 bg-slate-50 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">
             {orderStatusMap[orders?.status]}
@@ -146,6 +172,11 @@ export default function OrderDetail() {
                 <p className="mt-2 text-slate-500">
                   Đơn hàng đang chờ nhà hàng xác nhận và chuẩn bị.
                 </p>
+                {reason && (
+                  <div className="mt-2 text-red-500">
+                    Lý do hủy: {reason}
+                  </div>
+                )}
               </div>
             </div>
           </section>
@@ -250,6 +281,13 @@ export default function OrderDetail() {
             </div>
           </section>
         </div>
+        {isRatingModalOpen && <RatingModal onClose={handleRatingModalClose} />}
+        {isCancelModalOpen && (
+          <CancelOrderModal
+            onClose={handleCancelModalClose}
+            onSubmit={handleCancelOrder}
+          />
+        )}
       </div>
     </div>
   );
