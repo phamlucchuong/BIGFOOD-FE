@@ -1,12 +1,13 @@
 // AppRoutes.jsx
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 // import layouts
 import AdminLayout from "../modules/Admin/layouts/AdminLayout";
-import UserDefaultLayout from "../modules/User/layouts/UserDefaultLayout";
 import RestaurantLayout from "../modules/Restaurant/layouts/RestaurantLayout";
-import RegisterPage from "../modules/Restaurant/pages/RegisterAndLogin/RegisterPage";
 import LoginPage from "../modules/Restaurant/pages/RegisterAndLogin/LoginPage";
+import RegisterPage from "../modules/Restaurant/pages/RegisterAndLogin/RegisterPage";
+import UserDefaultLayout from "../modules/User/layouts/UserDefaultLayout";
+import StickyLayout from "../modules/User/layouts/StickyLayout";
 
 
 // import pages
@@ -14,22 +15,24 @@ import Home from "../modules/User/pages/Home";
 import RestaurantDetail from "../modules/User/pages/RestaurantDetail";
 
 import AdminDashboard from "../modules/Admin/pages/AdminDashboard";
-import UserManagerment from "../modules/Admin/pages/UserManagerment";
-import RestaurantRequest from "../modules/Admin/pages/restaurant/RestaurantRequest";
-import RestaurantManagerment from "../modules/Admin/pages/restaurant/RestaurantManagerment";
-import ReportingManagerment from "../modules/Admin/pages/restaurant/ReportingManagerment";
-import OrderManagerment from "../modules/Admin/pages/OrderManagerment";
 import FinanceReporting from "../modules/Admin/pages/FinanceReporting";
+import OrderManagerment from "../modules/Admin/pages/OrderManagerment";
+import UserManagerment from "../modules/Admin/pages/UserManagerment";
+import ReportingManagerment from "../modules/Admin/pages/restaurant/ReportingManagerment";
+import RestaurantManagerment from "../modules/Admin/pages/restaurant/RestaurantManagerment";
+import RestaurantRequest from "../modules/Admin/pages/restaurant/RestaurantRequest";
 
-import RestaurantDashboard from "../modules/Restaurant/pages/RestaurantDashboard";
-import { RestaurantInfoPage } from "../modules/Restaurant/pages/RestaurantInfoPage"
+import { AnalyticsPage } from "../modules/Restaurant/pages/AnalyticsPage";
 import { MenuManagementPage } from '../modules/Restaurant/pages/MenuManagementPage';
-import { AnalyticsPage } from "../modules/Restaurant/pages/AnalyticsPage"
-import { OrderManagementPage } from "../modules/Restaurant/pages/OrderManagementPage"
-import {ReviewsManagementPage} from "../modules/Restaurant/pages/ReviewsManagementPage"
-import Order from "../modules/User/pages/Order";
+import { OrderManagementPage } from "../modules/Restaurant/pages/OrderManagementPage";
+import RestaurantDashboard from "../modules/Restaurant/pages/RestaurantDashboard";
+import { RestaurantInfoPage } from "../modules/Restaurant/pages/RestaurantInfoPage";
+import { ReviewsManagementPage } from "../modules/Restaurant/pages/ReviewsManagementPage";
 import Checkout from "../modules/User/pages/Checkout";
 import Collection from "../modules/User/pages/Collection";
+import OrderDetail from "../modules/User/pages/OrderDetail";
+import Search from "../modules/User/pages/Search";
+import OrderAll from "../modules/User/pages/OrderAll";
 
 
 export default function AppRoutes() {
@@ -38,10 +41,15 @@ export default function AppRoutes() {
       {/* user routes */}
       <Route path="/" element={<UserDefaultLayout />}>
         <Route index element={<Home />} />
+      </Route>
+
+      <Route element={<StickyLayout />}>
         <Route path="/restaurant-detail" element={<RestaurantDetail />} />
-        <Route path="/orders" element={<Order />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/collection" element={<Collection />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/order/detail" element={<OrderDetail />} />
+        <Route path="/order/all" element={<OrderAll />} />
       </Route>
 
 

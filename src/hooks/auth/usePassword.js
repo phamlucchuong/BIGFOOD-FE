@@ -1,12 +1,15 @@
+
 import { useState, useEffect, useRef } from "react";
 import { setToken } from "../../services/localStorageService";
 import { login, sendOtp } from "../../api/auth/authApi";
+import { useNavigate } from "react-router-dom";
 
 export default function usePassword({ email, onNext, setPasswordGlobal, onClose }) {
   const [password, setPassword] = useState(["", "", "", "", "", ""]);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const inputRefs = useRef([]);
+  const navigate = useNavigate();
 
   const handleChange = (event, index) => {
     const newValues = [...password];
@@ -35,7 +38,15 @@ export default function usePassword({ email, onNext, setPasswordGlobal, onClose 
           setSnackBarOpen(false);
           console.log("Login success");
           onClose();
+          navigate("/");
         }
+
+    //   } else {
+    //     setPasswordGlobal(passwordString);
+    //     localStorage.setItem("password", passwordString);
+    //     onNext("register");
+    //   }
+    // } catch (error) {
           setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
           setSnackBarOpen(true);
           setPassword(["", "", "", "", "", ""]);
@@ -46,26 +57,30 @@ export default function usePassword({ email, onNext, setPasswordGlobal, onClose 
         }
       } catch (error) {
       console.error("Unexpected error:", error);
+      setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
+      setSnackBarOpen(true);
+      setPassword(["", "", "", "", "", ""]);
+      setTimeout(() => inputRefs.current[0]?.focus(), 100);
     }
+  };
 
 
-    const handleSendOtp = async () => {
-      try {
-        await sendOtp(email);
-        console.log("Otp sent for reset password");
-        onNext("otp");
-      } catch (err) {
-        console.error("Error sending otp:", err);
-      }
-    };
+  const handleSendOtp = async () => {
+    try {
+      await sendOtp(email);
+      console.log("Otp sent for reset password");
+      onNext("otp");
+    } catch (err) {
+      console.error("Error sending otp:", err);
+    }
+  };
 
-    return {
-      password,
-      handleChange,
-      handleSendOtp,
-      inputRefs,
-      snackBarOpen,
-      snackBarMessage,
-    };
-  }
+  return {
+    password,
+    handleChange,
+    handleSendOtp,
+    inputRefs,
+    snackBarOpen,
+    snackBarMessage,
+  };
 }

@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { addNewSearch, getHotSearchList } from "../../api/common/searchApi";
+import { getHotSearchList } from "../../api/common/searchApi";
+import useHome from "./useRestaurant";
 
 const STORAGE_KEY = "history_search";
 
 export default function useSearch(limit = 5) {
   const [historySearch, setHistorySeach] = useState([]);
   const [hotSearch, setHotSearch] = useState([]);
+  const { restaurants, fetchRestaurants, isLoading } = useHome();
 
   // Load lịch sử từ localStorage khi component mount
   useEffect(() => {
@@ -31,21 +33,22 @@ export default function useSearch(limit = 5) {
     fetchHotSearch(); // Gọi hàm
   }, []); // Mảng rỗng đảm bảo chỉ chạy 1 lần
 
-  // Hàm thêm từ khóa mới
-  const addSearch = async (search) => {
+  // Hàm thêm từ khóa mới và tìm kiếm
+  const addSearch = async (search, page = 0, isReset = false) => {
     if (!search.trim()) return;
 
+    // Thêm vào lịch sử
     let newHistory = [search, ...historySearch.filter(item => item !== search)];
     if (newHistory.length > limit) newHistory = newHistory.slice(0, limit);
 
     setHistorySeach(newHistory);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));
 
-    // ✅ Cải thiện: Gọi API với xử lý lỗi
+    // Gọi API tìm kiếm nhà hàng: getRestaurant(lng, lat, categoryId, searchText, page)
     try {
-      await addNewSearch(search.trim());
+      await fetchRestaurants("", search.trim(), page, isReset);
     } catch (error) {
-      console.error("Lỗi khi thêm từ khóa tìm kiếm mới:", error);
+      console.error("Lỗi khi tìm kiếm nhà hàng:", error);
     }
   };
 
@@ -55,5 +58,12 @@ export default function useSearch(limit = 5) {
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  return { historySearch, hotSearch, addSearch, clearHistorySearch };
+  return { 
+    historySearch, 
+    hotSearch, 
+    addSearch, 
+    clearHistorySearch,
+    restaurants,
+    isLoading
+  };
 }

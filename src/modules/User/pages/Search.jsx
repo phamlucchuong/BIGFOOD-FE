@@ -7,18 +7,22 @@ import TextButton from "../../../components/common/buttons/TextButton";
 import RestaurantCard from "../../../components/common/cards/RestaurantCard";
 import { useNavigate } from "react-router-dom";
 
-export default function Collection() {
+export default function Search() {
   const [searchParams] = useSearchParams();
-  const categoryId = searchParams.get("id");
-  const categoryName = searchParams.get("name");
+  const query = searchParams.get("query");
   const [page, setPage] = useState(0);
-
   const { restaurants, fetchRestaurants, totalPages } = useHome();
 
+  const handleSearchTail = () => {
+    if (localStorage.getItem("user_address") !== "") {
+      return ` gần ${localStorage.getItem("user_address")}`;
+    } else return "";
+  };
+
   useEffect(() => {
-    if (categoryId) {
+    if (query) {
       const fetchData = async () => {
-        await fetchRestaurants(categoryId, "", 0, true);
+        await fetchRestaurants("", query, 0, true);
       };
       fetchData();
     }
@@ -26,25 +30,28 @@ export default function Collection() {
 
   const handleFetchRestaurants = async () => {
     const nextPage = page + 1;
-    await fetchRestaurants(categoryId, "", nextPage, false);
+    await fetchRestaurants("", query, nextPage, false);
     setPage(nextPage);
   };
 
   const navigate = useNavigate();
-  function handleRestaurantClick(restaurant) {
-    navigate(
-      `/restaurant-detail?id=${restaurant.restaurantId}&name=${restaurant.restaurantName}`
-    );
+    function handleRestaurantClick(restaurant) {
+    navigate(`/restaurant-detail?id=${restaurant.restaurantId}&name=${restaurant.restaurantName}`);
   }
 
   return (
     <>
       <CollectionSection
-        title={categoryName || "Bộ sưu tập"}
+        title={`Kết quả tìm kiếm cho`}
+        highlight={query}
+        size="sm"
+        tail={handleSearchTail()}
+        color={"#ff4c4cff"}
         data={restaurants}
         CardComponent={RestaurantCard}
         onItemClick={handleRestaurantClick}
       />
+
       {page < totalPages - 1 && (
         <TextButton
           name={"Xem thêm"}

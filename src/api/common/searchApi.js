@@ -4,7 +4,7 @@
 export async function addNewSearch(newSearch) {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/search`,
+            `http://localhost:8080/bigfood/api/searchs`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -22,7 +22,7 @@ export async function addNewSearch(newSearch) {
 export async function getHotSearchList() {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/search`,
+            `http://localhost:8080/bigfood/api/searchs/hot`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },

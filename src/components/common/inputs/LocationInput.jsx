@@ -25,6 +25,9 @@ const handleGetLocation = async () => {
     try {
       const { latitude, longitude } = await getCurrentPosition();
       const locationName = await getAddressFromCoordinates(latitude, longitude);
+      localStorage.setItem("user_address", locationName);
+      localStorage.setItem("user_latitude", latitude);
+      localStorage.setItem("user_longitude", longitude);
       setAddress(locationName);
       setIsTyping(locationName.trim() !== "");
     } catch (error) {
