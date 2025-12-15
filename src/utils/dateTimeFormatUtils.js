@@ -5,20 +5,20 @@
  * @example formatDateTime(new Date()) => "2025-12-13T16:28:59"
  */
 export const formatDateTime = (date) => {
-  if (!date) return '';
+  if (!date) return "";
 
   const dateObj = date instanceof Date ? date : new Date(date);
-  
+
   if (isNaN(dateObj.getTime())) {
-    return '';
+    return "";
   }
 
   const year = dateObj.getFullYear();
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const day = String(dateObj.getDate()).padStart(2, '0');
-  const hours = String(dateObj.getHours()).padStart(2, '0');
-  const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-  const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const hours = String(dateObj.getHours()).padStart(2, "0");
+  const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+  const seconds = String(dateObj.getSeconds()).padStart(2, "0");
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 };
@@ -30,16 +30,16 @@ export const formatDateTime = (date) => {
  * @example formatDate(new Date()) => "13/12/2025"
  */
 export const formatDate = (date) => {
-  if (!date) return '';
+  if (!date) return "";
 
   const dateObj = date instanceof Date ? date : new Date(date);
-  
+
   if (isNaN(dateObj.getTime())) {
-    return '';
+    return "";
   }
 
-  const day = String(dateObj.getDate()).padStart(2, '0');
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
   const year = dateObj.getFullYear();
 
   return `${day}/${month}/${year}`;
@@ -52,16 +52,16 @@ export const formatDate = (date) => {
  * @example formatTime(new Date()) => "16:28"
  */
 export const formatTime = (date) => {
-  if (!date) return '';
+  if (!date) return "";
 
   const dateObj = date instanceof Date ? date : new Date(date);
-  
+
   if (isNaN(dateObj.getTime())) {
-    return '';
+    return "";
   }
 
-  const hours = String(dateObj.getHours()).padStart(2, '0');
-  const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+  const hours = String(dateObj.getHours()).padStart(2, "0");
+  const minutes = String(dateObj.getMinutes()).padStart(2, "0");
 
   return `${hours}:${minutes}`;
 };
@@ -73,12 +73,12 @@ export const formatTime = (date) => {
  * @example formatFullDateTime(new Date()) => "13/12/2025 16:28"
  */
 export const formatFullDateTime = (date) => {
-  if (!date) return '';
+  if (!date) return "";
 
   const dateObj = date instanceof Date ? date : new Date(date);
-  
+
   if (isNaN(dateObj.getTime())) {
-    return '';
+    return "";
   }
 
   return `${formatDate(dateObj)} | ${formatTime(dateObj)}`;
@@ -91,12 +91,12 @@ export const formatFullDateTime = (date) => {
  * @example formatRelativeTime(new Date(Date.now() - 300000)) => "5 phút trước"
  */
 export const formatRelativeTime = (date) => {
-  if (!date) return '';
+  if (!date) return "";
 
   const dateObj = date instanceof Date ? date : new Date(date);
-  
+
   if (isNaN(dateObj.getTime())) {
-    return '';
+    return "";
   }
 
   const now = new Date();
@@ -107,7 +107,7 @@ export const formatRelativeTime = (date) => {
   const diffDay = Math.floor(diffHour / 24);
 
   if (diffSec < 60) {
-    return 'Vừa xong';
+    return "Vừa xong";
   } else if (diffMin < 60) {
     return `${diffMin} phút trước`;
   } else if (diffHour < 24) {
@@ -126,12 +126,12 @@ export const formatRelativeTime = (date) => {
  * @example formatISOToReadable("2025-12-13T16:28:59") => "13/12/2025 16:28"
  */
 export const formatISOToReadable = (isoString) => {
-  if (!isoString) return '';
-  
+  if (!isoString) return "";
+
   const date = new Date(isoString);
-  
+
   if (isNaN(date.getTime())) {
-    return '';
+    return "";
   }
 
   return formatFullDateTime(date);
@@ -144,12 +144,12 @@ export const formatISOToReadable = (isoString) => {
  * @example formatISOToDate("2025-12-13T16:28:59") => "13/12/2025"
  */
 export const formatISOToDate = (isoString) => {
-  if (!isoString) return '';
-  
+  if (!isoString) return "";
+
   const date = new Date(isoString);
-  
+
   if (isNaN(date.getTime())) {
-    return '';
+    return "";
   }
 
   return formatDate(date);
@@ -162,12 +162,12 @@ export const formatISOToDate = (isoString) => {
  * @example formatISOToTime("2025-12-13T16:28:59") => "16:28"
  */
 export const formatISOToTime = (isoString) => {
-  if (!isoString) return '';
-  
+  if (!isoString) return "";
+
   const date = new Date(isoString);
-  
+
   if (isNaN(date.getTime())) {
-    return '';
+    return "";
   }
 
   return formatTime(date);
@@ -182,7 +182,7 @@ export const parseDateTime = (dateTimeString) => {
   if (!dateTimeString) return null;
 
   const date = new Date(dateTimeString);
-  
+
   return isNaN(date.getTime()) ? null : date;
 };
 
@@ -192,4 +192,45 @@ export const parseDateTime = (dateTimeString) => {
  */
 export const getCurrentDateTime = () => {
   return formatDateTime(new Date());
+};
+
+export const calculateDeliveryTime = (distance) => {
+  const minSpeed = 15; // km/h (Kẹt xe)
+  const maxSpeed = 30; // km/h (Đường thoáng)
+  const prepTime = 15; // Phút (Thời gian nhà hàng làm món)
+
+  // 1. Tính thời gian di chuyển (đổi ra phút)
+  // Đi nhanh nhất (maxSpeed) -> Tốn ít thời gian nhất (minTime)
+  const minTravelTimeMinutes = (distance / maxSpeed) * 60;
+
+  // Đi chậm nhất (minSpeed) -> Tốn nhiều thời gian nhất (maxTime)
+  const maxTravelTimeMinutes = (distance / minSpeed) * 60;
+
+  // 2. Cộng thêm thời gian làm món
+  const totalMinMinutes = minTravelTimeMinutes + prepTime;
+  const totalMaxMinutes = maxTravelTimeMinutes + prepTime;
+
+  // 3. Tính ra Timestamp (ms)
+  // Date.now() + số phút * 60 giây * 1000 ms
+  const minTimeMs = Date.now() + totalMinMinutes * 60 * 1000;
+  const maxTimeMs = Date.now() + totalMaxMinutes * 60 * 1000;
+
+  // 4. Hàm helper để format ra giờ:phút (VD: 12:30)
+  const formatTime = (ms) => {
+    const date = new Date(ms);
+    return date.toLocaleTimeString("vi-VN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  };
+
+  return {
+    // Trả về chuỗi hiển thị luôn (hoặc trả về timestamp tùy nhu cầu)
+    min: formatTime(minTimeMs),
+    max: formatTime(maxTimeMs),
+    // Trả thêm timestamp raw nếu muốn tính toán tiếp
+    minMs: minTimeMs,
+    maxMs: maxTimeMs,
+  };
 };

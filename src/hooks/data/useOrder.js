@@ -45,6 +45,15 @@ export default function useOrder() {
     }
   };
 
+  const cancelOrder = async (orderId, updateStatusRequest) => {
+    // Implement cancel order logic here
+    const response = await updateOrderStatus(orderId, updateStatusRequest);
+    if(response.ok) {
+      // Optionally refresh order data
+      return response.results;
+    }
+  };
+
   return { 
     createOrder, 
     orders, 
@@ -52,6 +61,7 @@ export default function useOrder() {
     orderHistory, 
     getAllOrder, 
     total,
-    totalPages 
+    totalPages,
+    cancelOrder
   };
 }

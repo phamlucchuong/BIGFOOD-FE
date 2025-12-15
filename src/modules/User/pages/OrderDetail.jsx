@@ -8,68 +8,31 @@ import {
   paymentMethodMap,
 } from "../../../utils/statusMapperUtils";
 import { formatUuidWithPrefix } from "../../../utils/uuidFormatUtils";
-import { formatISOToReadable } from "../../../utils/dateTimeFormatUtils";
+import { formatISOToReadable, calculateDeliveryTime } from "../../../utils/dateTimeFormatUtils";
 import { useSearchParams } from "react-router-dom";
 import TextButton from "../../../components/common/buttons/TextButton";
 
 export default function OrderDetail() {
-  const { orders, getOrder } = useOrder();
+  const { orders, getOrder, cancelOrder } = useOrder();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("id");
 
   useEffect(() => {
-    getOrder(orderId);
+    const fetchOrder = async () => {
+      await getOrder(orderId);
+    };
+    fetchOrder();
   }, []);
 
-  const buttonColor = {
-    PENDING: "red",
-    COMPLETED: "blue",
-  }[orders?.status];
-
-  const calTime = (distance) => {
-    const minSpeed = 15; // km/h (Kẹt xe)
-    const maxSpeed = 30; // km/h (Đường thoáng)
-    const prepTime = 15; // Phút (Thời gian nhà hàng làm món)
-
-    // 1. Tính thời gian di chuyển (đổi ra phút)
-    // Đi nhanh nhất (maxSpeed) -> Tốn ít thời gian nhất (minTime)
-    const minTravelTimeMinutes = (distance / maxSpeed) * 60;
-
-    // Đi chậm nhất (minSpeed) -> Tốn nhiều thời gian nhất (maxTime)
-    const maxTravelTimeMinutes = (distance / minSpeed) * 60;
-
-    // 2. Cộng thêm thời gian làm món
-    const totalMinMinutes = minTravelTimeMinutes + prepTime;
-    const totalMaxMinutes = maxTravelTimeMinutes + prepTime;
-
-    // 3. Tính ra Timestamp (ms)
-    // Date.now() + số phút * 60 giây * 1000 ms
-    const minTimeMs = Date.now() + totalMinMinutes * 60 * 1000;
-    const maxTimeMs = Date.now() + totalMaxMinutes * 60 * 1000;
-
-    // 4. Hàm helper để format ra giờ:phút (VD: 12:30)
-    const formatTime = (ms) => {
-      const date = new Date(ms);
-      return date.toLocaleTimeString("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
-    };
-
-    return {
-      // Trả về chuỗi hiển thị luôn (hoặc trả về timestamp tùy nhu cầu)
-      min: formatTime(minTimeMs),
-      max: formatTime(maxTimeMs),
-      // Trả thêm timestamp raw nếu muốn tính toán tiếp
-      minMs: minTimeMs,
-      maxMs: maxTimeMs,
-    };
+  const handleCancelOrder = async () => {
+    // Xử lý hủy đơn hàng
+    const updateStatusRequest = { status: "CANCELLED" };
+    const result = await cancelOrder(orderId, updateStatusRequest);
+    if (result) {
+      // Handle successful cancellation, e.g., show a message or update UI
+      await getOrder(orderId);
+    }
   };
-
-  // Cách dùng trong UI:
-  // const time = calTime(orders.deliveryDistance);
-  // Hiển thị: <div>{time.min} – {time.max}</div>  => "22:08 – 22:25"
 
   return (
     <div className="min-h-screen bg-[#e8edf2] px-4 py-10">
@@ -97,10 +60,17 @@ export default function OrderDetail() {
               </p>
             </div>
           </div>
-          <TextButton
-            name={orders?.status == "PENDING" ? "Hủy đơn hàng" : ""}
-            className={`border border-${buttonColor}-700 px-4 py-2 rounded-lg font-medium text-sm transition`}
-          />
+          {orders.status === "PENDING" ? (
+            <TextButton
+              name={"Hủy đơn hàng"}
+              className="border border-red-500 text-red-700 px-4 py-2 rounded-lg font-medium text-sm transition hover:scale-105"
+            />
+          ) : (
+            <TextButton
+              name={"Đặt lại"}
+              className="border border-blue-700 text-blue-700 px-4 py-2 rounded-lg font-medium text-sm transition hover:scale-105"
+            />
+          )}
           <div className="rounded-full border border-slate-200 bg-slate-50 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">
             {orderStatusMap[orders?.status]}
           </div>
@@ -201,8 +171,8 @@ export default function OrderDetail() {
                 </div>
                 <div className="flex flex-col items-center justify-center gap-1 rounded-xl bg-white px-4 py-3 text-center font-semibold text-slate-700">
                   <div>
-                    {calTime(orders.deliveryDistance).min} –{" "}
-                    {calTime(orders.deliveryDistance).max}
+                    {calculateDeliveryTime(orders.deliveryDistance).min} –{" "}
+                    {calculateDeliveryTime(orders.deliveryDistance).max}
                   </div>
                   <div className="text-xs font-medium text-slate-500">
                     Dự kiến giao hàng
