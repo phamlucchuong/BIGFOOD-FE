@@ -36,26 +36,15 @@ export default function usePassword({ email, onNext, setPasswordGlobal, onClose 
           console.log("Login success");
           onClose();
         }
-        if (localStorage.getItem("email-verified") === "true") {
-          const response = await login(email, passwordString);
-          if (response.data.code == 1001) {
-            setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
-            setSnackBarOpen(true);
-            setPassword(["", "", "", "", "", ""]);
-            setTimeout(() => inputRefs.current[0]?.focus(), 100);
-          } else {
-            setToken(response.results?.token);
-            setSnackBarOpen(false);
-            console.log("Login success");
-            onNext("home");
-          }
+          setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
+          setSnackBarOpen(true);
+          setPassword(["", "", "", "", "", ""]);
         } else {
           setPasswordGlobal(passwordString);
           localStorage.setItem("password", passwordString);
           onNext("register");
         }
-      }
-    } catch (error) {
+      } catch (error) {
       console.error("Unexpected error:", error);
     }
 

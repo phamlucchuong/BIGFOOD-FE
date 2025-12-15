@@ -1,4 +1,5 @@
-import {getListOrder , getOrderDetail , updateStatusOrder , getOrderRestaurantByStatus} from "../../../api/restaurant/orderAPI"
+import {getListOrder , getOrderDetail , updateStatusOrder , 
+    getOrderRestaurantByStatus , getRestaurantStatistical} from "../../../api/restaurant/orderAPI"
 
 export function useOrder(){
    const listOrderMyRestaurant = async () =>{
@@ -30,7 +31,15 @@ export function useOrder(){
     return response;
    }
 
+   const restaurantStatistical = async() => {
+      const response = await getRestaurantStatistical();
+    if(!response.ok){
+        throw new Error(`Failed to fetch restaurant statistical order : ${response.status}`);
+    }
+    return response;
+   }
+
    return {
-    listOrderMyRestaurant ,orderDetail , updateStatus , listOrderByStatus
+    listOrderMyRestaurant ,orderDetail , updateStatus , listOrderByStatus , restaurantStatistical
    }
 }

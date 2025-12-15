@@ -300,7 +300,7 @@ export const MenuManagementPage = () => {
                       </span>
                     </td>
                     <td className="p-4 font-medium">{formatCurrency(food.price)}</td>
-                    <td className="p-4 text-gray-600">{food.count}</td>
+                    <td className="p-4 text-gray-600">{food.sold}</td>
                     <td className="p-4">
                       {!food.available ? (
                         <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm">
