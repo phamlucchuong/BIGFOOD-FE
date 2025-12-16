@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -6,6 +5,8 @@ import RelatedRestaurants from "../../../components/dropdown/RelatedRestaurants"
 import ProductSection from "../../../sections/ProductSection";
 import { ChevronDown, ChevronRight, ClipboardList } from "lucide-react";
 import useRestaurant from "../../../hooks/data/useRestaurant";
+import TextButton from "../../../components/common/buttons/TextButton";
+import ReviewModal from "../../../components/modals/common/ReviewModal";
 
 export default function RestaurantDetail() {
   const [searchParams] = useSearchParams();
@@ -20,7 +21,16 @@ export default function RestaurantDetail() {
   const [selectedSize, setSelectedSize] = useState("M");
 
   const [showSlider, setShowSlider] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false); 
   const navigate = useNavigate();
+
+  // Mock reviews data
+  const mockReviews = [
+    { user: "Nguyen Van A", comment: "Món ăn rất ngon, phục vụ nhiệt tình!", rating: 5 },
+    { user: "Tran Thi B", comment: "Không gian quán đẹp, nhưng món ăn hơi nguội.", rating: 4 },
+    { user: "Le Van C", comment: "Giá cả hợp lý, sẽ quay lại lần sau.", rating: 5 },
+    { user: "Pham Thi D", comment: "Món ăn không đúng như mong đợi.", rating: 3 },
+  ];
 
   // load từ sessionStorage khi mở trang
   useEffect(() => {
@@ -214,9 +224,23 @@ export default function RestaurantDetail() {
               </div>
             </div>
             <p>{restaurantDetail?.address}</p>
-            <a className="underline" href="">
-              Thong tin quan
-            </a>
+            <div className="flex items-center gap-4 mt-4">
+              <a className="underline text-blue-500 cursor-pointer" href="">
+                Thông tin quán
+              </a>
+              <a
+                onClick={() => setShowReviewModal(true)}
+                className="px-6 py-2 text-blue-500 text-md font-bold rounded-lg hover:bg-blue-50 outline-none focus:outline-none active:opacity-70 transition cursor-pointer"
+            >Đánh giá</a>
+            </div>
+            {/* Render ReviewModel */}
+            {showReviewModal && (
+              <ReviewModal
+                onClose={() => setShowReviewModal(false)}
+                restaurantId={restaurantId} // Pass restaurantId as a prop
+                reviews={mockReviews} // Pass mock reviews
+              />
+            )}
           </div>
           <div className="w-full mt-4">
             <div className="flex items-center gap-2 mb-3">
