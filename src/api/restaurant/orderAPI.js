@@ -57,5 +57,15 @@ async function getRestaurantStatistical() {
     return response.json();
 }
 
+async function getRestaurantStatisticalAndSort(timeRange) {
+     const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/statistics?timeRange=${timeRange}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+        }
+    });
+    return response.json();
+}
 
-export {getListOrder , getOrderDetail , updateStatusOrder , getOrderRestaurantByStatus , getRestaurantStatistical}
+
+export {getListOrder , getOrderDetail , updateStatusOrder , getOrderRestaurantByStatus , getRestaurantStatistical ,getRestaurantStatisticalAndSort}
