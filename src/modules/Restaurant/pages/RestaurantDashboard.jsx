@@ -82,11 +82,7 @@ const RestaurantDashboard = () => {
                   <p className="text-sm text-gray-600">{food.sold} đã bán</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">{formatCurrency(food.price)}</p>
-                  <div className="flex items-center gap-1">
-                    <Star size={14} className="fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm">{4.7}</span>
-                  </div>
+                  <p className="font-bold">{formatCurrency(food.price)}</p> 
                 </div>
               </div>
             ))}

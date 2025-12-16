@@ -5,16 +5,14 @@
  import { useRestaurant } from '../../../hooks/auth/restaurant/useRestaurant';
 
  export const AnalyticsPage = () => {
-  const [timeRange, setTimeRange] = useState('day');
   const[data , setData] = useState();
   const[dataBestFood , setDataBestFood] = useState();
   const[dataLestFood , setDataLeastFood] = useState();
-  const {restaurantStatistical } = useOrder();
+  const {restaurantStatistical , restaurantStatisticalAndSort } = useOrder();
   const {listFoodBestSell , listFoodLeast} = useRestaurant();
 
   const handleLoad = async ()=>{
      const response = await restaurantStatistical();
-     console.log( "restaurant Statistical : " ,response);
      if(response.ok){
       setData([response.results]);
      }
@@ -28,6 +26,18 @@
      }
   }
 
+  const handleLoadSort = async (timeRange) =>{
+   try{
+    const response = await restaurantStatisticalAndSort(timeRange);
+    console.log( "restaurant Statistical sort : " ,response);
+    if(response.ok){
+      setData([response.results]);
+    }
+   }catch(error){
+    console.error("Error loading statistics:", error);
+   }
+  }
+
   useEffect(()=> {
     handleLoad();
     handleLoadFood();
@@ -38,7 +48,7 @@
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Báo Cáo Thống Kê</h2>
         <div className="flex gap-3">
-          <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)} className="px-4 py-2 border rounded-lg">
+          <select onChange={(e) => handleLoadSort(e.target.value)}  className="px-4 py-2 border rounded-lg">
             <option value="day">Hôm nay</option>
             <option value="week">Tuần này</option>
             <option value="month">Tháng này</option>
@@ -113,7 +123,7 @@
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600 w-20">Trung lập</span>
               <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-yellow-500" style={{ width:  `${100 - (order.percentagePositive +order.percentNegative) }%` }}></div>
+                <div className="h-full bg-yellow-500" style={{ width:  `${100 - (order.percentagePositive + order.percentNegative) }%` }}></div>
               </div>
               <span className="text-sm font-medium">{100 - (order.percentagePositive +order.percentNegative)}%</span>
             </div>
