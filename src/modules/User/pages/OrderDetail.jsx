@@ -105,16 +105,17 @@ export default function OrderDetail() {
     await getOrder(orderId);
   };
 
-
   const status = {
     PENDING: "Đơn hàng đang chờ nhà hàng xác nhận và chuẩn bị.",
     CONFIRMED: "Đơn hàng đã được xác nhận và đang tiến hành chuẩn bị.",
     PREPARING: "Đơn hàng đang được đầu bếp chuẩn bị.",
-    DELIVERING: "Đơn hàng đang được giao tới quý khách, hãy chú ý điện thoại để không bỏ lỡ cuộc gọi từ nhân viên giao hàng.",
-    COMPLETED: "Đơn hàng đã hoàn thành, cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi.",
+    DELIVERING:
+      "Đơn hàng đang được giao tới quý khách, hãy chú ý điện thoại để không bỏ lỡ cuộc gọi từ nhân viên giao hàng.",
+    COMPLETED:
+      "Đơn hàng đã hoàn thành, cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi.",
     CANCELLED: "Đơn hàng đã được hủy bởi khách hàng.",
     REJECTED: "Đơn hàng bị nhà hàng từ chối.",
-  }
+  };
 
   return (
     <div className="min-h-screen bg-[#e8edf2] px-4 py-10">
@@ -212,9 +213,7 @@ export default function OrderDetail() {
                   <ClipboardList className="h-4 w-4 text-sky-500" />
                   Trạng thái đơn hàng
                 </div>
-                <p className="mt-2 text-slate-500">
-                  {status[orders.status]}
-                </p>
+                <p className="mt-2 text-slate-500">{status[orders.status]}</p>
               </div>
             </div>
             {/* đánh giá đơn hàng */}
@@ -241,26 +240,26 @@ export default function OrderDetail() {
                       </div>
                     ))}
                   </div>
-                  <div className="flex justify-end mt-2">
-                    <span className="text-sm text-gray-700">
+                  <div className="mt-4 text-left">
+                    <span className="block text-xs text-gray-700">
                       {review?.lastUpdateAt
                         ? formatISOToReadable(review.lastUpdateAt)
                         : ""}
                     </span>
+                    <p className="text-gray-700">{review.reviewText}</p>
                   </div>
-                  <p className="mt-6 text-gray-700">{review.reviewText}</p>
 
                   {/* trả lời bình luận của nhà hàng */}
                   {review.replyText && (
-                    <div className="mt-6">
-                      <span className="text-sm text-gray-700">
+                    <div className="mt-6 text-right ml-auto w-full">
+                      <span className="block text-xs text-gray-700">
                         {review?.replyAt
                           ? formatISOToReadable(review.replyAt)
                           : ""}
                       </span>
-                      <div className="flex justify-end mt-2">
-                        <p className="mt-6 text-gray-700">{review.replyText}</p>
-                      </div>
+                      <p className="text-gray-700 inline-block text-right">
+                        {review.replyText}
+                      </p>
                     </div>
                   )}
                 </div>

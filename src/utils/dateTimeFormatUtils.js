@@ -81,7 +81,7 @@ export const formatFullDateTime = (date) => {
     return "";
   }
 
-  return `${formatDate(dateObj)} | ${formatTime(dateObj)}`;
+  return `${formatTime(dateObj)} ${formatDate(dateObj)}`;
 };
 
 /**
