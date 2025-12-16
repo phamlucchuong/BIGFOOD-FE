@@ -1,9 +1,9 @@
 import { formatISOToReadable } from "../../../utils/dateTimeFormatUtils";
 import { formatCurrency } from "../../../utils/moneyFormatUtils";
 import { formatUuidWithPrefix } from "../../../utils/uuidFormatUtils";
-import { getStatusMap } from "../../../utils/orderStatusMap";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { orderStatusMapper } from "../../../utils/statusMapperUtils";
 
 // Hiển thị đơn hàng; dùng `item` để khớp với CollectionSection
 export default function OrderCard({ item, onClick }) {
@@ -25,7 +25,7 @@ export default function OrderCard({ item, onClick }) {
 
   return (
     <div
-      className="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-2 hover:shadow-md transition py-3 my-4"
+      className="relative bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-2 hover:shadow-md transition py-3 my-4"
       onClick={onClick}
     >
       <div className="flex items-center justify-between">
@@ -79,22 +79,22 @@ export default function OrderCard({ item, onClick }) {
           <div className="mr-12">
             <button
               onClick={onReorder}
-              className="px-4 py-[7px] border border-blue-500 text-blue-500 font-semibold rounded-xl hover:bg-blue-50 transition text-sm"
+              className="absolute right-64 top-6 px-4 py-[7px] border border-blue-500 text-blue-500 font-semibold rounded-xl hover:bg-blue-50 transition text-sm"
             >
               Đặt lại
             </button>
           </div>
         ) : null}
         {/* Right section - Buttons and Status */}
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-2">
           {/* Status Badge */}
           {order.status ? (
             <div
-              className={`px-4 py-[5px] rounded-full text-xs font-semibold ${
-                getStatusMap(order.status).color
+              className={`px-4 py-[5px] rounded-lg text-xs font-medium ${
+                orderStatusMapper[order.status].color
               }`}
             >
-              {getStatusMap(order.status).text}
+              {orderStatusMapper[order.status].text}
             </div>
           ) : null}
 

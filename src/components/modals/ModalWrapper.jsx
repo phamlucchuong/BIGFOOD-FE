@@ -18,8 +18,8 @@ export default function ModalWrapper({ title, description, children, onClose }) 
                     <i className="fa-solid fa-xmark text-sm"></i>
                 </button>
 
-                <h2>{title}</h2>
-                <p>{description}</p>
+                <h2 className="text-2xl">{title}</h2>
+                <p className="text-gray-500 text-sm">{description}</p>
                 {children}
             </div>
         </div>

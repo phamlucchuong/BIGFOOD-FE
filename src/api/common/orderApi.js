@@ -81,7 +81,7 @@ export async function getOrderByUserId(status, page) {
 }
 
 
-export async function updateOrderStatus(orderId, updateStatusRequest) {
+export async function updateOrderStatus(orderId, request) {
     try {
         const response = await fetch(
             `http://localhost:8080/bigfood/api/orders/${orderId}/status`,
@@ -90,7 +90,7 @@ export async function updateOrderStatus(orderId, updateStatusRequest) {
                 headers: { "Content-Type": "application/json",
                     authorization: `Bearer ${getToken()}`
                 },
-                body: JSON.stringify(updateStatusRequest),
+                body: JSON.stringify(request),
             }
         );
 
@@ -99,3 +99,4 @@ export async function updateOrderStatus(orderId, updateStatusRequest) {
         console.error("Lỗi khi lấy danh sách đơn hàng: ", error);
     }
 }
+

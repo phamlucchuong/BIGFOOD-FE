@@ -3,6 +3,7 @@ import {
   createNewOrder,
   getOrderById,
   getOrderByUserId,
+  updateOrderStatus,
 } from "../../api/common/orderApi";
 
 export default function useOrder() {
@@ -30,7 +31,8 @@ export default function useOrder() {
       const newData = response.results.orders || [];
       const total = response?.results?.total ?? 0;
       setTotal(total);
-      const totalPages = response?.results?.totalPages ?? response?.results?.total ?? 1;
+      const totalPages =
+        response?.results?.totalPages ?? response?.results?.total ?? 1;
       setTotalPages(totalPages);
 
       if (reset || page === 0) {
@@ -45,23 +47,23 @@ export default function useOrder() {
     }
   };
 
-  const cancelOrder = async (orderId, updateStatusRequest) => {
+  const cancelOrder = async (orderId, updateRequest) => {
     // Implement cancel order logic here
-    const response = await updateOrderStatus(orderId, updateStatusRequest);
-    if(response.ok) {
+    const response = await updateOrderStatus(orderId, updateRequest);
+    if (response.ok) {
       // Optionally refresh order data
       return response.results;
     }
   };
 
-  return { 
-    createOrder, 
-    orders, 
-    getOrder, 
-    orderHistory, 
-    getAllOrder, 
+  return {
+    createOrder,
+    orders,
+    getOrder,
+    orderHistory,
+    getAllOrder,
     total,
     totalPages,
-    cancelOrder
+    cancelOrder,
   };
 }

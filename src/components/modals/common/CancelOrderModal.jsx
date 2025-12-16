@@ -60,7 +60,7 @@ export default function CancelOrderModal({ onClose, onSubmit }) {
                         value={otherReason}
                         onChange={(e) => setOtherReason(e.target.value)}
                         placeholder="Nhập lý do khác..."
-                        className="mt-2 w-full rounded border-gray-300"
+                        className="mt-2 w-full rounded border border-gray-500 p-2 text-sm focus:outline-blue-300 focus:ring-blue-500"
                         rows={3}
                     />
                 )}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getHotSearchList } from "../../api/common/searchApi";
 import useHome from "./useRestaurant";
+import { getRestaurant } from "../../api/common/restaurantApi";
 
 const STORAGE_KEY = "history_search";
 

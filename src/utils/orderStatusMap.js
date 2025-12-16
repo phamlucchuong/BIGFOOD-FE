@@ -9,7 +9,7 @@ export const getStatusMap = (status) => {
       return { text: "ĐANG GIAO HÀNG", color: "bg-green-100 text-green-600" };
     case "REJECTED":
       return { text: "BỊ TỪ CHỐI", color: "bg-red-100 text-red-600" };
-    case "CANCELED":
+    case "CANCELLED":
       return { text: "ĐÃ HỦY", color: "bg-gray-100 text-gray-600" };
     case "COMPLETED":
       return { text: "HOÀN THÀNH", color: "bg-gray-100 text-gray-600" };
