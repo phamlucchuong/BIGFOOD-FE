@@ -1,14 +1,22 @@
 import { useState } from "react";
-import { getRestaurant, getRestaurantDetail } from "../../api/common/restaurantApi";
-
-
+import {
+  getRestaurant,
+  getRestaurantDetail,
+  getRestaurantRequestApi,
+  approveRestaurantRequestApi,
+} from "../../api/common/restaurantApi";
 
 export default function useHome() {
   const [restaurants, setRestaurants] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchRestaurants = async (categoryId, searchText, pageIndex, isReset = false) => {
+  const fetchRestaurants = async (
+    categoryId,
+    searchText,
+    pageIndex,
+    isReset = false
+  ) => {
     setIsLoading(true);
     try {
       const response = await getRestaurant(categoryId, searchText, pageIndex);
@@ -29,9 +37,7 @@ export default function useHome() {
     }
   };
 
-
-
-  const [ restaurantDetail, setRestaurantDetail ] = useState(null);
+  const [restaurantDetail, setRestaurantDetail] = useState(null);
   const fetchRestaurantDetail = async (restaurantId) => {
     setIsLoading(true);
     try {
@@ -41,10 +47,14 @@ export default function useHome() {
       console.error("Lỗi fetch chi tiết nhà hàng:", error);
     } finally {
       setIsLoading(false);
-    } 
+    }
   };
 
-  const fetchRestaurantsByCategory = async (categoryId, pageIndex = 0, isReset = false) => {
+  const fetchRestaurantsByCategory = async (
+    categoryId,
+    pageIndex = 0,
+    isReset = false
+  ) => {
     setIsLoading(true);
     try {
       // getRestaurant(lng, lat, categoryId, searchText, page)
@@ -64,13 +74,44 @@ export default function useHome() {
     }
   };
 
-  return { 
-    restaurants, 
-    fetchRestaurants, 
-    totalPages, 
-    isLoading, 
-    restaurantDetail, 
+  const [restaurantRequests, setRestaurantRequests] = useState([]);
+  const fetchRestaurantRequests = async (page = 0) => {
+    setIsLoading(true);
+    try {
+      const response = await getRestaurantRequestApi(page);
+      if (response.ok) {
+        setRestaurantRequests(response.results.restaurants);
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const approveRequest = async (requestId, isApproved) => {
+    setIsLoading(true);
+    try {
+      const response = await approveRestaurantRequestApi(requestId, isApproved);
+      if(response.ok) {
+        alert("Phê duyệt thành công");
+      } else {
+        alert("Phê duyệt thất bại");
+      }
+    } catch (error) {
+      console.error("Lỗi phê duyệt yêu cầu:", error);
+    }
+  };
+
+  return {
+    restaurants,
+    fetchRestaurants,
+    totalPages,
+    isLoading,
+    restaurantDetail,
     fetchRestaurantDetail,
-    fetchRestaurantsByCategory 
+    fetchRestaurantsByCategory,
+    restaurantRequests,
+    fetchRestaurantRequests,
+    approveRequest
   };
 }

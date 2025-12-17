@@ -9,6 +9,7 @@ import CategoryCard from "../../../../components/common/cards/CategoryCard";
 
 export default function RestaurantManagerment() {
   const [categories, setCategories] = useState([]);
+  const [ restaurants, setRestaurants ] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const data = await handleLoadCategories();
