@@ -249,7 +249,7 @@ const AppSidebar = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex ${
+        className={`py-8 flex items-center ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
@@ -280,6 +280,7 @@ const AppSidebar = () => {
             />
           )}
         </Link>
+        <span className="text-white text-2xl ml-[-30px]">BigFood</span>
       </div>
 
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">

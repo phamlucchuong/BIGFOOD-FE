@@ -3,6 +3,8 @@ import {
   createNewOrder,
   getOrderById,
   getOrderByUserId,
+  updateOrderStatus,
+  getSummary,
 } from "../../api/common/orderApi";
 
 export default function useOrder() {
@@ -10,6 +12,7 @@ export default function useOrder() {
   const [orderHistory, setOrderHistory] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
+  const [orderSummary, setOrderSummary] = useState({});
 
   const createOrder = async (formData) => {
     return await createNewOrder(formData);
@@ -30,7 +33,8 @@ export default function useOrder() {
       const newData = response.results.orders || [];
       const total = response?.results?.total ?? 0;
       setTotal(total);
-      const totalPages = response?.results?.totalPages ?? response?.results?.total ?? 1;
+      const totalPages =
+        response?.results?.totalPages ?? response?.results?.total ?? 1;
       setTotalPages(totalPages);
 
       if (reset || page === 0) {
@@ -45,13 +49,35 @@ export default function useOrder() {
     }
   };
 
-  return { 
-    createOrder, 
-    orders, 
-    getOrder, 
-    orderHistory, 
-    getAllOrder, 
+  const cancelOrder = async (orderId, updateRequest) => {
+    // Implement cancel order logic here
+    const response = await updateOrderStatus(orderId, updateRequest);
+    if (response.ok) {
+      // Optionally refresh order data
+      return response.results;
+    }
+  };
+
+  const getOrderSummary = async () => {
+    try {
+      const response = await getSummary();
+      setOrderSummary(response.results || {});
+    } catch (error) {
+      console.error("Error fetching order summary:", error);
+      return {};
+    }
+  };
+
+  return {
+    createOrder,
+    orders,
+    getOrder,
+    orderHistory,
+    getAllOrder,
     total,
-    totalPages 
+    totalPages,
+    cancelOrder,
+    orderSummary,
+    getOrderSummary,
   };
 }

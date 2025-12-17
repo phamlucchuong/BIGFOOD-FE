@@ -18,13 +18,13 @@ function Header({ isSticky, onToggleSearch, onLoginClick }) {
     setToken(t);
   }, []);
 
+  const handleItemDropdown = () => {
+    setDropdown(true);
+  };
+
   const handleLogout = async () => {
     setDropdown(false);
     await logout();
-  };
-
-  const handleItemDropdown = () => {
-    setDropdown(true);
   };
 
   return (

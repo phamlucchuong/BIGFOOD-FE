@@ -1,75 +1,121 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Bike, ClipboardList, Clock, CreditCard, MapPin } from "lucide-react";
-import useOrder from "../../../hooks/data/useOrder";
-import { useEffect } from "react";
-import { formatCurrency } from "../../../utils/moneyFormatUtils";
-import {
-  orderStatusMap,
-  paymentMethodMap,
-} from "../../../utils/statusMapperUtils";
-import { formatUuidWithPrefix } from "../../../utils/uuidFormatUtils";
-import { formatISOToReadable } from "../../../utils/dateTimeFormatUtils";
+import { ClipboardList, CreditCard, MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import TextButton from "../../../components/common/buttons/TextButton";
+import CancelOrderModal from "../../../components/modals/common/CancelOrderModal";
+import RatingModal from "../../../components/modals/common/RatingModal";
+import useOrder from "../../../hooks/data/useOrder";
+import useReview from "../../../hooks/data/useReview";
+import {
+  calculateDeliveryTime,
+  formatISOToReadable,
+} from "../../../utils/dateTimeFormatUtils";
+import { formatCurrency } from "../../../utils/moneyFormatUtils";
+import {
+  orderStatusMapper,
+  paymentMethodMapper,
+} from "../../../utils/statusMapperUtils";
+import { formatUuidWithPrefix } from "../../../utils/uuidFormatUtils";
 
 export default function OrderDetail() {
-  const { orders, getOrder } = useOrder();
+  const { orders, getOrder, cancelOrder } = useOrder();
+  const { createReview, updateReview } = useReview();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("id");
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [review, setReview] = useState({
+    rating: 0,
+    reviewText: "",
+    lastUpdateAt: null,
+    replyText: "",
+    replyAt: null,
+  });
+  const [reason, setReason] = useState("");
 
-  useEffect(() => {
-    getOrder(orderId);
-  }, []);
-
-  const buttonColor = {
-    PENDING: "red",
-    COMPLETED: "blue",
-  }[orders?.status];
-
-  const calTime = (distance) => {
-    const minSpeed = 15; // km/h (Kẹt xe)
-    const maxSpeed = 30; // km/h (Đường thoáng)
-    const prepTime = 15; // Phút (Thời gian nhà hàng làm món)
-
-    // 1. Tính thời gian di chuyển (đổi ra phút)
-    // Đi nhanh nhất (maxSpeed) -> Tốn ít thời gian nhất (minTime)
-    const minTravelTimeMinutes = (distance / maxSpeed) * 60;
-
-    // Đi chậm nhất (minSpeed) -> Tốn nhiều thời gian nhất (maxTime)
-    const maxTravelTimeMinutes = (distance / minSpeed) * 60;
-
-    // 2. Cộng thêm thời gian làm món
-    const totalMinMinutes = minTravelTimeMinutes + prepTime;
-    const totalMaxMinutes = maxTravelTimeMinutes + prepTime;
-
-    // 3. Tính ra Timestamp (ms)
-    // Date.now() + số phút * 60 giây * 1000 ms
-    const minTimeMs = Date.now() + totalMinMinutes * 60 * 1000;
-    const maxTimeMs = Date.now() + totalMaxMinutes * 60 * 1000;
-
-    // 4. Hàm helper để format ra giờ:phút (VD: 12:30)
-    const formatTime = (ms) => {
-      const date = new Date(ms);
-      return date.toLocaleTimeString("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
-    };
-
-    return {
-      // Trả về chuỗi hiển thị luôn (hoặc trả về timestamp tùy nhu cầu)
-      min: formatTime(minTimeMs),
-      max: formatTime(maxTimeMs),
-      // Trả thêm timestamp raw nếu muốn tính toán tiếp
-      minMs: minTimeMs,
-      maxMs: maxTimeMs,
-    };
+  const handleRatingModalOpen = () => {
+    setIsRatingModalOpen(true);
   };
 
-  // Cách dùng trong UI:
-  // const time = calTime(orders.deliveryDistance);
-  // Hiển thị: <div>{time.min} – {time.max}</div>  => "22:08 – 22:25"
+  const handleRatingModalClose = () => {
+    setIsRatingModalOpen(false);
+  };
+
+  const handleCancelModalOpen = () => {
+    setIsCancelModalOpen(true);
+  };
+
+  const handleCancelModalClose = () => {
+    setIsCancelModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (!orderId) return;
+    getOrder(orderId);
+  }, [orderId]);
+
+  useEffect(() => {
+    if (orders?.review) {
+      handleFetchReview();
+      handleFetchReason();
+    }
+  }, [orders]);
+
+  const handleCancelOrder = async (reason) => {
+    console.log("Hủy đơn hàng với lý do: ", reason);
+    const request = {
+      status: "CANCELLED",
+      reason: reason,
+    };
+    const result = await cancelOrder(orderId, request);
+    if (result) {
+      await getOrder(orderId, reason);
+    }
+  };
+
+  const handleFetchReview = () => {
+    setReview({
+      rating: orders.review.rating,
+      reviewText: orders.review.reviewText,
+      lastUpdateAt: orders.review.lastUpdateAt,
+      replyText: orders.review.replyText,
+      replyAt: orders.review.replyAt,
+    });
+  };
+
+  const handleFetchReason = () => {
+    setReason(
+      orders.status === "CANCELLED" ? orders.cancelReason : orders.rejectReason
+    );
+  };
+
+  const handleReview = async (rating, comment) => {
+    const reviewData = {
+      rating,
+      reviewText: comment,
+    };
+
+    if (orders?.review?.id) {
+      await updateReview(orderId, reviewData);
+    } else {
+      await createReview(orderId, reviewData);
+    }
+
+    await getOrder(orderId);
+  };
+
+  const status = {
+    PENDING: "Đơn hàng đang chờ nhà hàng xác nhận và chuẩn bị.",
+    CONFIRMED: "Đơn hàng đã được xác nhận và đang tiến hành chuẩn bị.",
+    PREPARING: "Đơn hàng đang được đầu bếp chuẩn bị.",
+    DELIVERING:
+      "Đơn hàng đang được giao tới quý khách, hãy chú ý điện thoại để không bỏ lỡ cuộc gọi từ nhân viên giao hàng.",
+    COMPLETED:
+      "Đơn hàng đã hoàn thành, cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi.",
+    CANCELLED: "Đơn hàng đã được hủy bởi khách hàng.",
+    REJECTED: "Đơn hàng bị nhà hàng từ chối.",
+  };
 
   return (
     <div className="min-h-screen bg-[#e8edf2] px-4 py-10">
@@ -97,12 +143,36 @@ export default function OrderDetail() {
               </p>
             </div>
           </div>
-          <TextButton
-            name={orders?.status == "PENDING" ? "Hủy đơn hàng" : ""}
-            className={`border border-${buttonColor}-700 px-4 py-2 rounded-lg font-medium text-sm transition`}
-          />
-          <div className="rounded-full border border-slate-200 bg-slate-50 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700">
-            {orderStatusMap[orders?.status]}
+
+          {orders.status === "PENDING" && (
+            <TextButton
+              name={"Hủy đơn hàng"}
+              onClick={handleCancelModalOpen}
+              className="border border-red-500 text-red-700 px-4 py-2 rounded-lg font-medium text-sm transition hover:scale-105"
+            />
+          )}
+          {orders.status === "COMPLETED" && orders?.review?.id == null && (
+            <TextButton
+              name={"Đánh giá"}
+              onClick={handleRatingModalOpen}
+              className="border border-yellow-500 text-yellow-500 px-4 py-2 rounded-lg font-medium text-sm transition hover:scale-105"
+            />
+          )}
+          {(orders.status === "CANCELLED" ||
+            orders.status == "REJECTED" ||
+            (orders.status === "COMPLETED" && orders?.review?.id != null)) && (
+            <TextButton
+              name={"Đặt lại"}
+              onClick={handleRatingModalOpen}
+              className="border border-blue-700 text-blue-700 px-4 py-2 rounded-lg font-medium text-sm transition hover:scale-105"
+            />
+          )}
+
+          <div
+            className={`rounded-full border border-slate-200 px-5 py-2 text-xs font-semibold uppercase tracking-wide cursor-default
+            ${orderStatusMapper[orders?.status]?.color}`}
+          >
+            {orderStatusMapper[orders?.status]?.text}
           </div>
         </div>
 
@@ -141,12 +211,78 @@ export default function OrderDetail() {
               <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
                 <div className="flex items-center gap-2 font-medium">
                   <ClipboardList className="h-4 w-4 text-sky-500" />
-                  Trạng thái giao hàng
+                  Trạng thái đơn hàng
                 </div>
-                <p className="mt-2 text-slate-500">
-                  Đơn hàng đang chờ nhà hàng xác nhận và chuẩn bị.
-                </p>
+                <p className="mt-2 text-slate-500">{status[orders.status]}</p>
               </div>
+            </div>
+            {/* đánh giá đơn hàng */}
+            <div className="relative space-y-4 rounded-2xl border border-slate-100 bg-white/80 p-6 mt-4">
+              {orders?.review?.id && (
+                <div className="">
+                  <div
+                    onClick={handleRatingModalOpen}
+                    className="absolute top-0 right-2 cursor-pointer"
+                  >
+                    <i className="fa-solid fa-pencil text-gray-500 text-xs hover:text-red-500 transition-transform"></i>
+                  </div>
+                  <div className="flex justify-center items-center gap-2 mt-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <div
+                        key={star}
+                        className={`text-[50px] ${
+                          star <= review.rating
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      >
+                        ★
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 text-left">
+                    <span className="block text-xs text-gray-700">
+                      {review?.lastUpdateAt
+                        ? formatISOToReadable(review.lastUpdateAt)
+                        : ""}
+                    </span>
+                    <p className="text-gray-700">{review.reviewText}</p>
+                  </div>
+
+                  {/* trả lời bình luận của nhà hàng */}
+                  {review.replyText && (
+                    <div className="mt-6 text-right ml-auto w-full">
+                      <span className="block text-xs text-gray-700">
+                        {review?.replyAt
+                          ? formatISOToReadable(review.replyAt)
+                          : ""}
+                      </span>
+                      <p className="text-gray-700 inline-block text-right">
+                        {review.replyText}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+              {(orders.status == "CANCELLED" ||
+                orders.status == "REJECTED") && (
+                <>
+                  <div className="">
+                    <h3
+                      className={`text-lg font-semibold text-${
+                        orders.status == "CANCELLED" ? "orange" : "red"
+                      }-600`}
+                    >
+                      Lý do {orders.status == "CANCELLED" ? "hủy" : "từ chối"}{" "}
+                      đơn hàng:
+                    </h3>
+                    <p className="mt-2 text-gray-700">{reason}</p>
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    Vào lúc: {formatISOToReadable(orders.lastUpdateAt)}
+                  </span>
+                </>
+              )}
             </div>
           </section>
 
@@ -173,7 +309,9 @@ export default function OrderDetail() {
 
             <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
               <div className="flex items-center justify-between font-semibold text-slate-800">
-                <span>Trả qua {paymentMethodMap[1][orders.paymentMethod]}</span>
+                <span>
+                  Trả qua {paymentMethodMapper[1][orders.paymentMethod]}
+                </span>
                 <span>{formatCurrency(orders.totalAmount)}</span>
               </div>
               <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
@@ -185,7 +323,7 @@ export default function OrderDetail() {
                 ) : (
                   <span>
                     Thanh toán qua{" "}
-                    {paymentMethodMap?.[1]?.[orders.paymentMethod] ||
+                    {paymentMethodMapper?.[1]?.[orders.paymentMethod] ||
                       orders.paymentMethod}
                   </span>
                 )}
@@ -201,8 +339,8 @@ export default function OrderDetail() {
                 </div>
                 <div className="flex flex-col items-center justify-center gap-1 rounded-xl bg-white px-4 py-3 text-center font-semibold text-slate-700">
                   <div>
-                    {calTime(orders.deliveryDistance).min} –{" "}
-                    {calTime(orders.deliveryDistance).max}
+                    {calculateDeliveryTime(orders.deliveryDistance).min} –{" "}
+                    {calculateDeliveryTime(orders.deliveryDistance).max}
                   </div>
                   <div className="text-xs font-medium text-slate-500">
                     Dự kiến giao hàng
@@ -250,6 +388,20 @@ export default function OrderDetail() {
             </div>
           </section>
         </div>
+        {isRatingModalOpen && (
+          <RatingModal
+            currentRating={review.rating}
+            currentReview={review.reviewText}
+            onClose={handleRatingModalClose}
+            onSubmit={handleReview}
+          />
+        )}
+        {isCancelModalOpen && (
+          <CancelOrderModal
+            onClose={handleCancelModalClose}
+            onSubmit={handleCancelOrder}
+          />
+        )}
       </div>
     </div>
   );

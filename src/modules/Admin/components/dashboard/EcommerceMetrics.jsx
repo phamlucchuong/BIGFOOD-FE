@@ -1,7 +1,20 @@
 import Badge from "../ui/Badge";
 import { UsersRound, Box, ArrowUp, ArrowDown} from "lucide-react";
+import { useEffect } from "react";
+import { useUser } from "../../hooks/useUser";
+import useOrder from "../../../../hooks/data/useOrder";
 
 export default function EcommerceMetrics() {
+
+  const { userSummary, handleUserSummary } = useUser();
+  const { orderSummary, getOrderSummary } = useOrder();
+
+  useEffect(() => {
+    handleUserSummary();
+    getOrderSummary();
+  }, []);
+
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
       {/* <!-- Metric Item Start --> */}
@@ -16,12 +29,14 @@ export default function EcommerceMetrics() {
               Accounts
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-3xl dark:text-white/90">
-              3,782
+              {userSummary.total}
             </h4>
           </div>
-          <Badge color="success">
-            <ArrowUp />
-            11.01%
+          <Badge color={`${userSummary.direction === "increase" ? "success" : "error"}`}>
+            {
+              userSummary.direction === "increase" ? <ArrowUp /> : <ArrowDown />
+            }
+            {userSummary.changePercentage} %
           </Badge>
         </div>
       </div>
@@ -38,13 +53,15 @@ export default function EcommerceMetrics() {
               Orders
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-3xl dark:text-white/90">
-              5,359
+              {orderSummary.total}
             </h4>
           </div>
 
-          <Badge color="error">
-            <ArrowDown />
-            9.05%
+          <Badge color={`${orderSummary.direction === "increase" ? "success" : "error"}`}>
+            {
+              orderSummary.direction === "increase" ? <ArrowUp /> : <ArrowDown />
+            }
+            {orderSummary.changePercentage} %
           </Badge>
         </div>
       </div>

@@ -79,3 +79,42 @@ export async function getOrderByUserId(status, page) {
         console.error("Lỗi khi lấy danh sách đơn hàng: ", error);
     }
 }
+
+
+export async function updateOrderStatus(orderId, request) {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/bigfood/api/orders/${orderId}/status`,
+            {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json",
+                    authorization: `Bearer ${getToken()}`
+                },
+                body: JSON.stringify(request),
+            }
+        );
+
+        return response.json();
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách đơn hàng: ", error);
+    }
+}
+
+export async function getSummary() {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/bigfood/api/orders/summary`,
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json",
+                    authorization: `Bearer ${localStorage.getItem("token")}`
+                },
+            }
+        );
+
+        return response.json();
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách đơn hàng: ", error);
+    }
+}
+

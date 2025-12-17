@@ -9,14 +9,16 @@ export default function Footer() {
     return (
         <div className="px-[200px] pb-[50px] pt-7" style={{borderTop: '1px solid #d1d5db'}}>
             <div><span className="text-blue-500 text-5xl">beFood</span></div>
+        {/* <div className="mt-[100px] px-[200px] pb-[50px] pt-7" style={{borderTop: '1px solid #d1d5db'}}>
+            <div><span className="text-blue-500 text-5xl">BigFood</span></div> */}
 
             <div className="flex justify-between font-bold text-md text-gray-700 leading-[2.5rem] mt-5 pt-7" 
                 style={{borderTop: '1px solid #d1d5db'}}>
                 <ul>
-                    <li>Về befood</li>
+                    <li>Về BigFood</li>
                     <li>Tin tức</li>
                     <li>Đăng ký làm nhà hàng</li>
-                    <li>Trở thành tài xế beFood</li>
+                    <li>Trở thành tài xế BigFood</li>
                 </ul>
 
                 <ul>
@@ -67,7 +69,7 @@ export default function Footer() {
 
             <div className="flex justify-between mt-3 pt-7 border-t border-gray-300">
                 <div className="text-[13px] text-gray-500 leading-[1.2rem] mr-[100px]">
-                    <h3 className="text-xl font-700 text-black mb-3">CÔNG TY CỔ PHẦN BE GROUP</h3>
+                    <h3 className="text-xl font-700 text-black mb-3">CÔNG TY CỔ PHẦN BIG GROUP</h3>
                     <p>Giấy chứng nhận ĐKDN: 123456789. Cấp lần đầu 21/12/2004. Cơ quan cấp: do Sở Kế hoạch và Đầu tư Thành Phố Hà Nội.</p>
                     <p>Đăng ký thay đổi lần 9: 21/12/2025. Cơ quan cấp: Sở Kế Hoạch và Đầu tư Thành Phố Hồ Chí Minh.</p>
                     <p>Giấy phép kinh doanh vận tải bằng xe ô tô cấp lần đầu: số 1234, ngày 1/1/1111; cấp lần thứ 5: số 5678, ngày 2/2/2222 bởi Sở Giao Thông Vận Tải Thành Phố Hồ Chí Minh.</p>

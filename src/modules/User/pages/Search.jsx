@@ -14,7 +14,7 @@ export default function Search() {
   const { restaurants, fetchRestaurants, totalPages } = useHome();
 
   const handleSearchTail = () => {
-    if (localStorage.getItem("user_address") !== "") {
+    if (localStorage.getItem("user_address") !== null) {
       return ` gần ${localStorage.getItem("user_address")}`;
     } else return "";
   };

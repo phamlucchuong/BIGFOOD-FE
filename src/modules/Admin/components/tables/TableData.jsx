@@ -1,6 +1,7 @@
 import React from 'react';
 import Badge from '../ui/Badge';
-
+import { formatDate } from '../../../../utils/dateUtils';
+import { useUser } from '../../hooks/useUser';
 
 
 const Table = ({ children }) => <table className="w-full">{children}</table>;
@@ -20,11 +21,24 @@ export default function AdminCustomTable({
 
     const handleAction = (action, item) => {
         if (mode === 'users') {
-            alert(`${action} người dùng ${item.user.name}`);
+            alert(`${action} người dùng ${item.name}`);
         } else {
             alert(`${action} yêu cầu của nhà hàng ${item.restaurantName}`);
         }
     };
+
+
+    const { changeUserStatus, addAdminRole } = useUser();
+    const handleChangeUserStatus = (userId) => {
+        alert(`Xóa người dùng với ID: ${userId}`);
+        changeUserStatus(userId);
+    };
+
+    const handleAddAdminRole = (userId) => {
+        alert(`Thêm vai trò Admin cho người dùng với ID: ${userId}`);
+        addAdminRole(userId);
+    };
+
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -48,9 +62,9 @@ export default function AdminCustomTable({
                 <div className="flex items-center gap-3">
                     {/* Button 1 */}
                     {
-                        (user.role !== 'Admin') &&
+                        !user.roles.some(role => role.name === 'ADMIN') &&
                         <button
-                            onClick={() => handleAction('Nâng cấp Role', user)}
+                            onClick={() => handleAddAdminRole(user.id)}
                             className="text-gray-500 hover:text-brand-500 transition-colors"
                             title={actions[0].name}
                         >
@@ -59,9 +73,9 @@ export default function AdminCustomTable({
                     }
 
                     {/* Button 2 */}
-                    {user.accountStatus === 'Active' ? (
+                    {user.isDeleted === false ? (
                         <button
-                            onClick={() => handleAction('Khóa', user)}
+                            onClick={() => handleChangeUserStatus(user.id)}
                             className="text-gray-500 hover:text-error-500 transition-colors"
                             title={actions[1].name}
                         >
@@ -69,7 +83,7 @@ export default function AdminCustomTable({
                         </button>
                     ) : (
                         <button
-                            onClick={() => handleAction('Mở khóa', user)}
+                            onClick={() => handleChangeUserStatus(user.id)}
                             className="text-gray-500 hover:text-success-500 transition-colors"
                             title={actions[2].name}
                         >
@@ -148,24 +162,38 @@ export default function AdminCustomTable({
                     <TableCell className="px-5 py-4 sm:px-6 text-start">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 overflow-hidden rounded-full">
-                                <img width={40} height={40} src={user.user.image} alt={user.user.name} />
+                                {
+                                    user.image
+                                    ? <img width={40} height={40} src={user.user.image} alt={user.user.name} />
+                                    : <img width={40} height={40} src="/src/assets/images/user_default.png" alt={"Default user image"} />
+                                }
                             </div>
                             <div>
-                                <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">{user.user.name}</span>
-                                <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{user.user.email}</span>
+                                <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">{user.name}</span>
+                                <span className="block text-gray-500 text-theme-xs dark:text-gray-400">{user.email}</span>
                             </div>
                         </div>
                     </TableCell>
+
                     {/* Vai trò */}
-                    <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">{user.role}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">
+                        {/* 1. Kiểm tra xem user.roles có tồn tại và là mảng không */}
+                        {user.roles && user.roles.length > 0 && (
+                            <span>{user.roles.map(role => role.name).join(' ')}</span>
+                        )}
+                    </TableCell>
+
                     {/* Ngày tham gia */}
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">{user.dateJoined}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">{formatDate(user.createdAt)}</TableCell>
+
                     {/* Tổng đơn hàng */}
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">{user.totalOrders}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">0</TableCell>
+
                     {/* Trạng thái */}
                     <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        <Badge size="sm" color={getStatusColor(user.accountStatus)}>{user.accountStatus}</Badge>
+                        <Badge size="sm">{user.isDeleted === true ? "Đã khóa" : "Hoạt động"}</Badge>
                     </TableCell>
+
                     {/* Thao tác */}
                     <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                         {renderActionCell(user)}
@@ -218,6 +246,7 @@ export default function AdminCustomTable({
                 </TableRow>
             ));
         }
+
         return null;
     };
 
