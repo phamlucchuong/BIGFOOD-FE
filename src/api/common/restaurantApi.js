@@ -1,3 +1,5 @@
+import { getToken } from "../../services/localStorageService";
+
 export async function getRestaurant(categoryId = "", searchText = "", page) {
   try {
     const baseUrl = "http://localhost:8080/bigfood/api/restaurants";
@@ -86,6 +88,48 @@ export async function getRestaurantsByCategory(categoryId, page = 0) {
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    return response.json();
+  } catch (error) {
+    console.error("Lỗi khi lấy nhà hàng theo danh mục: ", error);
+  }
+}
+
+export async function getRestaurantRequestApi(page = 0) {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/bigfood/api/restaurants/request${
+        page ? `?page=${page}` : ""
+      }`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${getToken()}`,
+        },
+      }
+    );
+
+    return response.json();
+  } catch (error) {
+    console.error("Lỗi khi lấy nhà hàng theo danh mục: ", error);
+  }
+}
+
+
+export async function approveRestaurantRequestApi(restaurantId, approved) {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/bigfood/api/restaurants/request/approve`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({ restaurantId, approved }),
       }
     );
 
