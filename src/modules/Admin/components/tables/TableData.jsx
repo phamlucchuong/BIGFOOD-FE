@@ -274,18 +274,18 @@ export default function AdminCustomTable({
           {/* Tên Nhà hàng */}
           <TableCell className="px-5 py-4 sm:px-6 text-start">
             <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-              {restaurant.restaurantName}
+              {restaurant.name}
             </span>
             <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
-              {restaurant.location}
+              {restaurant.address}
             </span>
           </TableCell>
           {/* Người gửi yêu cầu */}
           <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">
-            {restaurant.startedDate}
+            {restaurant.approvedAt}
           </TableCell>
           <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">
-            {restaurant.category}
+            {restaurant.categories.map(cate => cate).join(", ")}
           </TableCell>
           {/* Ngày yêu cầu */}
           <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
@@ -293,7 +293,7 @@ export default function AdminCustomTable({
           </TableCell>
           {/* Trạng thái (Pending) */}
           <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-            {restaurant.ratings}
+            {restaurant.rating}
           </TableCell>
           {/* Thao tác */}
           <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">

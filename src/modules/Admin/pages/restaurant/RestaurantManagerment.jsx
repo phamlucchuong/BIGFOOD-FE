@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
-import CollectionSection from "../../../../sections/CollectionSection";
 import handleLoadCategories from "../../../../hooks/data/useFoodCategory";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { CircleAlert, Info } from "lucide-react";
 import TableData from "../../components/tables/TableData";
 import CategoryCard from "../../../../components/common/cards/CategoryCard";
+import useRestaurant from "../../../../hooks/data/useRestaurant";
 
 export default function RestaurantManagerment() {
   const [categories, setCategories] = useState([]);
-  const [ restaurants, setRestaurants ] = useRestaurant([]);
+  const { restaurants, getRestaurantTag, totalPages } = useRestaurant();
   useEffect(() => {
     const fetchData = async () => {
       const data = await handleLoadCategories();
       setCategories(data);
+      await getRestaurantTag();
     };
     fetchData();
   }, []);
@@ -78,7 +79,7 @@ export default function RestaurantManagerment() {
 
         <TableData
           mode="restaurants"
-          data={restaurantRequestData}
+          data={restaurants}
           headers={[
             "Tên Nhà hàng",
             "Ngày hoạt động",
