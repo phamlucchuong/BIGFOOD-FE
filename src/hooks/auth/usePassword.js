@@ -1,10 +1,14 @@
-
 import { useState, useEffect, useRef } from "react";
 import { setToken } from "../../services/localStorageService";
 import { login, sendOtp } from "../../api/auth/authApi";
 import { useNavigate } from "react-router-dom";
 
-export default function usePassword({ email, onNext, setPasswordGlobal, onClose }) {
+export default function usePassword({
+  email,
+  onNext,
+  setPasswordGlobal,
+  onClose,
+}) {
   const [password, setPassword] = useState(["", "", "", "", "", ""]);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
@@ -32,6 +36,7 @@ export default function usePassword({ email, onNext, setPasswordGlobal, onClose 
     const passwordString = password.join("");
     try {
       if (localStorage.getItem("email-verified") !== "true") {
+        console.log(email, passwordString);
         const response = await login({ email, password: passwordString });
         if (response.ok) {
           setToken(response?.results?.token);
@@ -40,22 +45,15 @@ export default function usePassword({ email, onNext, setPasswordGlobal, onClose 
           onClose();
           navigate("/");
         }
-
-    //   } else {
-    //     setPasswordGlobal(passwordString);
-    //     localStorage.setItem("password", passwordString);
-    //     onNext("register");
-    //   }
-    // } catch (error) {
-          setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
-          setSnackBarOpen(true);
-          setPassword(["", "", "", "", "", ""]);
-        } else {
-          setPasswordGlobal(passwordString);
-          localStorage.setItem("password", passwordString);
-          onNext("register");
-        }
-      } catch (error) {
+        setSnackBarOpen(true);
+        setPassword(["", "", "", "", "", ""]);
+        setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
+      } else {
+        setPasswordGlobal(passwordString);
+        localStorage.setItem("password", passwordString);
+        onNext("register");
+      }
+    } catch (error) {
       console.error("Unexpected error:", error);
       setSnackBarMessage("Sai mật khẩu hoặc tài khoản chưa tồn tại!");
       setSnackBarOpen(true);
@@ -63,7 +61,6 @@ export default function usePassword({ email, onNext, setPasswordGlobal, onClose 
       setTimeout(() => inputRefs.current[0]?.focus(), 100);
     }
   };
-
 
   const handleSendOtp = async () => {
     try {

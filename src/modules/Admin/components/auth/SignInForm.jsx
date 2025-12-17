@@ -16,14 +16,14 @@ export default function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { signinByEmailAndPassword } = useAuth();
+  const { loginWithEmailAndPassword } = useAuth();
 
   const handleSignin = async (e) => {
     e.preventDefault();
     try { 
       console.log("Email:", email);
       console.log("Password:", password);
-      await signinByEmailAndPassword(email, password);
+      await loginWithEmailAndPassword(email, password);
       navigate("/admin");
     } catch (error) {
       console.error("Đăng nhập thất bại:", error);
