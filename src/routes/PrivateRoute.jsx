@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import { getToken } from "../services/localStorageService";
 
 /**
  * Hàm kiểm tra trạng thái đăng nhập.
@@ -7,7 +8,7 @@ import { Navigate } from "react-router-dom";
  */
 const isAuthenticated = () => {
   // Ví dụ: kiểm tra sự tồn tại của token trong localStorage
-  return localStorage.getItem("token") !== null;
+  return getToken() !== null;
 };
 
 const PrivateRoute = ({ children }) => {

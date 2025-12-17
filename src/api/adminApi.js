@@ -1,3 +1,4 @@
+import { getToken } from "../services/localStorageService";
 
 
 export async function getAllUser() {
@@ -8,7 +9,7 @@ export async function getAllUser() {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                    authorization: `Bearer ${getToken()}`,
                 }
             }
         );
@@ -30,7 +31,7 @@ export async function getUserSummary() {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                    authorization: `Bearer ${getToken()}`,
                 }
             }
         );
@@ -50,7 +51,7 @@ export async function changeUserStatusById(id) {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
-                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                    authorization: `Bearer ${getToken()}`,
                 }
             }
         );
@@ -67,7 +68,7 @@ export async function addAdminRoleToUser(id) {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
-                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                    authorization: `Bearer ${getToken()}`,
                 }
             }
         );
