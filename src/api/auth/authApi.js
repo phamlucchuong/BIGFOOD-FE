@@ -43,25 +43,34 @@ async function verifyOtp(email, otp) {
     return response.json();
 }
 
-async function login({email, password}) {
+
+async function login(email, password) {
     const response = await fetch("http://localhost:8080/bigfood/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
     });
-    return response.json();
 
+    // let data = null;
+    // try {
+    //     data = await response.json();
+    // } catch (e) {
+    //     // backend có thể không trả JSON khi lỗi
+    //     console.log(e)
+    //     data = null;
+    // }
+
+    // return { ok: response.ok, status: response.status, data };
+    return response.json();
 }
 
 
-export async function register(email, name, phone, password) {
-     const response =  await fetch("http://localhost:8080/bigfood/api/users", {
+async function register(email, name, phone, password) {
+    await fetch("http://localhost:8080/bigfood/api/users", {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ name, phone, email, password }),
-      });
-      console.log("Register response:", response);
-      return response.json();
+    });
 }
 
 async function updateAccount(email, name, phone, password) {
@@ -69,7 +78,18 @@ async function updateAccount(email, name, phone, password) {
         method: "PUT",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ name, phone, password }),
-      });
+    });
+}
+
+
+async function logoutWithToken() {
+    await fetch(`http://localhost:8080/bigfood/api/auth/logout`, {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+            authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+    });
 }
 
 async function createRestaurant(formData) {
@@ -85,17 +105,4 @@ async function createRestaurant(formData) {
 }
 
 
-async function logoutUser() {
-    const token = getToken();
-    const response = await fetch(`http://localhost:8080/bigfood/api/auth/logout`, {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-        },
-    });
-    return response;
-}
-
-
-
-export { verifyEmail, sendOtp, verifyOtp, login , updateAccount ,createRestaurant, logoutUser }
+export { verifyEmail, sendOtp, verifyOtp, login, updateAccount, logoutWithToken, register, createRestaurant };

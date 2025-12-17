@@ -100,3 +100,21 @@ export async function updateOrderStatus(orderId, request) {
     }
 }
 
+export async function getSummary() {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/bigfood/api/orders/summary`,
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json",
+                    authorization: `Bearer ${localStorage.getItem("token")}`
+                },
+            }
+        );
+
+        return response.json();
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách đơn hàng: ", error);
+    }
+}
+

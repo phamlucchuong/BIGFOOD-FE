@@ -6,13 +6,13 @@ import { Navigate } from "react-router-dom";
  * @returns {boolean}
  */
 const isAuthenticated = () => {
-  // Ví dụ: kiểm tra sự tồn tại của authToken trong localStorage
-  return localStorage.getItem("authToken") !== null;
+  // Ví dụ: kiểm tra sự tồn tại của token trong localStorage
+  return localStorage.getItem("token") !== null;
 };
 
 const PrivateRoute = ({ children }) => {
   if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/admin/signin" replace />;
   }
 
   return children;

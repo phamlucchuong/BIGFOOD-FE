@@ -1,5 +1,7 @@
 // AppRoutes.jsx
-import { Route, Routes } from "react-router-dom";
+
+import { Routes, Route } from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
 
 // import layouts
 import AdminLayout from "../modules/Admin/layouts/AdminLayout";
@@ -21,6 +23,7 @@ import UserManagerment from "../modules/Admin/pages/UserManagerment";
 import ReportingManagerment from "../modules/Admin/pages/restaurant/ReportingManagerment";
 import RestaurantManagerment from "../modules/Admin/pages/restaurant/RestaurantManagerment";
 import RestaurantRequest from "../modules/Admin/pages/restaurant/RestaurantRequest";
+import SignIn from "../modules/Admin/pages/auth/SignIn";
 
 import { AnalyticsPage } from "../modules/Restaurant/pages/AnalyticsPage";
 import { MenuManagementPage } from '../modules/Restaurant/pages/MenuManagementPage';
@@ -55,7 +58,14 @@ export default function AppRoutes() {
 
 
       {/* admin routes */}
-      <Route path="/admin/" element={<AdminLayout />}>
+      <Route
+        path="/admin"
+        element={
+          <PrivateRoute>
+            <AdminLayout />
+          </PrivateRoute>
+        }
+      >
         <Route index element={<AdminDashboard />} />
         <Route path="user-managerment" element={<UserManagerment />} />
         <Route path="restaurant-request" element={<RestaurantRequest />} />
@@ -63,13 +73,16 @@ export default function AppRoutes() {
         <Route path="reporting-managerment" element={<ReportingManagerment />} />
         <Route path="order-managerment" element={<OrderManagerment />} />
         <Route path="finance-reporting" element={<FinanceReporting />} />
+        {/* <Route path="signin" element={<SignIn />} /> */}
       </Route>
       
-      
-      <Route path="/restaurant/register" element={<RegisterPage />} />
-      <Route path="/restaurant/login" element={<LoginPage />} />
+      <Route path="/admin/signin" element={<SignIn />} />
 
       {/* Restaurant Main */}
+      <Route path="/restaurant/login" element={<LoginPage />} />
+      <Route path="/restaurant/register" element={<RegisterPage />} />
+
+      {/* restaurant routes */}
       <Route path="/restaurant/" element={<RestaurantLayout />}>
         <Route index element={<RestaurantDashboard />} />
         <Route path="info" element={<RestaurantInfoPage />} />

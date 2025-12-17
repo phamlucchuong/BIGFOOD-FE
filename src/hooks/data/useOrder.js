@@ -4,6 +4,7 @@ import {
   getOrderById,
   getOrderByUserId,
   updateOrderStatus,
+  getSummary,
 } from "../../api/common/orderApi";
 
 export default function useOrder() {
@@ -11,6 +12,7 @@ export default function useOrder() {
   const [orderHistory, setOrderHistory] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
+  const [orderSummary, setOrderSummary] = useState({});
 
   const createOrder = async (formData) => {
     return await createNewOrder(formData);
@@ -56,6 +58,16 @@ export default function useOrder() {
     }
   };
 
+  const getOrderSummary = async () => {
+    try {
+      const response = await getSummary();
+      setOrderSummary(response.results || {});
+    } catch (error) {
+      console.error("Error fetching order summary:", error);
+      return {};
+    }
+  };
+
   return {
     createOrder,
     orders,
@@ -65,5 +77,7 @@ export default function useOrder() {
     total,
     totalPages,
     cancelOrder,
+    orderSummary,
+    getOrderSummary,
   };
 }
