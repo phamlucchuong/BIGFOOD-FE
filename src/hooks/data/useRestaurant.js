@@ -5,6 +5,7 @@ import {
   getRestaurantRequestApi,
   approveRestaurantRequestApi,
   getRestaurantTagApi,
+  getRestaurantReportApi,
 } from "../../api/common/restaurantApi";
 
 export default function useRestaurant() {
@@ -103,10 +104,22 @@ export default function useRestaurant() {
     }
   };
 
-  const getRestaurantTag = async () => {
+  const getRestaurantTag = async (categoryId = "") => {
     setIsLoading(true);
     try {
-      const response = await getRestaurantTagApi();
+      const response = await getRestaurantTagApi(categoryId);
+      if(response.ok) {
+        setRestaurants(response.results.restaurants);
+      }
+    } catch (error) {
+      console.error("Lỗi phê duyệt yêu cầu:", error);
+    }
+  }
+
+  const getResutaurantReports = async (page = 0) => {
+    setIsLoading(true);
+    try {
+      const response = await getRestaurantReportApi(page);
       if(response.ok) {
         setRestaurants(response.results.restaurants);
       }
@@ -127,5 +140,6 @@ export default function useRestaurant() {
     fetchRestaurantRequests,
     approveRequest,
     getRestaurantTag,
+    getResutaurantReports,
   };
 }

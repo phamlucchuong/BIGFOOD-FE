@@ -30,6 +30,19 @@ async function sendOtp(email) {
 };
 
 
+async function sendReport(email) {
+    await fetch(
+        `http://localhost:8080/bigfood/api/otp/send/report?email=${encodeURIComponent(email)}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${getToken()}`,
+            },
+        }
+    );
+};
+
 async function verifyOtp(email, otp) {
     const response = await fetch(
         `http://localhost:8080/bigfood/api/otp/verify?key=${encodeURIComponent(email)}&otp=${otp}`,
@@ -95,4 +108,4 @@ async function createRestaurant(formData) {
 }
 
 
-export { verifyEmail, sendOtp, verifyOtp, login, updateAccount, logoutWithToken, register, createRestaurant };
+export { verifyEmail, sendOtp, verifyOtp, login, updateAccount, logoutWithToken, register, createRestaurant, sendReport };

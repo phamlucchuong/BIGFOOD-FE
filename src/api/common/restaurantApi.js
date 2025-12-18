@@ -158,3 +158,23 @@ export async function getRestaurantTagApi(categoryId, page = 0) {
     console.error("Lỗi khi lấy nhà hàng theo danh mục: ", error);
   }
 }
+
+
+export async function getRestaurantReportApi(page = 0) {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/bigfood/api/restaurants/report?${page ? `&page=${page}` : ""}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${getToken()}`,
+        },
+      }
+    );
+
+    return response.json();
+  } catch (error) {
+    console.error("Lỗi khi lấy nhà hàng theo danh mục: ", error);
+  }
+}

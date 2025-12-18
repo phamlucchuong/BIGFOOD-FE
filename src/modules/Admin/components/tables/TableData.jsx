@@ -2,7 +2,7 @@ import React from "react";
 import Badge from "../ui/Badge";
 import { formatDate } from "../../../../utils/dateUtils";
 import { useUser } from "../../hooks/useUser";
-import { formatISOToReadable } from "../../../../utils/dateTimeFormatUtils";
+import { formatISOToReadable, formatISOToDate } from "../../../../utils/dateTimeFormatUtils";
 
 const Table = ({ children }) => <table className="w-full">{children}</table>;
 const TableBody = ({ children, className }) => (
@@ -28,13 +28,6 @@ export default function AdminCustomTable({
 }) {
   // Thêm prop mode
 
-  const handleAction = (action, item) => {
-    if (mode === "users") {
-      alert(`${action} người dùng ${item.name}`);
-    } else {
-      alert(`${action} yêu cầu của nhà hàng ${item.restaurantName}`);
-    }
-  };
 
   const { changeUserStatus, addAdminRole } = useUser();
   const handleChangeUserStatus = (userId) => {
@@ -49,6 +42,10 @@ export default function AdminCustomTable({
 
   const handleRequestsAction = (restaurantId, isApproved) => {
     onAction(restaurantId, isApproved);
+  }
+
+  const handleRestaurantDetail = (restaurantId, restaurantName) => {
+    onAction[1](restaurantId, restaurantName);
   }
 
 
@@ -137,19 +134,41 @@ export default function AdminCustomTable({
       return (
         <div className="flex items-center gap-3">
           {/* Button 1 */}
-          {user.role !== "Admin" && (
             <button
-              onClick={() => handleAction("Nâng cấp Role", user)}
+              onClick={() => handleRestaurantDetail(user.id, user.name)}
               className="text-gray-500 hover:text-brand-500 transition-colors"
               title={actions[0].name}
             >
               {actions[0].icon}
             </button>
-          )}
 
           {/* Button 2 */}
           <button
-            onClick={() => handleAction("Khóa", user)}
+            onClick={() => handleRestaurantDetail(user.id, user.name)}
+            className="text-gray-500 hover:text-error-500 transition-colors"
+            title={actions[1].name}
+          >
+            {actions[1].icon}
+          </button>
+        </div>
+      );
+    }
+
+    if (mode === "reports") {
+      return (
+        <div className="flex items-center gap-3">
+          {/* Button 1 */}
+            <button
+              onClick={() => onAction[0](user.email)}
+              className="text-gray-500 hover:text-brand-500 transition-colors"
+              title={actions[0].name}
+            >
+              {actions[0].icon}
+            </button>
+
+          {/* Button 2 */}
+          <button
+            onClick={() => onAction[1](user.id, user.name)}
             className="text-gray-500 hover:text-error-500 transition-colors"
             title={actions[1].name}
           >
@@ -282,7 +301,7 @@ export default function AdminCustomTable({
           </TableCell>
           {/* Người gửi yêu cầu */}
           <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">
-            {restaurant.approvedAt}
+            {formatISOToReadable(restaurant.approvedAt)}
           </TableCell>
           <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">
             {restaurant.categories.map(cate => cate).join(", ")}
@@ -294,6 +313,41 @@ export default function AdminCustomTable({
           {/* Trạng thái (Pending) */}
           <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
             {restaurant.rating}
+          </TableCell>
+          {/* Thao tác */}
+          <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+            {renderActionCell(restaurant)}
+          </TableCell>
+        </TableRow>
+      ));
+    }
+
+    if (mode === "reports") {
+      return data.map((restaurant) => (
+        <TableRow key={restaurant.id}>
+          {/* Tên Nhà hàng */}
+          <TableCell className="px-5 py-4 sm:px-6 text-start">
+            <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+              {restaurant.restaurantName}
+            </span>
+            <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
+              {restaurant.address}
+            </span>
+          </TableCell>
+          {/* Người gửi yêu cầu */}
+          <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">
+            {formatISOToDate(restaurant.approvedAt)}
+          </TableCell>
+          {/* <TableCell className="px-4 py-3 text-gray-800 text-start text-theme-sm dark:text-white/90">
+            {restaurant.categories.map(cate => cate).join(", ")}
+          </TableCell> */}
+          {/* Ngày yêu cầu */}
+          {/* <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+            {restaurant.totalOrders}
+          </TableCell> */}
+          {/* Trạng thái (Pending) */}
+          <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+            {restaurant.negativeRatingPercentage}%
           </TableCell>
           {/* Thao tác */}
           <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
@@ -337,7 +391,7 @@ export default function AdminCustomTable({
         ) : (
           <div className="w-full py-32 flex justify-center items-center">
             <p className="text-gray-500 text-lg">
-              Không có yêu cầu xét duyệt nào.
+              Danh sách trống . . .
             </p>
           </div>
         )}
