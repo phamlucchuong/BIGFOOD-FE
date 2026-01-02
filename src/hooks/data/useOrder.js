@@ -5,6 +5,7 @@ import {
   getOrderByUserId,
   updateOrderStatus,
   getSummary,
+  getChartDataApi,
 } from "../../api/common/orderApi";
 
 export default function useOrder() {
@@ -68,6 +69,18 @@ export default function useOrder() {
     }
   };
 
+
+  const [ chartData, setChartData ] = useState([]);
+  const getOrderChartData = async () => {
+    try {
+      const response = await getChartDataApi();
+      setChartData(response.results || {});
+    } catch (error) {
+      console.error("Error fetching order summary:", error);
+      return {};
+    }
+  };
+
   return {
     createOrder,
     orders,
@@ -79,5 +92,7 @@ export default function useOrder() {
     cancelOrder,
     orderSummary,
     getOrderSummary,
+    getOrderChartData,
+    chartData,
   };
 }

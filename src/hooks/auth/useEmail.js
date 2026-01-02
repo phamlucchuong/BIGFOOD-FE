@@ -43,6 +43,5 @@ export default function useEmail({ onNext, setEmail }) {
     isValidEmail,
     loading,
     handleVerifyEmail,
-    handleSendReport,
   };
 }
