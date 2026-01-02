@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -6,12 +5,13 @@ import RelatedRestaurants from "../../../components/dropdown/RelatedRestaurants"
 import ProductSection from "../../../sections/ProductSection";
 import { ChevronDown, ChevronRight, ClipboardList } from "lucide-react";
 import useRestaurant from "../../../hooks/data/useRestaurant";
+import SizeCard from "../../../components/common/cards/SizeCard";
 
 export default function RestaurantDetail() {
   const [searchParams] = useSearchParams();
-  const restaurantId = searchParams.get('id');
-  const restaurantName = searchParams.get('name');
-  
+  const restaurantId = searchParams.get("id");
+  const restaurantName = searchParams.get("name");
+
   const [cart, setCart] = useState([]);
   const [showPopup, setShowPopup] = useState(false); // state cho popup
   const [selectedProduct, setSelectedProduct] = useState(null); // state lưu thông tin sản phẩm khi click
@@ -28,12 +28,11 @@ export default function RestaurantDetail() {
     if (saved) setCart(JSON.parse(saved));
   }, []);
 
-
   const { restaurantDetail, fetchRestaurantDetail } = useRestaurant();
   useEffect(() => {
-    console.log('Restaurant ID from URL:', restaurantId);
+    console.log("Restaurant ID from URL:", restaurantId);
     if (restaurantId) {
-      console.log('Fetching restaurant detail for ID:', restaurantId);
+      console.log("Fetching restaurant detail for ID:", restaurantId);
       fetchRestaurantDetail(restaurantId);
     }
   }, []);
@@ -49,8 +48,9 @@ export default function RestaurantDetail() {
   };
 
   const addToCart = (product) => {
-    const extraPrice = selectedSize === "L" ? 10000 : 0;
-    const finalPrice = product.price + extraPrice;
+    // Lấy giá từ foodOptions dựa trên selectedSize
+    const selectedOption = product.foodOptions?.find(opt => opt.name === selectedSize);
+    const finalPrice = selectedOption?.price || 0;
 
     setCart((prev) => {
       const exists = prev.find(
@@ -77,7 +77,7 @@ export default function RestaurantDetail() {
             quantity: total,
             note,
             size: selectedSize,
-            price: finalPrice, // lưu giá theo size
+            price: finalPrice, // lưu giá theo size từ foodOptions
           },
         ];
       }
@@ -121,17 +121,17 @@ export default function RestaurantDetail() {
 
   const onFinish = async (e) => {
     e.preventDefault();
-    
+
     // Validation: Kiểm tra restaurantId và cart
     // Ưu tiên dùng userId từ restaurantDetail nếu có, nếu không thì dùng từ URL params
     const finalRestaurantId = restaurantDetail?.userId || restaurantId;
-    
+
     if (!finalRestaurantId || finalRestaurantId.trim() === "") {
       alert("Thiếu thông tin nhà hàng!");
-      console.error("Restaurant ID:", { 
-        fromUrl: restaurantId, 
+      console.error("Restaurant ID:", {
+        fromUrl: restaurantId,
         fromDetail: restaurantDetail?.userId,
-        restaurantDetail 
+        restaurantDetail,
       });
       return;
     }
@@ -142,10 +142,18 @@ export default function RestaurantDetail() {
     }
 
     // Validate từng item trong cart
-    const invalidCartItems = cart.filter(item => {
-      return !item || !item.id || item.id === null || item.id === undefined || 
-             !item.quantity || item.quantity === null || item.quantity === undefined || 
-             Number(item.quantity) <= 0 || isNaN(Number(item.quantity));
+    const invalidCartItems = cart.filter((item) => {
+      return (
+        !item ||
+        !item.id ||
+        item.id === null ||
+        item.id === undefined ||
+        !item.quantity ||
+        item.quantity === null ||
+        item.quantity === undefined ||
+        Number(item.quantity) <= 0 ||
+        isNaN(Number(item.quantity))
+      );
     });
 
     if (invalidCartItems.length > 0) {
@@ -153,28 +161,28 @@ export default function RestaurantDetail() {
       console.error("Invalid cart items:", invalidCartItems);
       return;
     }
-    
+
     // Lưu thông tin đơn hàng vào sessionStorage
     const orderData = {
       restaurant: {
         id: finalRestaurantId.trim(),
         name: restaurantName || restaurantDetail?.restaurantName || "",
-        address: restaurantDetail?.address || ""
+        address: restaurantDetail?.address || "",
       },
-      cart: cart.map(item => ({
+      cart: cart.map((item) => ({
         ...item,
         id: String(item.id).trim(),
         quantity: Number(item.quantity),
         price: Number(item.price) || 0,
-        note: item.note ? String(item.note).trim() : ""
-      }))
+        note: item.note ? String(item.note).trim() : "",
+      })),
     };
-    
+
     console.log("OrderData được lưu:", orderData);
-    
+
     sessionStorage.setItem("orderData", JSON.stringify(orderData));
     console.log("Đơn hàng đã đặt:", orderData);
-    
+
     // Navigate sang trang checkout
     navigate("/checkout");
   };
@@ -183,7 +191,7 @@ export default function RestaurantDetail() {
     e.preventDefault();
     const element = document.getElementById(categoryName);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -208,7 +216,9 @@ export default function RestaurantDetail() {
         <div className="mx-auto px-60">
           <div className="flex flex-col gap-3 py-4">
             <div className="flex flex-row items-center justify-between">
-              <h1 className="font-bold text-2xl">{restaurantDetail?.restaurantName}</h1>
+              <h1 className="font-bold text-2xl">
+                {restaurantDetail?.restaurantName}
+              </h1>
               <div className="rounded-xl border border-gray-300 px-2 py-1">
                 <button>Yêu thích</button>
               </div>
@@ -253,11 +263,13 @@ export default function RestaurantDetail() {
                   <div
                     key={index}
                     className="rounded-2xl border border-gray-300 py-1 uppercase flex gap-1 px-4 cursor-pointer"
-                      onClick={(e) => handleCategoryClick(e, category.name)}
+                    onClick={(e) => handleCategoryClick(e, category.name)}
                   >
                     <span className="hover:text-blue-600">
                       {category.name}
-                      <strong className="text-blue-500 bg-gray-200 rounded-full px-2 ml-1">{totalProducts}</strong>
+                      <strong className="text-blue-500 bg-gray-200 rounded-full px-2 ml-1">
+                        {totalProducts}
+                      </strong>
                     </span>
                   </div>
                 );
@@ -366,7 +378,6 @@ export default function RestaurantDetail() {
 
         {/* Popup hiển thị thông tin chi tiết sản phẩm */}
         {showPopup && selectedProduct && (
-
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white rounded-lg max-w-md w-full shadow-lg relative">
               <button
@@ -386,15 +397,12 @@ export default function RestaurantDetail() {
                   <h3 className="text-2xl font-semibold">
                     {selectedProduct.name}
                   </h3>
-                  <p className="text-xl text-yellow-600">
-                    {selectedProduct.price.toLocaleString()}đ
-                  </p>
                 </div>
                 <div>
-                  <div class="w-full max-w-lg pt-4 mb-55">
+                  <div className="w-full max-w-lg pt-4 mb-55">
                     <label
-                      for="message"
-                      class="block text-xs text-gray-600 uppercase mb-1"
+                      htmlFor="message"
+                      className="block text-xs text-gray-600 uppercase mb-1"
                     >
                       Viết lời nhắn cho nhà hàng
                     </label>
@@ -403,50 +411,28 @@ export default function RestaurantDetail() {
                       value={note}
                       onChange={handleNoteChange}
                       rows="2"
-                      class="w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 p-2 text-sm"
+                      className="w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 p-2 text-sm"
                       placeholder=""
                     ></textarea>
                     <br />
-                    <div class="w-full max-w-lg my-2">
+                    <div className="w-full max-w-lg my-2">
                       <label
-                        for="message"
-                        class="block text-xs text-gray-600 uppercase mb-1"
+                        htmlFor="message"
+                        className="block text-xs text-gray-600 uppercase mb-1"
                       >
                         Size - bắt buộc
                       </label>
 
                       <div className="space-y-2">
-                        {/* Option M */}
-                        <label className="flex justify-between items-center border rounded-lg p-2 cursor-pointer">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="size"
-                              value="M"
-                              checked={selectedSize === "M"}
-                              onChange={() => setSelectedSize("M")}
-                              className="text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="ml-2 text-sm">M</span>
-                          </div>
-                          <span className="text-sm text-gray-500">0đ</span>
-                        </label>
-
-                        {/* Option L */}
-                        <label className="flex justify-between items-center border rounded-lg p-2 cursor-pointer">
-                          <div className="flex items-center">
-                            <input
-                              type="radio"
-                              name="size"
-                              value="L"
-                              checked={selectedSize === "L"}
-                              onChange={() => setSelectedSize("L")}
-                              className="text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="ml-2 text-sm">L - 700ml</span>
-                          </div>
-                          <span className="text-sm text-gray-500">10.000đ</span>
-                        </label>
+                        {selectedProduct.foodOptions?.map((option) => (
+                          <SizeCard
+                            key={option.id}
+                            sizeName={option.name}
+                            price={option.price.toLocaleString()}
+                            isDefault={selectedSize === option.name}
+                            setSelectedSize={setSelectedSize}
+                          />
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -473,9 +459,7 @@ export default function RestaurantDetail() {
                   >
                     Thêm vào giỏ -{" "}
                     {(
-                      (selectedProduct.price +
-                        (selectedSize === "L" ? 10000 : 0)) *
-                      total
+                      (selectedProduct.foodOptions?.find(opt => opt.name === selectedSize)?.price || 0) * total
                     ).toLocaleString()}
                     đ
                   </button>

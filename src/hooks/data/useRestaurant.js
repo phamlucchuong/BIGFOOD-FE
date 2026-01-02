@@ -4,9 +4,11 @@ import {
   getRestaurantDetail,
   getRestaurantRequestApi,
   approveRestaurantRequestApi,
+  getRestaurantTagApi,
+  getRestaurantReportApi,
 } from "../../api/common/restaurantApi";
 
-export default function useHome() {
+export default function useRestaurant() {
   const [restaurants, setRestaurants] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -102,6 +104,30 @@ export default function useHome() {
     }
   };
 
+  const getRestaurantTag = async (categoryId = "") => {
+    setIsLoading(true);
+    try {
+      const response = await getRestaurantTagApi(categoryId);
+      if(response.ok) {
+        setRestaurants(response.results.restaurants);
+      }
+    } catch (error) {
+      console.error("Lỗi phê duyệt yêu cầu:", error);
+    }
+  }
+
+  const getResutaurantReports = async (page = 0) => {
+    setIsLoading(true);
+    try {
+      const response = await getRestaurantReportApi(page);
+      if(response.ok) {
+        setRestaurants(response.results.restaurants);
+      }
+    } catch (error) {
+      console.error("Lỗi phê duyệt yêu cầu:", error);
+    }
+  }
+
   return {
     restaurants,
     fetchRestaurants,
@@ -112,6 +138,8 @@ export default function useHome() {
     fetchRestaurantsByCategory,
     restaurantRequests,
     fetchRestaurantRequests,
-    approveRequest
+    approveRequest,
+    getRestaurantTag,
+    getResutaurantReports,
   };
 }

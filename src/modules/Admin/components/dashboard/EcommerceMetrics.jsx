@@ -45,7 +45,7 @@ export default function EcommerceMetrics() {
       {/* <!-- Metric Item Start --> */}
       <div className="rounded-2xl border border-gray-800 bg-[#171F2F] p-5 md:p-6">
         <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-          <Box className="text-white"/>
+          <i className="fa-solid fa-basket-shopping text-xl text-white"></i>
         </div>
         <div className="flex items-end justify-between mt-5">
           <div>

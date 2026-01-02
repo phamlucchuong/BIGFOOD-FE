@@ -1,17 +1,27 @@
 import Chart from "react-apexcharts";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Ellipsis } from "lucide-react";
+import useOrder from "../../../../hooks/data/useOrder";
+import { data } from "react-router-dom";
 
 
 export default function MonthlySalesChart() {
+  const { chartData, getOrderChartData } = useOrder();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getOrderChartData();
+    };
+    fetchData();
+  }, []);
   const options = {
     colors: ["#465fff"],
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "bar",
-      // height: 180,
+      height: 180,
       toolbar: {
         show: false,
       },
@@ -88,7 +98,8 @@ export default function MonthlySalesChart() {
   const series = [
     {
       name: "Sales",
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      // data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      data: chartData
     },
   ];
   const [isOpen, setIsOpen] = useState(false);

@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import handleLoadCategories from "../../../hooks/data/useFoodCategory";
 import TextButton from "../../../components/common/buttons/TextButton";
 import CollectionSection from "../../../sections/CollectionSection";
-import useHome from "../../../hooks/data/useRestaurant";
+import useRestaurant from "../../../hooks/data/useRestaurant";
 import CategoryCard from "../../../components/common/cards/CategoryCard";
 import RestaurantCard from "../../../components/common/cards/RestaurantCard";
 
 export default function Home() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const { restaurants, fetchRestaurants, totalPages } = useHome();
+  const { restaurants, fetchRestaurants, totalPages } = useRestaurant();
   const [page, setPage] = useState(0);
 
   useEffect(() => {

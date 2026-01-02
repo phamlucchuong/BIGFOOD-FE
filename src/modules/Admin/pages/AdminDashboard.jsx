@@ -23,9 +23,6 @@ export default function AdminDashboard() {
           <MonthlyTarget />
         </div>
 
-        <div className="col-span-12">
-          <StatisticsChart />
-        </div>
 
         <div className="col-span-12">
           <RecentOrders />

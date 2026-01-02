@@ -1,5 +1,9 @@
 
 export default function ProductCard({ product, onAddToCart, onProductClick }) {
+  // Tìm foodOption có defaultPrice = true
+  const defaultOption = product.foodOptions?.find(option => option.defaultPrice === true);
+  const displayPrice = defaultOption?.price || 0;
+
   return (
     <div className="bg-white rounded-lg shadow-sm w-full max-w-xs pb-4" onClick={() => onProductClick(product)} >
       <img src={product.image} alt={product.name} className="w-full h-40 object-cover rounded-md hover:scale-105 transition-transform" />
@@ -7,7 +11,7 @@ export default function ProductCard({ product, onAddToCart, onProductClick }) {
         <h3 className="text-sm font-semibold">{product.name}</h3>
         <p className="text-xs text-gray-500 mt-1">🛒 {product.sold} đã bán</p>
         <div className="flex justify-between items-center mt-2">
-          <span className="font-bold text-base">{product.price.toLocaleString()}đ</span>
+          <span className="font-bold text-base">{displayPrice.toLocaleString()}đ</span>
           <button
             onClick={(e) => {
               onAddToCart(product)
