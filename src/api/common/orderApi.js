@@ -118,3 +118,20 @@ export async function getSummary() {
     }
 }
 
+export async function getChartDataApi() {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/bigfood/api/orders/chart`,
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json",
+                    authorization: `Bearer ${getToken()}`
+                },
+            }
+        );
+
+        return response.json();
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách đơn hàng: ", error);
+    }
+}
