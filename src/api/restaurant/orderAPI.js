@@ -1,8 +1,8 @@
 import { getToken } from "../../services/localStorageService";
 
-async function getListOrder() {
+async function getListOrder(page) {
     const token = getToken();
-    const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/all`, {
+    const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/page/${page}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,

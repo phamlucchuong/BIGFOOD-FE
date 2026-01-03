@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Ban, Check, Download } from "lucide-react";
+import { Ban, Check, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { formatCurrency } from "../../../dataSample/restaurant/formatCurrency";
 import { OrderDetailModal } from "../components/OrderDetailModal";
 import { useOrder } from '../../../hooks/auth/restaurant/useOrder';
@@ -11,13 +11,23 @@ export const OrderManagementPage = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [statusFilter, setStatusFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
 
   const { listOrderMyRestaurant, updateStatus , listOrderByStatus} = useOrder();
 
-  const handleLoadListOrder = async () => {
+  const handleLoadListOrder = async (page = 1) => {
     try {
-      const data = await listOrderMyRestaurant();
-      setOrders(data.results);
+      console.log("page : " + page);
+      const response = await listOrderMyRestaurant(page);
+      const data = response.results;
+      setOrders(data.orders);
+      setCurrentPage(data.page);
+      setTotalPages(data.totalPages);
+      setPageSize(data.pageSize);
+      setTotal(data.total);
       console.log(data.results);
     } catch (error) {
       console.error('Error loading orders:', error);
@@ -25,7 +35,7 @@ export const OrderManagementPage = () => {
   };
 
   useEffect(() => {
-    handleLoadListOrder();
+    handleLoadListOrder(1);
   }, []);
 
   const handleUpdateStatus = async (statusOrder) => {
@@ -56,8 +66,13 @@ export const OrderManagementPage = () => {
   };
 
   const handleLoadStatusFilter = async(status) =>{
-     const data = await listOrderByStatus(status);
-     setOrders(data.results);
+     const response = await listOrderByStatus(status);
+     const data = response.results;
+     setOrders(data.orders);
+     setCurrentPage(data.page);
+     setTotalPages(data.totalPages);
+     setPageSize(data.pageSize);
+     setTotal(data.total);
   }
 
   const handleReject = async () => {
@@ -244,6 +259,78 @@ export const OrderManagementPage = () => {
               )}
             </div>
           ))}
+
+          {/* Pagination */}
+          <div className="bg-white p-4 rounded-xl border flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Hiển thị{" "}
+              {total > 0 ? (currentPage - 1) * pageSize + 1 : 0} đến{" "}
+              {Math.min(currentPage * pageSize, total)} trong {total} đơn hàng
+            </div>
+
+            <div className="flex gap-2 items-center">
+              {/* Prev */}
+              <button
+                onClick={() => {
+                  if (currentPage > 1) {
+                    handleLoadListOrder(currentPage - 1);
+                  }
+                }}
+                disabled={currentPage === 1}
+                className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft size={20} />
+              </button>
+
+              {/* Page numbers */}
+              <div className="flex gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+
+                  // Guard an toàn
+                  if (pageNum < 1 || pageNum > totalPages) return null;
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => handleLoadListOrder(pageNum)}
+                      className={`px-3 py-1 rounded-lg ${
+                        currentPage === pageNum
+                          ? "bg-orange-600 text-white"
+                          : "border hover:bg-gray-50"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Next */}
+              <button
+                onClick={() => {
+                  if (currentPage < totalPages) {
+                    handleLoadListOrder(currentPage + 1);
+                  }
+                }}
+                disabled={currentPage === totalPages}
+                className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+
         </div>
 
         <div className="space-y-6">

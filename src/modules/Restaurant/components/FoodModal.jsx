@@ -1,17 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { Image, Upload } from 'lucide-react';
+import { Image, Upload, Plus, Trash2 } from 'lucide-react';
 
-export const FoodModal = ({ show , onClose, onSave, food = null, categories }) => {
+export default function FoodModal({ show, onClose, onSave, food = null, categories = [] }) {
   const [formData, setFormData] = useState({
-    idFood: food?.id || '',
-    name: food?.name || '',
-    categoryId: food?.categoryId || categories[0]?.id,
-    price: food?.price || '',
-    image: food?.image || '',
-    description: food?.description || '',
-    available: food?.available || false
+    idFood: '',
+    name: '',
+    categoryId: categories[0]?.id || '',
+    price: '',
+    image: '',
+    description: '',
+    available: false,
+    foodOptions: []
   });
-  const [imagePreview, setImagePreview] = useState(food?.image || '');
+  const [imagePreview, setImagePreview] = useState('');
+  
+  useEffect(() => {
+    if (food) {
+      // Tìm categoryId từ food.categoryId hoặc từ categoryName nếu không có categoryId
+      const categoryId = food.categoryId || categories.find(cat => cat.name === food.categoryName)?.id || categories[0]?.id;
+      setFormData({
+        idFood: food.id || '',
+        name: food.name || '',
+        categoryId,
+        price: food.price || '',
+        image: food.image || '',
+        description: food.description || '',
+        available: food.available !== undefined ? food.available : false,
+        foodOptions: food.foodOptions ? food.foodOptions.map(opt => ({ name: opt.name, price: opt.price })) : []
+      });
+      setImagePreview(food.image || '');
+    } else {
+      // Reset cho thêm mới
+      setFormData({
+        idFood: '',
+        name: '',
+        categoryId: categories[0]?.id || '',
+        price: '',
+        image: '',
+        description: '',
+        available: false,
+        foodOptions: []
+      });
+      setImagePreview('');
+    }
+  }, [food, categories]);
+  
+  // Kiểm tra xem category có phải là đồ uống không
+  const isDrinkCategory = () => {
+    const category = categories.find(cat => cat.id === formData.categoryId);
+    if (!category) return false;
+    const categoryName = category.name.toLowerCase();
+    return categoryName.includes('nước') || 
+           categoryName.includes('đồ uống') || 
+           categoryName.includes('drink') ||
+           categoryName.includes('beverage');
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -25,21 +68,99 @@ export const FoodModal = ({ show , onClose, onSave, food = null, categories }) =
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave({ 
-      ...formData, 
-      price: Number(formData.price)
+  const handleCategoryChange = (categoryId) => {
+    const newFormData = {...formData, categoryId};
+    
+    // Nếu chuyển sang danh mục đồ uống và chưa có foodOptions, tạo mặc định
+    const category = categories.find(cat => cat.id === categoryId);
+    const categoryName = category?.name.toLowerCase() || '';
+    const isDrink = categoryName.includes('nước') || 
+                    categoryName.includes('đồ uống') || 
+                    categoryName.includes('drink') ||
+                    categoryName.includes('beverage');
+    
+    if (isDrink && (!newFormData.foodOptions || newFormData.foodOptions.length === 0)) {
+      newFormData.foodOptions = [
+        { name: 'M', price: '' },
+        { name: 'L', price: '' },
+        { name: 'XL', price: '' }
+      ];
+    } else if (!isDrink) {
+      newFormData.foodOptions = [];
+    }
+    
+    setFormData(newFormData);
+  };
+
+  const addOption = () => {
+    setFormData({
+      ...formData,
+      foodOptions: [...formData.foodOptions, { name: '', price: '' }]
     });
+  };
+
+  const removeOption = (index) => {
+    const newOptions = formData.foodOptions.filter((_, i) => i !== index);
+    setFormData({...formData, foodOptions: newOptions});
+  };
+
+  const updateOption = (index, field, value) => {
+    const newOptions = [...formData.foodOptions];
+    newOptions[index] = { ...newOptions[index], [field]: value };
+    setFormData({...formData, foodOptions: newOptions});
+  };
+
+  const handleSubmit = () => {
+    if (!formData.name.trim()) {
+      alert('Vui lòng nhập tên món ăn');
+      return;
+    }
+
+    if (isDrinkCategory()) {
+      if (formData.foodOptions.length === 0) {
+        alert('Vui lòng thêm ít nhất một option cho đồ uống');
+        return;
+      }
+      for (const option of formData.foodOptions) {
+        if (!option.name.trim() || !option.price) {
+          alert('Vui lòng điền đầy đủ thông tin option và giá');
+          return;
+        }
+      }
+    } else {
+      if (!formData.price) {
+        alert('Vui lòng nhập giá món ăn');
+        return;
+      }
+    }
+    
+    const submitData = { 
+      ...formData
+    };
+    
+    // Nếu có foodOptions, xử lý price cho foodOptions
+    if (isDrinkCategory() && formData.foodOptions.length > 0) {
+      submitData.foodOptions = formData.foodOptions.map(option => ({
+        name: option.name,
+        price: Number(option.price)
+      }));
+      // Có thể set price mặc định là giá của option đầu tiên
+      submitData.price = Number(formData.foodOptions[0].price) || 0;
+    } else {
+      submitData.price = Number(formData.price);
+      submitData.foodOptions = [];
+    }
+    console.log("data food : " ,submitData);
+    onSave(submitData);
   };
 
   if (!show) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl p-6 max-w-2xl w-full my-8">
+      <div className="bg-white rounded-xl p-6 max-w-2xl w-full my-8 max-h-[90vh] overflow-y-auto">
         <h3 className="text-xl font-bold mb-4">{food ? 'Sửa Món Ăn' : 'Thêm Món Ăn Mới'}</h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-2">Ảnh món ăn</label>
@@ -76,9 +197,8 @@ export const FoodModal = ({ show , onClose, onSave, food = null, categories }) =
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-orange-500 focus:border-transparent"
-                placeholder="Ví dụ: Phở Bò Đặc Biệt"
-                required
+                className="w-full px-4 py-2 border rounded-lg focus:border-transparent"
+                placeholder="Ví dụ: Trà Sữa Trân Châu"
               />
             </div>
 
@@ -86,9 +206,8 @@ export const FoodModal = ({ show , onClose, onSave, food = null, categories }) =
               <label className="block text-sm font-medium mb-2">Danh mục *</label>
               <select
                 value={formData.categoryId}
-                onChange={(e) => setFormData({...formData, categoryId: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg  focus:ring-orange-500 focus:border-transparent"
-                required
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:border-transparent"
               >
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>
@@ -96,24 +215,77 @@ export const FoodModal = ({ show , onClose, onSave, food = null, categories }) =
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Giá (VNĐ) *</label>
-              <input
-                type="number"
-                value={formData.price}
-                onChange={(e) => setFormData({...formData, price: e.target.value})}
-                className="w-full px-4 py-2 border rounded-lg  focus:ring-orange-500 focus:border-transparent"
-                placeholder="50000"
-                required
-                min="0"
-              />
-            </div>
+            {/* Hiển thị price thông thường nếu không phải đồ uống */}
+            {!isDrinkCategory() && (
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2">Giá (VNĐ) *</label>
+                <input
+                  type="number"
+                  value={formData.price}
+                  onChange={(e) => setFormData({...formData, price: e.target.value})}
+                  className="w-full px-4 py-2 border rounded-lg focus:border-transparent"
+                  placeholder="50000"
+                  min="0"
+                />
+              </div>
+            )}
+
+            {/* Hiển thị phần foodOptions nếu là đồ uống */}
+            {isDrinkCategory() && (
+              <div className="md:col-span-2">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium">Kích cỡ & Giá *</label>
+                  <button
+                    type="button"
+                    onClick={addOption}
+                    className="text-orange-600 hover:text-orange-700 flex items-center gap-1 text-sm"
+                  >
+                    <Plus size={16} />
+                    Thêm option
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {formData.foodOptions.map((option, index) => (
+                    <div key={index} className="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        value={option.name}
+                        onChange={(e) => updateOption(index, 'name', e.target.value)}
+                        className="w-24 px-3 py-2 border rounded-lg focus:border-transparent"
+                        placeholder="M, L, XL"
+                      />
+                      <input
+                        type="number"
+                        value={option.price}
+                        onChange={(e) => updateOption(index, 'price', e.target.value)}
+                        className="flex-1 px-3 py-2 border rounded-lg  focus:border-transparent"
+                        placeholder="Giá (VNĐ)"
+                        min="0"
+                      />
+                      {formData.foodOptions.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeOption(index)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {formData.foodOptions.length === 0 && (
+                  <p className="text-sm text-gray-500 mt-2">Chưa có option nào. Nhấn "Thêm option" để bắt đầu.</p>
+                )}
+              </div>
+            )}
+
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-2">Mô tả món ăn</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border rounded-lg focus:border-transparent"
                 placeholder="Mô tả ngắn về món ăn..."
                 rows="3"
               />
@@ -121,15 +293,23 @@ export const FoodModal = ({ show , onClose, onSave, food = null, categories }) =
           </div>
 
           <div className="flex gap-3 pt-4 border-t">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50">
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
+            >
               Hủy
             </button>
-            <button type="submit" className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
+            <button 
+              type="button"
+              onClick={handleSubmit} 
+              className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+            >
               {food ? 'Cập Nhật' : 'Thêm Món'}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
-};
+}
