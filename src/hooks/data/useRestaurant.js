@@ -11,6 +11,10 @@ import {
 export default function useRestaurant() {
   const [restaurants, setRestaurants] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchRestaurants = async (
@@ -104,12 +108,18 @@ export default function useRestaurant() {
     }
   };
 
-  const getRestaurantTag = async (categoryId = "") => {
+  const getRestaurantTag = async ( categoryId = "", page ) => {
     setIsLoading(true);
     try {
-      const response = await getRestaurantTagApi(categoryId);
+      const response = await getRestaurantTagApi(categoryId , page);
+      const data = response.results;
+      console.log("retaurant : ", data);
       if(response.ok) {
-        setRestaurants(response.results.restaurants);
+        setRestaurants(data.items);
+        setTotal(data.total);
+        setCurrentPage(data.page);
+        setPageSize(data.pageSize);
+        setTotalPages(data.totalPages);
       }
     } catch (error) {
       console.error("Lỗi phê duyệt yêu cầu:", error);
@@ -140,6 +150,10 @@ export default function useRestaurant() {
     fetchRestaurantRequests,
     approveRequest,
     getRestaurantTag,
+    currentPage ,
+    totalPages ,
+    pageSize,
+    total,
     getResutaurantReports,
   };
 }

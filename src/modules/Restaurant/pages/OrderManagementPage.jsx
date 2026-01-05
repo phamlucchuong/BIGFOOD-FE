@@ -23,7 +23,7 @@ export const OrderManagementPage = () => {
       console.log("page : " + page);
       const response = await listOrderMyRestaurant(page);
       const data = response.results;
-      setOrders(data.orders);
+      setOrders(data.items);
       setCurrentPage(data.page);
       setTotalPages(data.totalPages);
       setPageSize(data.pageSize);

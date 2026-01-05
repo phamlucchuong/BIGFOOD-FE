@@ -4,10 +4,21 @@ import { getAllUser, getUserSummary, changeUserStatusById, addAdminRoleToUser } 
 export const useUser = () => {
 
     const [ users, setUsers ] = useState([]);
-    const fetchUsers = async () => {
-        const response = await getAllUser();
-        if (response) {
-            setUsers(response.results);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [total, setTotal] = useState(0);
+
+    const fetchUsers = async (page) => {
+        const response = await getAllUser(page);
+        const data = response.results;
+        console.log(" data user : " , data);
+        if (response.ok) {
+            setUsers(data.items);
+            setCurrentPage(data.page);
+            setTotal(data.total);
+            setPageSize(data.pageSize);
+            setTotalPages(data.totalPages)
         }
     }
 
@@ -46,5 +57,5 @@ export const useUser = () => {
 
 
 
-  return { users, fetchUsers, userSummary, handleUserSummary, changeUserStatus, addAdminRole };
+  return { users, fetchUsers, currentPage , total , totalPages , pageSize ,userSummary, handleUserSummary, changeUserStatus, addAdminRole };
 };

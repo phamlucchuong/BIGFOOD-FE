@@ -138,12 +138,10 @@ export async function approveRestaurantRequestApi(restaurantId, approved) {
   }
 }
 
-export async function getRestaurantTagApi(categoryId, page = 0) {
+export async function getRestaurantTagApi(categoryId, page) {
   try {
     const response = await fetch(
-      `http://localhost:8080/bigfood/api/restaurants/category?${
-        categoryId ? `categoryId=${categoryId}` : ""
-      }${page ? `&page=${page}` : ""}`,
+      `http://localhost:8080/bigfood/api/restaurants/category?categoryId=${categoryId || ""}&page=${page ?? 0}`,
       {
         method: "GET",
         headers: {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Edit2, Trash2, Filter, Star, Eye, EyeOff } from "lucide-react";
+import { Plus, Edit2, Trash2, Filter, Star, Eye, EyeOff , ChevronLeft, ChevronRight  } from "lucide-react";
 import { formatCurrency } from "../../../dataSample/restaurant/formatCurrency"
 import { CategoryModal } from '../components/CategoryModal';
 import  FoodModal  from '../components/FoodModal';
@@ -15,7 +15,11 @@ export const MenuManagementPage = () => {
   const [editingFood, setEditingFood] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-    
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const { 
     getCategorieFoods, 
     createCategory, 
@@ -29,10 +33,15 @@ export const MenuManagementPage = () => {
     listFoodByCatogoryId
   } = useRestaurant();
 
- const loadFoods = async () => {
+ const loadFoods = async (page = 1) => {
         try {
-            const data = await listFood();
-            setFoods(data.results);
+            const response = await listFood(page);
+            const data = response.results;
+            setFoods(data.items);
+            setCurrentPage(data.page);
+            setTotalPages(data.totalPages);
+            setPageSize(data.pageSize);
+            setTotal(data.total);
         } catch (error) {
             console.error('Error loading foods:', error);
             alert('Không thể tải danh sách món ăn');
@@ -128,8 +137,7 @@ export const MenuManagementPage = () => {
                 ...food,
                 available: !food.available
             };
-            const updatedFood  = await updateFoodItemIsAvailable(updatedData);
-             setFoods(foods.map(f => f.id === foodId ? updatedFood : f));
+             await updateFoodItemIsAvailable(updatedData);
              loadFoods();
         } catch (error) {
             console.error('Error toggling sold out status:', error);
@@ -299,7 +307,7 @@ export const MenuManagementPage = () => {
                         {food.categoryName}
                       </span>
                     </td>
-                    <td className="p-4 font-medium">{formatCurrency(food.price)}</td>
+                    <td className="p-4 font-medium">{formatCurrency(food.foodOptions.find(opt => opt.defaultPrice)?.price || null)}</td>
                     <td className="p-4 text-gray-600">{food.sold}</td>
                     <td className="p-4">
                       {!food.available ? (
@@ -343,6 +351,76 @@ export const MenuManagementPage = () => {
               )}
             </tbody>
           </table>
+             {/* Pagination */}
+          <div className="bg-white p-4 rounded-xl border flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Hiển thị{" "}
+              {total > 0 ? (currentPage - 1) * pageSize + 1 : 0} đến{" "}
+              {Math.min(currentPage * pageSize, total)} trong {total} đơn hàng
+            </div>
+
+            <div className="flex gap-2 items-center">
+              {/* Prev */}
+              <button
+                onClick={() => {
+                  if (currentPage > 1) {
+                    loadFoods(currentPage - 1);
+                  }
+                }}
+                disabled={currentPage === 1}
+                className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft size={20} />
+              </button>
+
+              {/* Page numbers */}
+              <div className="flex gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+
+                  // Guard an toàn
+                  if (pageNum < 1 || pageNum > totalPages) return null;
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => loadFoods(pageNum)}
+                      className={`px-3 py-1 rounded-lg ${
+                        currentPage === pageNum
+                          ? "bg-orange-600 text-white"
+                          : "border hover:bg-gray-50"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Next */}
+              <button
+                onClick={() => {
+                  if (currentPage < totalPages) {
+                    loadFoods(currentPage + 1);
+                  }
+                }}
+                disabled={currentPage === totalPages}
+                className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

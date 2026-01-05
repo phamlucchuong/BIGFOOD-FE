@@ -6,27 +6,27 @@ export default function FoodModal({ show, onClose, onSave, food = null, categori
     idFood: '',
     name: '',
     categoryId: categories[0]?.id || '',
-    price: '',
     image: '',
     description: '',
     available: false,
     foodOptions: []
   });
   const [imagePreview, setImagePreview] = useState('');
-  
+
   useEffect(() => {
     if (food) {
-      // Tìm categoryId từ food.categoryId hoặc từ categoryName nếu không có categoryId
       const categoryId = food.categoryId || categories.find(cat => cat.name === food.categoryName)?.id || categories[0]?.id;
+      const foodOptions = food.foodOptions && food.foodOptions.length > 0
+        ? food.foodOptions.map(opt => ({ name: opt.name, price: opt.price, defaultPrice: opt.defaultPrice }))
+        : [{ name: 'Mặc định', price: food.price || '', defaultPrice: true }];
       setFormData({
         idFood: food.id || '',
         name: food.name || '',
         categoryId,
-        price: food.price || '',
         image: food.image || '',
         description: food.description || '',
         available: food.available !== undefined ? food.available : false,
-        foodOptions: food.foodOptions ? food.foodOptions.map(opt => ({ name: opt.name, price: opt.price })) : []
+        foodOptions
       });
       setImagePreview(food.image || '');
     } else {
@@ -35,26 +35,15 @@ export default function FoodModal({ show, onClose, onSave, food = null, categori
         idFood: '',
         name: '',
         categoryId: categories[0]?.id || '',
-        price: '',
         image: '',
         description: '',
         available: false,
-        foodOptions: []
+        foodOptions: [{ name: 'Mặc định', price: '', defaultPrice: true }]
       });
       setImagePreview('');
     }
   }, [food, categories]);
-  
-  // Kiểm tra xem category có phải là đồ uống không
-  const isDrinkCategory = () => {
-    const category = categories.find(cat => cat.id === formData.categoryId);
-    if (!category) return false;
-    const categoryName = category.name.toLowerCase();
-    return categoryName.includes('nước') || 
-           categoryName.includes('đồ uống') || 
-           categoryName.includes('drink') ||
-           categoryName.includes('beverage');
-  };
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -62,52 +51,40 @@ export default function FoodModal({ show, onClose, onSave, food = null, categori
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
-        setFormData({...formData, image: reader.result});
+        setFormData({ ...formData, image: reader.result });
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleCategoryChange = (categoryId) => {
-    const newFormData = {...formData, categoryId};
-    
-    // Nếu chuyển sang danh mục đồ uống và chưa có foodOptions, tạo mặc định
-    const category = categories.find(cat => cat.id === categoryId);
-    const categoryName = category?.name.toLowerCase() || '';
-    const isDrink = categoryName.includes('nước') || 
-                    categoryName.includes('đồ uống') || 
-                    categoryName.includes('drink') ||
-                    categoryName.includes('beverage');
-    
-    if (isDrink && (!newFormData.foodOptions || newFormData.foodOptions.length === 0)) {
+    const newFormData = { ...formData, categoryId };
+
+    if ((!newFormData.foodOptions || newFormData.foodOptions.length === 0)) {
       newFormData.foodOptions = [
-        { name: 'M', price: '' },
-        { name: 'L', price: '' },
-        { name: 'XL', price: '' }
+        { name: 'Mặc định', price: '', defaultPrice: true },
       ];
-    } else if (!isDrink) {
-      newFormData.foodOptions = [];
     }
-    
+
     setFormData(newFormData);
   };
 
   const addOption = () => {
     setFormData({
       ...formData,
-      foodOptions: [...formData.foodOptions, { name: '', price: '' }]
+      foodOptions: [...formData.foodOptions, { name: '', price: '', defaultPrice: false }]
     });
   };
 
   const removeOption = (index) => {
     const newOptions = formData.foodOptions.filter((_, i) => i !== index);
-    setFormData({...formData, foodOptions: newOptions});
+    setFormData({ ...formData, foodOptions: newOptions });
   };
 
   const updateOption = (index, field, value) => {
     const newOptions = [...formData.foodOptions];
     newOptions[index] = { ...newOptions[index], [field]: value };
-    setFormData({...formData, foodOptions: newOptions});
+    setFormData({ ...formData, foodOptions: newOptions });
   };
 
   const handleSubmit = () => {
@@ -115,8 +92,6 @@ export default function FoodModal({ show, onClose, onSave, food = null, categori
       alert('Vui lòng nhập tên món ăn');
       return;
     }
-
-    if (isDrinkCategory()) {
       if (formData.foodOptions.length === 0) {
         alert('Vui lòng thêm ít nhất một option cho đồ uống');
         return;
@@ -127,30 +102,17 @@ export default function FoodModal({ show, onClose, onSave, food = null, categori
           return;
         }
       }
-    } else {
-      if (!formData.price) {
-        alert('Vui lòng nhập giá món ăn');
-        return;
-      }
-    }
-    
-    const submitData = { 
+    const submitData = {
       ...formData
     };
-    
+
     // Nếu có foodOptions, xử lý price cho foodOptions
-    if (isDrinkCategory() && formData.foodOptions.length > 0) {
-      submitData.foodOptions = formData.foodOptions.map(option => ({
-        name: option.name,
-        price: Number(option.price)
-      }));
-      // Có thể set price mặc định là giá của option đầu tiên
-      submitData.price = Number(formData.foodOptions[0].price) || 0;
-    } else {
-      submitData.price = Number(formData.price);
-      submitData.foodOptions = [];
-    }
-    console.log("data food : " ,submitData);
+    submitData.foodOptions = formData.foodOptions.map(option => ({
+      name: option.name,
+      price: Number(option.price),
+      defaultPrice: option.defaultPrice
+    }));
+    console.log("data food : ", submitData);
     onSave(submitData);
   };
 
@@ -196,7 +158,7 @@ export default function FoodModal({ show, onClose, onSave, food = null, categori
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:border-transparent"
                 placeholder="Ví dụ: Trà Sữa Trân Châu"
               />
@@ -215,76 +177,59 @@ export default function FoodModal({ show, onClose, onSave, food = null, categori
               </select>
             </div>
 
-            {/* Hiển thị price thông thường nếu không phải đồ uống */}
-            {!isDrinkCategory() && (
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2">Giá (VNĐ) *</label>
-                <input
-                  type="number"
-                  value={formData.price}
-                  onChange={(e) => setFormData({...formData, price: e.target.value})}
-                  className="w-full px-4 py-2 border rounded-lg focus:border-transparent"
-                  placeholder="50000"
-                  min="0"
-                />
-              </div>
-            )}
-
             {/* Hiển thị phần foodOptions nếu là đồ uống */}
-            {isDrinkCategory() && (
-              <div className="md:col-span-2">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium">Kích cỡ & Giá *</label>
-                  <button
-                    type="button"
-                    onClick={addOption}
-                    className="text-orange-600 hover:text-orange-700 flex items-center gap-1 text-sm"
-                  >
-                    <Plus size={16} />
-                    Thêm option
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  {formData.foodOptions.map((option, index) => (
-                    <div key={index} className="flex gap-2 items-center">
-                      <input
-                        type="text"
-                        value={option.name}
-                        onChange={(e) => updateOption(index, 'name', e.target.value)}
-                        className="w-24 px-3 py-2 border rounded-lg focus:border-transparent"
-                        placeholder="M, L, XL"
-                      />
-                      <input
-                        type="number"
-                        value={option.price}
-                        onChange={(e) => updateOption(index, 'price', e.target.value)}
-                        className="flex-1 px-3 py-2 border rounded-lg  focus:border-transparent"
-                        placeholder="Giá (VNĐ)"
-                        min="0"
-                      />
-                      {formData.foodOptions.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeOption(index)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {formData.foodOptions.length === 0 && (
-                  <p className="text-sm text-gray-500 mt-2">Chưa có option nào. Nhấn "Thêm option" để bắt đầu.</p>
-                )}
+            <div className="md:col-span-2">
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium">Kích cỡ & Giá *</label>
+                <button
+                  type="button"
+                  onClick={addOption}
+                  className="text-orange-600 hover:text-orange-700 flex items-center gap-1 text-sm"
+                >
+                  <Plus size={16} />
+                  Thêm option
+                </button>
               </div>
-            )}
+              <div className="space-y-2">
+                {formData.foodOptions.map((option, index) => (
+                  <div key={index} className="flex gap-2 items-center">
+                    <input
+                      type="text"
+                      value={option.name}
+                      onChange={(e) => updateOption(index, 'name', e.target.value)}
+                      className="w-24 px-3 py-2 border rounded-lg focus:border-transparent"
+                      placeholder="Kích cỡ"
+                    />
+                    <input
+                      type="number"
+                      value={option.price}
+                      onChange={(e) => updateOption(index, 'price', e.target.value)}
+                      className="flex-1 px-3 py-2 border rounded-lg  focus:border-transparent"
+                      placeholder="Giá (VNĐ)"
+                      min="0"
+                    />
+                    {formData.foodOptions.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeOption(index)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {formData.foodOptions.length === 0 && (
+                <p className="text-sm text-gray-500 mt-2">Chưa có option nào. Nhấn "Thêm option" để bắt đầu.</p>
+              )}
+            </div>
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-2">Mô tả món ăn</label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:border-transparent"
                 placeholder="Mô tả ngắn về món ăn..."
                 rows="3"
@@ -293,16 +238,16 @@ export default function FoodModal({ show, onClose, onSave, food = null, categori
           </div>
 
           <div className="flex gap-3 pt-4 border-t">
-            <button 
-              type="button" 
-              onClick={onClose} 
+            <button
+              type="button"
+              onClick={onClose}
               className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
             >
               Hủy
             </button>
-            <button 
+            <button
               type="button"
-              onClick={handleSubmit} 
+              onClick={handleSubmit}
               className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
             >
               {food ? 'Cập Nhật' : 'Thêm Món'}

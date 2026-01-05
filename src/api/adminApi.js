@@ -1,10 +1,10 @@
 import { getToken } from "../services/localStorageService";
 
 
-export async function getAllUser() {
+export async function getAllUser(page) {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/users`,
+            `http://localhost:8080/bigfood/api/users/page/${page}`,
             {
                 method: "GET",
                 headers: {
