@@ -72,11 +72,11 @@ async function deleteCategory(id) {
 async function createFood(foodData) {
     const formData = new FormData();
     formData.append("name", foodData.name);
-    formData.append("price", foodData.price);
     formData.append("description", foodData.description || "");
     foodData.foodOptions.forEach((opt, index) => {
         formData.append(`foodOptions[${index}].name`, opt.name);
         formData.append(`foodOptions[${index}].price`, opt.price);
+        formData.append(`foodOptions[${index}].defaultPrice`, opt.defaultPrice);
     });
     if (foodData.imageFile) {
         formData.append("image", foodData.imageFile);
@@ -94,8 +94,8 @@ async function createFood(foodData) {
     });
     return response.json();
 }
-async function getListFood() {
-    const response = await fetch(`http://localhost:8080/bigfood/api/foods/all`, {
+async function getListFood(page) {
+    const response = await fetch(`http://localhost:8080/bigfood/api/foods/all/page/${page}`, {
         method: "GET",
         headers: { 
             "Content-Type": "application/json",
@@ -118,11 +118,11 @@ async function updateFood(foodData) {
     formData.append("name", foodData.name);
     formData.append("categoryId", foodData.categoryId);
     formData.append("description", foodData.description || "");
-    formData.append("price", foodData.price);
     formData.append("available" ,foodData.available);
     foodData.foodOptions.forEach((opt, index) => {
         formData.append(`foodOptions[${index}].name`, opt.name);
         formData.append(`foodOptions[${index}].price`, opt.price);
+        formData.append(`foodOptions[${index}].defaultPrice`, opt.defaultPrice);
     });
     if (foodData.imageFile) {
         formData.append("image", foodData.imageFile);

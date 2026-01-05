@@ -83,8 +83,8 @@ export function useRestaurant() {
         return response;
     }
 
-    const listFood = async () => {
-        const response = await getListFood();    
+    const listFood = async (page) => {
+        const response = await getListFood(page);    
         if (!response.ok) {
             throw new Error(`Failed to fetch list food : ${response.status}`);
         }

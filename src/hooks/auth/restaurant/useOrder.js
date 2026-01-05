@@ -7,6 +7,7 @@ export function useOrder(){
        if(!response.ok){
           throw new Error(`Failed to fetch list order : ${response.status}`);
        }
+       console.log("order : " , response);
        return response;
    }
    const orderDetail = async (orderId) =>{
