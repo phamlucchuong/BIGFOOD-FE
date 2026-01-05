@@ -1,7 +1,8 @@
 import { getToken } from "../../services/localStorageService";
+import { API_BASE_URL } from '../../config/config';
 
 async function getListReview(){
-     const response = await fetch(`http://localhost:8080/bigfood/api/reviews/restaurant/all`, {
+     const response = await fetch(`${API_BASE_URL}/reviews/restaurant/all`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${getToken()}`,
@@ -10,7 +11,7 @@ async function getListReview(){
     return response.json();
 }
 async function restaurantReplyUser({id , replyText}){
-     const response = await fetch(`http://localhost:8080/bigfood/api/reviews/${id}/reply`, {
+     const response = await fetch(`${API_BASE_URL}/reviews/${id}/reply`, {
         method: "PATCH",
         headers: {
             "Content-Type" : "application/json",
@@ -22,7 +23,7 @@ async function restaurantReplyUser({id , replyText}){
 }
 
 async function getListReviewSort(filter){
-     const response = await fetch(`http://localhost:8080/bigfood/api/reviews/restaurant/filter?sort=${filter}`, {
+     const response = await fetch(`${API_BASE_URL}/reviews/restaurant/filter?sort=${filter}`, {
         method: "GET",
         headers: {
             "Content-Type" : "application/json",

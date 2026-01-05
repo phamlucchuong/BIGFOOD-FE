@@ -1,10 +1,11 @@
 import { getToken } from "../services/localStorageService";
+import { API_BASE_URL } from '../config/config';
 
 
 export async function getAllUser(page) {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/users/page/${page}`,
+            `${API_BASE_URL}/users/page/${page}`,
             {
                 method: "GET",
                 headers: {
@@ -26,7 +27,7 @@ export async function getAllUser(page) {
 export async function getUserSummary() {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/users/summary`,
+            `${API_BASE_URL}/users/summary`,
             {
                 method: "GET",
                 headers: {
@@ -46,7 +47,7 @@ export async function getUserSummary() {
 export async function changeUserStatusById(id) {
     try {
         await fetch(
-            `http://localhost:8080/bigfood/api/users/${id}/status`,
+            `${API_BASE_URL}/users/${id}/status`,
             {
                 method: "PATCH",
                 headers: {
@@ -63,7 +64,7 @@ export async function changeUserStatusById(id) {
 export async function addAdminRoleToUser(id) {
     try {
         await fetch(
-            `http://localhost:8080/bigfood/api/users/${id}/admin-role`,
+            `${API_BASE_URL}/users/${id}/admin-role`,
             {
                 method: "PATCH",
                 headers: {

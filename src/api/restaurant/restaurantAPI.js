@@ -1,9 +1,10 @@
 import { getToken } from "../../services/localStorageService";
+import { API_BASE_URL } from '../../config/config';
 
 
 async function restaurantDetail() {
     const token = getToken();
-    const response = await fetch(`http://localhost:8080/bigfood/api/restaurants/detail`, {
+    const response = await fetch(`${API_BASE_URL}/restaurants/detail`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -16,7 +17,7 @@ async function restaurantDetail() {
 
 async function updateRes(formData) {
     const token = getToken();
-    const response = await fetch(`http://localhost:8080/bigfood/api/restaurants/update`, {
+    const response = await fetch(`${API_BASE_URL}/restaurants/update`, {
         method: "PUT",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -28,7 +29,7 @@ async function updateRes(formData) {
 }
 
 async function fetchCategoriesFoods() {
-    const response = await fetch("http://localhost:8080/bigfood/api/food-categories/all", {
+    const response = await fetch("${API_BASE_URL}/food-categories/all", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -39,7 +40,7 @@ async function fetchCategoriesFoods() {
 }
 
 async function addCategory(name , iconIndex) {
-    const response = await fetch(`http://localhost:8080/bigfood/api/food-categories`, {
+    const response = await fetch(`${API_BASE_URL}/food-categories`, {
         method: "POST",
         headers: { 
             "Content-Type": "application/json",
@@ -49,7 +50,7 @@ async function addCategory(name , iconIndex) {
     return response.json();
 }
 async function updateCategory({id , name , iconIndex}) {
-    const response = await fetch(`http://localhost:8080/bigfood/api/food-categories`, {
+    const response = await fetch(`${API_BASE_URL}/food-categories`, {
         method: "PATCH",
         headers: { 
             "Content-Type": "application/json",
@@ -60,7 +61,7 @@ async function updateCategory({id , name , iconIndex}) {
 }
 
 async function deleteCategory(id) {
-    const response = await fetch(`http://localhost:8080/bigfood/api/food-categories/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/food-categories/${id}`, {
         method: "DELETE",
         headers: { 
             "Content-Type": "application/json",
@@ -85,7 +86,7 @@ async function createFood(foodData) {
         const blob = await res.blob();
         formData.append("image", blob, `image_${Date.now()}.png`);
     }
-    const response = await fetch(`http://localhost:8080/bigfood/api/foods/${foodData.categoryId}`, {
+    const response = await fetch(`${API_BASE_URL}/foods/${foodData.categoryId}`, {
         method: "POST",
         headers: { 
             "Authorization": `Bearer ${getToken()}`
@@ -95,7 +96,7 @@ async function createFood(foodData) {
     return response.json();
 }
 async function getListFood(page) {
-    const response = await fetch(`http://localhost:8080/bigfood/api/foods/all/page/${page}`, {
+    const response = await fetch(`${API_BASE_URL}/foods/all/page/${page}`, {
         method: "GET",
         headers: { 
             "Content-Type": "application/json",
@@ -104,7 +105,7 @@ async function getListFood(page) {
     return response.json();
 }
 async function getListFoodByCategoryId(categoryId) {
-    const response = await fetch(`http://localhost:8080/bigfood/api/foods/list?categoryId=${categoryId}`, {
+    const response = await fetch(`${API_BASE_URL}/foods/list?categoryId=${categoryId}`, {
         method: "GET",
         headers: { 
             "Content-Type": "application/json",
@@ -132,7 +133,7 @@ async function updateFood(foodData) {
         formData.append("image", blob, `image_${Date.now()}.png`);
     }
 
-      const response = await fetch(`http://localhost:8080/bigfood/api/foods/update`, {
+      const response = await fetch(`${API_BASE_URL}/foods/update`, {
         method: "PUT",
         headers: { 
             "Authorization": `Bearer ${getToken()}`
@@ -145,7 +146,7 @@ async function updateFood(foodData) {
     return response.json();
 }
 async function deleteFood(id) {
-    const response = await fetch(`http://localhost:8080/bigfood/api/foods/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/foods/${id}`, {
         method: "DELETE",
         headers: { 
             "Authorization": `Bearer ${getToken()}`}
@@ -157,7 +158,7 @@ async function updateFoodIsAvailable(foodData) {
     const formData = new FormData();
     formData.append("foodId", foodData.id)
     formData.append("available" ,foodData.available);
-      const response = await fetch(`http://localhost:8080/bigfood/api/foods/update`, {
+      const response = await fetch(`${API_BASE_URL}/foods/update`, {
         method: "PUT",
         headers: { 
             "Authorization": `Bearer ${getToken()}`
@@ -171,7 +172,7 @@ async function updateFoodIsAvailable(foodData) {
 }
 
 async function  getListFoodBestSell(){
-     const response = await fetch(`http://localhost:8080/bigfood/api/foods/list/best-sell`, {
+     const response = await fetch(`${API_BASE_URL}/foods/list/best-sell`, {
         method: "GET",
         headers: { 
              "Content-Type": "application/json",
@@ -180,7 +181,7 @@ async function  getListFoodBestSell(){
     return response.json();
 }
 async function  getListFoodLeast(){
-     const response = await fetch(`http://localhost:8080/bigfood/api/foods/list/least-sell`, {
+     const response = await fetch(`${API_BASE_URL}/foods/list/least-sell`, {
         method: "GET",
         headers: { 
             "Content-Type": "application/json",
@@ -190,7 +191,7 @@ async function  getListFoodLeast(){
 }
 
 async function  getListOrderNew(){
-     const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/list-order-new`, {
+     const response = await fetch(`${API_BASE_URL}/orders/restaurant/list-order-new`, {
         method: "GET",
         headers: { 
             "Content-Type": "application/json",
