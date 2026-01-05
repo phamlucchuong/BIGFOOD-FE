@@ -3,7 +3,7 @@ import { API_BASE_URL } from '../../config/config';
 
 export async function getRestaurant(categoryId = "", searchText = "", page) {
   try {
-    const baseUrl = "${API_BASE_URL}/restaurants";
+    const baseUrl = `${API_BASE_URL}/restaurants`;
     const params = new URLSearchParams();
 
     // Cách viết chuẩn
