@@ -1,10 +1,11 @@
+import { API_BASE_URL } from '../../config/config';
 
 
 
 export async function addNewSearch(newSearch) {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/searchs`,
+            `${API_BASE_URL}/searchs`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -22,7 +23,7 @@ export async function addNewSearch(newSearch) {
 export async function getHotSearchList() {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/searchs/hot`,
+            `${API_BASE_URL}/searchs/hot`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
