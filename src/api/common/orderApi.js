@@ -1,10 +1,10 @@
 import { getToken } from "../../services/localStorageService";
-
+import { API_BASE_URL } from '../../config/config';
 
 export async function createNewOrder(formData) {
     try { 
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/orders`,
+            `${API_BASE_URL}/orders`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export async function createNewOrder(formData) {
 export async function getOrderById(orderId) {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/orders/${orderId}`,
+            `${API_BASE_URL}/orders/${orderId}`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export async function getOrderById(orderId) {
 export async function getOrderByUserId(status, page) {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/orders/user/all?status=${status}&page=${page}`,
+            `${API_BASE_URL}/orders/user/all?status=${status}&page=${page}`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json",
@@ -84,7 +84,7 @@ export async function getOrderByUserId(status, page) {
 export async function updateOrderStatus(orderId, request) {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/orders/${orderId}/status`,
+            `${API_BASE_URL}/orders/${orderId}/status`,
             {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json",
@@ -103,7 +103,7 @@ export async function updateOrderStatus(orderId, request) {
 export async function getSummary() {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/orders/summary`,
+            `${API_BASE_URL}/orders/summary`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export async function getSummary() {
 export async function getChartDataApi() {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/orders/chart`,
+            `${API_BASE_URL}/orders/chart`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json",
@@ -140,7 +140,7 @@ export async function getChartDataApi() {
 export async function getFinanceSummary() {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/orders/finance-summary`,
+            `${API_BASE_URL}/orders/finance-summary`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json",
@@ -159,7 +159,7 @@ export async function getFinanceSummary() {
 export async function getTopRecentOrdersApi() {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/orders/top-orders`,
+            `${API_BASE_URL}/orders/top-orders`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json",

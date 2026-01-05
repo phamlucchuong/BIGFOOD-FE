@@ -1,8 +1,9 @@
 import { getToken } from "../../services/localStorageService";
+import { API_BASE_URL } from '../../config/config';
 
 async function getListOrder(page) {
     const token = getToken();
-    const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/page/${page}`, {
+    const response = await fetch(`${API_BASE_URL}/orders/restaurant/page/${page}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -13,7 +14,7 @@ async function getListOrder(page) {
 
 async function getOrderDetail(orderId) {
     const token = getToken();
-    const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/detail/${orderId}`, {
+    const response = await fetch(`${API_BASE_URL}/orders/restaurant/detail/${orderId}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -23,7 +24,7 @@ async function getOrderDetail(orderId) {
 }
 async function getOrderRestaurantByStatus(status) {
     const token = getToken();
-    const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant?status=${status}`, {
+    const response = await fetch(`${API_BASE_URL}/orders/restaurant?status=${status}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -35,7 +36,7 @@ async function getOrderRestaurantByStatus(status) {
 async function updateStatusOrder({orderId , status , reason}) {
     reason = reason ?? "";
     const token = getToken();
-    const response = await fetch(`http://localhost:8080/bigfood/api/orders/${orderId}/status`, {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
         method: "PATCH",
         headers: {
             "Content-Type" : "application/json",
@@ -48,7 +49,7 @@ async function updateStatusOrder({orderId , status , reason}) {
 
 
 async function getRestaurantStatistical() {
-    const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/statistital`, {
+    const response = await fetch(`${API_BASE_URL}/orders/restaurant/statistital`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${getToken()}`,
@@ -58,7 +59,7 @@ async function getRestaurantStatistical() {
 }
 
 async function getRestaurantStatisticalAndSort(timeRange) {
-     const response = await fetch(`http://localhost:8080/bigfood/api/orders/restaurant/statistics?timeRange=${timeRange}`, {
+     const response = await fetch(`${API_BASE_URL}/orders/restaurant/statistics?timeRange=${timeRange}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${getToken()}`,

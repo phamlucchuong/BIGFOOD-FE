@@ -1,8 +1,9 @@
 import { getToken } from "../../services/localStorageService";
+import { API_BASE_URL } from '../../config/config';
 
 export async function getRestaurant(categoryId = "", searchText = "", page) {
   try {
-    const baseUrl = "http://localhost:8080/bigfood/api/restaurants";
+    const baseUrl = "${API_BASE_URL}/restaurants";
     const params = new URLSearchParams();
 
     // Cách viết chuẩn
@@ -63,7 +64,7 @@ export async function getRestaurantDetail(restaurantId) {
   try {
     console.log("API Call - Restaurant ID:", restaurantId);
     const response = await fetch(
-      `http://localhost:8080/bigfood/api/restaurants/detail`,
+      `${API_BASE_URL}/restaurants/detail`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -82,7 +83,7 @@ export async function getRestaurantDetail(restaurantId) {
 export async function getRestaurantsByCategory(categoryId, page = 0) {
   try {
     const response = await fetch(
-      `http://localhost:8080/bigfood/api/restaurants/category/${categoryId}${
+      `${API_BASE_URL}/restaurants/category/${categoryId}${
         page ? `?page=${page}` : ""
       }`,
       {
@@ -100,7 +101,7 @@ export async function getRestaurantsByCategory(categoryId, page = 0) {
 export async function getRestaurantRequestApi(page = 0) {
   try {
     const response = await fetch(
-      `http://localhost:8080/bigfood/api/restaurants/request${
+      `${API_BASE_URL}/restaurants/request${
         page ? `?page=${page}` : ""
       }`,
       {
@@ -121,7 +122,7 @@ export async function getRestaurantRequestApi(page = 0) {
 export async function approveRestaurantRequestApi(restaurantId, approved) {
   try {
     const response = await fetch(
-      `http://localhost:8080/bigfood/api/restaurants/request/approve`,
+      `${API_BASE_URL}/restaurants/request/approve`,
       {
         method: "PATCH",
         headers: {
@@ -141,7 +142,7 @@ export async function approveRestaurantRequestApi(restaurantId, approved) {
 export async function getRestaurantTagApi(categoryId, page) {
   try {
     const response = await fetch(
-      `http://localhost:8080/bigfood/api/restaurants/category?categoryId=${categoryId || ""}&page=${page ?? 0}`,
+      `${API_BASE_URL}/restaurants/category?categoryId=${categoryId || ""}&page=${page ?? 0}`,
       {
         method: "GET",
         headers: {
@@ -161,7 +162,7 @@ export async function getRestaurantTagApi(categoryId, page) {
 export async function getRestaurantReportApi(page = 0) {
   try {
     const response = await fetch(
-      `http://localhost:8080/bigfood/api/restaurants/report?${page ? `&page=${page}` : ""}`,
+      `${API_BASE_URL}/restaurants/report?${page ? `&page=${page}` : ""}`,
       {
         method: "GET",
         headers: {

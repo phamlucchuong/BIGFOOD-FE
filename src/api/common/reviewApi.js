@@ -1,8 +1,9 @@
+import { API_BASE_URL } from '../../config/config';
 import { getToken } from "../../services/localStorageService";
 export async function createNewReview(orderId, CreateReviewRequest) {
   try {
     const response = await fetch(
-      `http://localhost:8080/bigfood/api/reviews/${orderId}`,
+      `${API_BASE_URL}/reviews/${orderId}`,
       {
         method: "POST",
         headers: {
@@ -21,7 +22,7 @@ export async function createNewReview(orderId, CreateReviewRequest) {
 export async function updateReviewById(orderId, updateReviewRequest) {
   try {
     const response = await fetch(
-      `http://localhost:8080/bigfood/api/reviews/${orderId}`,
+      `${API_BASE_URL}/reviews/${orderId}`,
       {
         method: "PATCH",
         headers: {

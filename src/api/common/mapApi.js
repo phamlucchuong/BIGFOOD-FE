@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '../../config/config';
 
 
 export async function reverseGeocode(latitude, longitude) {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/goong/reverse-geocoding`,
+            `${API_BASE_URL}/goong/reverse-geocoding`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

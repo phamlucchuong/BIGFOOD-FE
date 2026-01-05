@@ -1,8 +1,9 @@
+import { API_BASE_URL } from '../../config/config';
 
 export async function getCategories() {
     try {
         const response = await fetch(
-            `http://localhost:8080/bigfood/api/restaurant-categories`,
+            `${API_BASE_URL}/restaurant-categories`,
             {
                 method: "GET",
                 headers: {
