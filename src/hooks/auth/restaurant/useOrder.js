@@ -2,8 +2,8 @@ import {getListOrder , getOrderDetail , updateStatusOrder ,
     getOrderRestaurantByStatus , getRestaurantStatistical , getRestaurantStatisticalAndSort} from "../../../api/restaurant/orderAPI"
 
 export function useOrder(){
-   const listOrderMyRestaurant = async () =>{
-       const response = await getListOrder();
+   const listOrderMyRestaurant = async (page) =>{
+       const response = await getListOrder(page);
        if(!response.ok){
           throw new Error(`Failed to fetch list order : ${response.status}`);
        }

@@ -74,6 +74,10 @@ async function createFood(foodData) {
     formData.append("name", foodData.name);
     formData.append("price", foodData.price);
     formData.append("description", foodData.description || "");
+    foodData.foodOptions.forEach((opt, index) => {
+        formData.append(`foodOptions[${index}].name`, opt.name);
+        formData.append(`foodOptions[${index}].price`, opt.price);
+    });
     if (foodData.imageFile) {
         formData.append("image", foodData.imageFile);
     } else if (foodData.image && typeof foodData.image === "string") {
@@ -116,6 +120,10 @@ async function updateFood(foodData) {
     formData.append("description", foodData.description || "");
     formData.append("price", foodData.price);
     formData.append("available" ,foodData.available);
+    foodData.foodOptions.forEach((opt, index) => {
+        formData.append(`foodOptions[${index}].name`, opt.name);
+        formData.append(`foodOptions[${index}].price`, opt.price);
+    });
     if (foodData.imageFile) {
         formData.append("image", foodData.imageFile);
     } else if (foodData.image && typeof foodData.image === "string") {

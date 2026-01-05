@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit2, Trash2, Filter, Star, Eye, EyeOff } from "lucide-react";
 import { formatCurrency } from "../../../dataSample/restaurant/formatCurrency"
 import { CategoryModal } from '../components/CategoryModal';
-import { FoodModal } from '../components/FoodModal';
+import  FoodModal  from '../components/FoodModal';
 import { useRestaurant } from "../../../hooks/auth/restaurant/useRestaurant"
 
 export const MenuManagementPage = () => {
@@ -316,6 +316,7 @@ export const MenuManagementPage = () => {
                       <div className="flex gap-2">
                         <button 
                           onClick={() => {
+                            console.log("show food menu " , food);
                             setEditingFood(food);
                             setShowFoodModal(true);
                           }} 
