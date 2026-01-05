@@ -1,0 +1,56 @@
+[
+  {
+    "category": "YOGURT",
+    "categoryindex" : "yogurt",
+    "products": [
+      {
+        "id": 1,
+        "name": "Yogurt Đắc Thơm",
+        "price": 39000,
+        "sold": 1,
+        "image": "/public/asia-eu-category.png"
+      },
+      {
+        "id": 2,
+        "name": "Yogurt Trái Cây",
+        "price": 39000,
+        "sold": 0,
+        "image": "/public/asia-eu-category.png"
+      },
+      {
+        "id": 3,
+        "name": "Yogurt Trái Cây Đá Xay",
+        "price": 39000,
+        "sold": 2,
+        "image": "/public/asia-eu-category.png"
+      },
+      {
+        "id": 4,
+        "name": "Yogurt Trái Cây Đá Xay",
+        "price": 39000,
+        "sold": 2,
+        "image": "/public/asia-eu-category.png"
+      }
+    ]
+  },
+  {
+    "category": "CÀ PHÊ",
+    "categoryindex" : "caphe",
+    "products": [
+      {
+        "id": 4,
+        "name": "Cà Phê Sữa",
+        "price": 25000,
+        "sold": 3,
+        "image": "/public/asia-eu-category.png"
+      },
+      {
+        "id": 5,
+        "name": "Bạc Xỉu",
+        "price": 27000,
+        "sold": 1,
+        "image": "/public/asia-eu-category.png"
+      }
+    ]
+  }
+]
