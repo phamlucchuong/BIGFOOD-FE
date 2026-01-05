@@ -6,6 +6,8 @@ import {
   updateOrderStatus,
   getSummary,
   getChartDataApi,
+  getFinanceSummary,
+  getTopRecentOrdersApi,
 } from "../../api/common/orderApi";
 
 export default function useOrder() {
@@ -81,6 +83,30 @@ export default function useOrder() {
     }
   };
 
+  const [financeData, setFinanceData] = useState({});
+  const getMonthlyTarget = async () => {
+    try {
+      const response = await getFinanceSummary();
+      setFinanceData(response.results || {});
+    } catch (error) {
+      console.error("Error fetching finance summary:", error);
+      return {};
+    }
+  };
+
+  const [ topRecentOrders, setTopRecentOrders ] = useState([]);
+  const getTopRecentOrders = async () => {
+    // Implement get top orders logic here
+    try {
+      const response = await getTopRecentOrdersApi();
+      setTopRecentOrders(response.results.orders || []);
+      // return response.results.orders || [];
+    } catch (error) {
+      console.error("Error fetching top recent orders:", error);
+      return [];
+    }
+  }
+
   return {
     createOrder,
     orders,
@@ -94,5 +120,9 @@ export default function useOrder() {
     getOrderSummary,
     getOrderChartData,
     chartData,
+    getMonthlyTarget,
+    financeData,
+    topRecentOrders,
+    getTopRecentOrders,
   };
 }

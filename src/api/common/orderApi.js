@@ -135,3 +135,41 @@ export async function getChartDataApi() {
         console.error("Lỗi khi lấy danh sách đơn hàng: ", error);
     }
 }
+
+
+export async function getFinanceSummary() {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/bigfood/api/orders/finance-summary`,
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json",
+                    authorization: `Bearer ${getToken()}`
+                },
+            }
+        );
+
+        return response.json();
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách đơn hàng: ", error);
+    }
+}
+
+
+export async function getTopRecentOrdersApi() {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/bigfood/api/orders/top-orders`,
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json",
+                    authorization: `Bearer ${getToken()}`
+                },
+            }
+        );
+
+        return response.json();
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách đơn hàng: ", error);
+    }
+}

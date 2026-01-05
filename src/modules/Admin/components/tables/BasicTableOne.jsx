@@ -39,26 +39,6 @@ const userData = [
     },
 ];
 
-// Dữ liệu cho Xét duyệt Nhà hàng (Yêu cầu đăng ký)
-const restaurantApprovalData = [
-    {
-        id: 101,
-        user: { image: "/src/assets/images/user-18.png", name: "Kaiya George", email: "kaiya.g@biz.com" },
-        restaurantName: "Kaiya's Kitchen",
-        location: "Quận 1, TP HCM",
-        dateRequested: "01/11/2025",
-        status: "Pending", // Trạng thái xét duyệt
-    },
-    {
-        id: 102,
-        user: { image: "/src/assets/images/user-20.png", name: "Abram Schleifer", email: "abram@digital.co" },
-        restaurantName: "Digital Delights",
-        location: "Quận 3, TP HCM",
-        dateRequested: "05/11/2025",
-        status: "Pending",
-    },
-];
-
 // ---------------------------------------------
 
 export default function AdminCustomTable({ mode = 'users' }) { // Thêm prop mode
