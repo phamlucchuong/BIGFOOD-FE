@@ -73,7 +73,6 @@ export default function AppRoutes() {
         <Route path="reporting-managerment" element={<ReportingManagerment />} />
         <Route path="order-managerment" element={<OrderManagerment />} />
         <Route path="finance-reporting" element={<FinanceReporting />} />
-        {/* <Route path="signin" element={<SignIn />} /> */}
       </Route>
       
       <Route path="/admin/signin" element={<SignIn />} />
