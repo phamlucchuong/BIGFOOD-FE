@@ -29,7 +29,7 @@ async function updateRes(formData) {
 }
 
 async function fetchCategoriesFoods() {
-    const response = await fetch("${API_BASE_URL}/food-categories/all", {
+    const response = await fetch(`${API_BASE_URL}/food-categories/all`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

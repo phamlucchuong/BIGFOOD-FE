@@ -59,7 +59,7 @@ async function verifyOtp(email, otp) {
 
 
 async function login({email, password}) {
-    const response = await fetch("${API_BASE_URL}/auth", {
+    const response = await fetch(`${API_BASE_URL}/auth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -70,7 +70,7 @@ async function login({email, password}) {
 
 
 async function register(email, name, phone, password) {
-    await fetch("${API_BASE_URL}/users", {
+    await fetch(`${API_BASE_URL}/users`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ name, phone, email, password }),
