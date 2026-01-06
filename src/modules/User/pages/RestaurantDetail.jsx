@@ -37,9 +37,16 @@ export default function RestaurantDetail() {
     }
   }, []);
 
+  // Xác định size default của món (ưu tiên defaultPrice, sau đó option đầu tiên)
+  const getDefaultSize = (product) => {
+    const defaultOption = product.foodOptions?.find((opt) => opt.defaultPrice);
+    return defaultOption?.name || product.foodOptions?.[0]?.name || "";
+  };
+
   // Hàm xử lý khi click vào sản phẩm để mở popup
   const handleProductClick = (product) => {
     setSelectedProduct(product); // Lưu thông tin sản phẩm vào state
+    setSelectedSize(getDefaultSize(product)); // Gán size mặc định cho popup
     setShowPopup(true); // Hiển thị popup
   };
   // Hàm xử lý thay đổi trong textfield ghi chú
@@ -47,24 +54,31 @@ export default function RestaurantDetail() {
     setNote(e.target.value);
   };
 
-  const addToCart = (product) => {
-    // Lấy giá từ foodOptions dựa trên selectedSize
-    const selectedOption = product.foodOptions?.find(opt => opt.name === selectedSize);
-    const finalPrice = selectedOption?.price || 0;
+  const addToCart = (product, sizeOverride) => {
+    // Ưu tiên size truyền vào, rồi tới size có sẵn của item, sau đó size default của món
+    const resolvedSize =
+      sizeOverride || product.size || getDefaultSize(product) || selectedSize;
+
+    // Lấy giá từ foodOptions dựa trên resolvedSize, fallback defaultPrice
+    const selectedOption = product.foodOptions?.find(
+      (opt) => opt.name === resolvedSize
+    );
+    const finalPrice = selectedOption?.price ?? product.defaultPrice ?? 0;
 
     setCart((prev) => {
       const exists = prev.find(
-        (item) => item.id === product.id && item.size === selectedSize
+        (item) => item.id === product.id && item.size === resolvedSize
       );
 
       if (exists) {
         // Nếu cùng sản phẩm và cùng size, cộng thêm số lượng
         return prev.map((item) =>
-          item.id === product.id && item.size === selectedSize
+          item.id === product.id && item.size === resolvedSize
             ? {
                 ...item,
                 quantity: total == 1 ? item.quantity + 1 : total,
                 note,
+                price: finalPrice,
               }
             : item
         );
@@ -76,8 +90,8 @@ export default function RestaurantDetail() {
             ...product,
             quantity: total,
             note,
-            size: selectedSize,
-            price: finalPrice, // lưu giá theo size từ foodOptions
+            size: resolvedSize,
+            price: finalPrice, // lưu giá theo size từ foodOptions hoặc defaultPrice
           },
         ];
       }
@@ -98,7 +112,7 @@ export default function RestaurantDetail() {
   const handleAddToCart = (item) => {
     const _note = note;
     const updatedItem = { ...item, note: _note };
-    addToCart(updatedItem);
+    addToCart(updatedItem, item.size);
   };
 
   // Giảm hoặc xóa sản phẩm
@@ -454,12 +468,14 @@ export default function RestaurantDetail() {
                     </button>
                   </div>
                   <button
-                    onClick={() => addToCart(selectedProduct)}
+                    onClick={() => addToCart(selectedProduct, selectedSize)}
                     className="w-full bg-yellow-500 text-white py-2 rounded-lg"
                   >
                     Thêm vào giỏ -{" "}
                     {(
-                      (selectedProduct.foodOptions?.find(opt => opt.name === selectedSize)?.price || 0) * total
+                      (selectedProduct.foodOptions?.find(
+                        (opt) => opt.name === selectedSize
+                      )?.price ?? selectedProduct.defaultPrice ?? 0) * total
                     ).toLocaleString()}
                     đ
                   </button>

@@ -63,7 +63,7 @@ const RestaurantDashboard = () => {
     { 
       label: 'Giá Trị TB/Đơn', 
       getValue: (data) => formatCurrency(data?.averageUnitRevenuePrice || 0),
-      getChange: (data) => '+12',
+      getChange: (data) => '+0',
       icon: TrendingUp, 
       color: 'bg-orange-500' 
     },

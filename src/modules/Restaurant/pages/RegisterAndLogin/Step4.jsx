@@ -176,7 +176,7 @@ const SuccessModal = () => (
                         onClick={() => toggleBusinessField(category)}
                         className="px-4 py-3 hover:bg-gray-100 cursor-pointer flex items-center justify-between"
                       >
-                        <span>{category.title}</span>
+                        <span>{category.name}</span>
                        
                       </div>
                     ))}
