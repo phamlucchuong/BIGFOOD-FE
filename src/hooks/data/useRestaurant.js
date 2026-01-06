@@ -27,7 +27,7 @@ export default function useRestaurant() {
     try {
       const response = await getRestaurant(categoryId, searchText, pageIndex);
       const newRestaurants = response.results.restaurants; // Lấy mảng nhà hàng từ response
-      setTotalPages(response.results.total); // Lưu tổng số trang
+      setTotalPages(response.results.totalPages ?? response.results.total ?? 0); // Lưu tổng số trang
 
       if (isReset || pageIndex === 0) {
         // Nếu là trang đầu hoặc reset -> Ghi đè mới hoàn toàn
@@ -66,7 +66,7 @@ export default function useRestaurant() {
       // getRestaurant(lng, lat, categoryId, searchText, page)
       const response = await getRestaurant(categoryId, "", pageIndex);
       const newRestaurants = response.results.restaurants;
-      setTotalPages(response.results.total);
+      setTotalPages(response.results.totalPages ?? response.results.total ?? 0);
 
       if (isReset || pageIndex === 0) {
         setRestaurants(newRestaurants);

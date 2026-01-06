@@ -356,7 +356,7 @@ export const MenuManagementPage = () => {
             <div className="text-sm text-gray-600">
               Hiển thị{" "}
               {total > 0 ? (currentPage - 1) * pageSize + 1 : 0} đến{" "}
-              {Math.min(currentPage * pageSize, total)} trong {total} đơn hàng
+              {Math.min(currentPage * pageSize, total)} trong {total} món ăn
             </div>
 
             <div className="flex gap-2 items-center">

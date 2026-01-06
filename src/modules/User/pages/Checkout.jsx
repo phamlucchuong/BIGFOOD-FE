@@ -215,7 +215,7 @@ export default function Checkout() {
         // sessionStorage.setItem("orderResponse", response.results);
         localStorage.setItem("last_order_id", response.results.id);
         console.log("Saved last_order_id:", response.results.id);
-        navigate("/order/detail");
+        navigate(`/order/detail?id=${response.results.id}`);
       } else {
         alert(`Đặt hàng thất bại: ${response.message || "Lỗi không xác định"}`);
       }
