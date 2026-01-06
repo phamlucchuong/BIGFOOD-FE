@@ -33,7 +33,7 @@ export default function useOrder() {
   const getAllOrder = async (status = false, page = 0, reset = false) => {
     try {
       const response = await getOrderByUserId(status, page);
-      const newData = response.results.orders || [];
+      const newData = response.results.items || [];
       const total = response?.results?.total ?? 0;
       setTotal(total);
       const totalPages =

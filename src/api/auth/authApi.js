@@ -70,7 +70,7 @@ async function login({email, password}) {
 
 
 async function register(email, name, phone, password) {
-    await fetch(`${API_BASE_URL}/users`, {
+    return await fetch(`${API_BASE_URL}/users`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ name, phone, email, password }),
